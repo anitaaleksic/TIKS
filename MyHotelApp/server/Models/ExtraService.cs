@@ -9,16 +9,16 @@ namespace MyHotelApp.server.Models;
 public class ExtraService
 {
     [Key]
-    public int ServiceID { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int ExtraServiceID { get; set; }
     [Required]
     [StringLength(100, ErrorMessage = "Service name cannot exceed 100 characters.")]
-    public string ServiceName { get; set; }
+    public required string ServiceName { get; set; }
     [Required]
     public decimal Price { get; set; }
-    [Required]
-    public string Description { get; set; }
+    public string? Description { get; set; }
     //ZA PARKING BR PARKING MESTA NE MOZE DA IH BUDE REZ VISE NEGO STO IMA PARKING MESTA 
     //ISTO I ZA RESTORAN I ZA WELLNESS
 
-    public List<Reservation> AddedToReservations { get; set; }
+    public List<Reservation> AddedToReservations { get; set; } = new List<Reservation>();
 }

@@ -16,18 +16,22 @@ public enum RoomType
 public class Room
 {
     [Key]
-    public int RoomNumber { get; set; }
+    [Range(1, 999, ErrorMessage = "Room number must be between 1 and 999.")]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public required int RoomNumber { get; set; }
     [Required]
-    public RoomType RoomType { get; set; }
+    public required RoomType RoomType { get; set; }
+    [Required]
     [Range(1, 5, ErrorMessage = "Capacity must be between 1 and 5.")]
-    public int Capacity { get; set; } //kroz konstrukotr stavi default capacity
+    public required int Capacity { get; set; } //kroz konstrukotr stavi default capacity
     [Required]
     [Range(1, 6, ErrorMessage = "Floor must be between 1 and 6.")]
-    public int Floor { get; set; }
+    public required int Floor { get; set; }
     [Required]
-    public bool IsAvailable { get; set; }
+    public bool IsAvailable { get; set; } = true;//na osnovu datuma mora da se proveri
     [Required]
-    public int PricePerNight { get; set; }//na osnovu tipa sobe i sprata
-    public string ImageUrl { get; set; }
-    public List<Reservation> Reservations { get; set; }
+    public required int PricePerNight { get; set; }//na osnovu tipa sobe i sprata
+    public string? ImageUrl { get; set; }
+    [JsonIgnore]
+    public List<Reservation> Reservations { get; set; } = new List<Reservation>();
 }
