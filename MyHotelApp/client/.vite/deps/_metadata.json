@@ -2,7 +2,30 @@
   "hash": "33c86de1",
   "configHash": "296c2c11",
   "lockfileHash": "ecee5ab1",
+<<<<<<< HEAD
   "browserHash": "4d174126",
   "optimized": {},
   "chunks": {}
+=======
+  "browserHash": "cdfee2f9",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "064529e9",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "72d0f6cc",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-Y455YYDO": {
+      "file": "chunk-Y455YYDO.js"
+    }
+  }
+>>>>>>> anita
 }

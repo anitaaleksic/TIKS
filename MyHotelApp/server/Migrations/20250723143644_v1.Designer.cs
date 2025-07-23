@@ -12,7 +12,7 @@ using MyHotelApp.server.Models;
 namespace MyHotelApp.Migrations
 {
     [DbContext(typeof(HotelContext))]
-    [Migration("20250722195331_v1")]
+    [Migration("20250723143644_v1")]
     partial class v1
     {
         /// <inheritdoc />
@@ -30,26 +30,25 @@ namespace MyHotelApp.Migrations
                     b.Property<int>("AddedToReservationsReservationID")
                         .HasColumnType("int");
 
-                    b.Property<int>("ExtraServicesServiceID")
+                    b.Property<int>("ExtraServicesExtraServiceID")
                         .HasColumnType("int");
 
-                    b.HasKey("AddedToReservationsReservationID", "ExtraServicesServiceID");
+                    b.HasKey("AddedToReservationsReservationID", "ExtraServicesExtraServiceID");
 
-                    b.HasIndex("ExtraServicesServiceID");
+                    b.HasIndex("ExtraServicesExtraServiceID");
 
                     b.ToTable("ExtraServiceReservation");
                 });
 
             modelBuilder.Entity("MyHotelApp.server.Models.ExtraService", b =>
                 {
-                    b.Property<int>("ServiceID")
+                    b.Property<int>("ExtraServiceID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExtraServiceID"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Price")
@@ -60,7 +59,7 @@ namespace MyHotelApp.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("ServiceID");
+                    b.HasKey("ExtraServiceID");
 
                     b.ToTable("ExtraServices");
                 });
@@ -71,10 +70,6 @@ namespace MyHotelApp.Migrations
                         .HasMaxLength(13)
                         .HasColumnType("nvarchar(13)");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -82,7 +77,8 @@ namespace MyHotelApp.Migrations
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(13)
+                        .HasColumnType("nvarchar(13)");
 
                     b.HasKey("JMBG");
 
@@ -125,10 +121,7 @@ namespace MyHotelApp.Migrations
             modelBuilder.Entity("MyHotelApp.server.Models.Room", b =>
                 {
                     b.Property<int>("RoomNumber")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomNumber"));
 
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
@@ -137,7 +130,6 @@ namespace MyHotelApp.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
@@ -156,14 +148,13 @@ namespace MyHotelApp.Migrations
 
             modelBuilder.Entity("MyHotelApp.server.Models.RoomService", b =>
                 {
-                    b.Property<int>("ServiceID")
+                    b.Property<int>("RoomServiceID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomServiceID"));
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ItemName")
@@ -174,7 +165,7 @@ namespace MyHotelApp.Migrations
                     b.Property<decimal>("ItemPrice")
                         .HasColumnType("decimal(18,2)");
 
-                    b.HasKey("ServiceID");
+                    b.HasKey("RoomServiceID");
 
                     b.ToTable("RoomServices");
                 });
@@ -184,12 +175,12 @@ namespace MyHotelApp.Migrations
                     b.Property<int>("AddedToReservationsReservationID")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoomServicesServiceID")
+                    b.Property<int>("RoomServicesRoomServiceID")
                         .HasColumnType("int");
 
-                    b.HasKey("AddedToReservationsReservationID", "RoomServicesServiceID");
+                    b.HasKey("AddedToReservationsReservationID", "RoomServicesRoomServiceID");
 
-                    b.HasIndex("RoomServicesServiceID");
+                    b.HasIndex("RoomServicesRoomServiceID");
 
                     b.ToTable("ReservationRoomService");
                 });
@@ -204,7 +195,7 @@ namespace MyHotelApp.Migrations
 
                     b.HasOne("MyHotelApp.server.Models.ExtraService", null)
                         .WithMany()
-                        .HasForeignKey("ExtraServicesServiceID")
+                        .HasForeignKey("ExtraServicesExtraServiceID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -238,7 +229,7 @@ namespace MyHotelApp.Migrations
 
                     b.HasOne("MyHotelApp.server.Models.RoomService", null)
                         .WithMany()
-                        .HasForeignKey("RoomServicesServiceID")
+                        .HasForeignKey("RoomServicesRoomServiceID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

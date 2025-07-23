@@ -9,17 +9,17 @@ public class Guest
 {
     [Key]
     [StringLength(13, ErrorMessage = "JMBG must be 13 characters long.")]
-    public string JMBG { get; set; }
+    public required string JMBG { get; set; }
+
     [Required]
     [StringLength(100, ErrorMessage = "Full name cannot exceed 100 characters.")]
-    public string FullName { get; set; }
+    public required string FullName { get; set; }
 
-    [EmailAddress(ErrorMessage = "Invalid email address.")]
-    public string Email { get; set; }
-
+    [Required]
     [Phone(ErrorMessage = "Invalid phone number.")]
-    public string PhoneNumber { get; set; }
-
-    public List<Reservation> Reservations { get; set; }
+    [StringLength(13, MinimumLength = 12, ErrorMessage = "Phone number must be between 12 and 13 characters long.")]
+    public required string PhoneNumber { get; set; }
+    [JsonIgnore]
+    public List<Reservation> Reservations { get; set; } = new List<Reservation>();
 
 }
