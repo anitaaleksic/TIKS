@@ -24,6 +24,10 @@ Global
 		{DF86702C-0F9C-DEDA-CEF3-0DB5F2289311} = {01CC0360-0ADF-AE28-732F-F006DA6DA0B7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
+<<<<<<< HEAD
 		SolutionGuid = {30A83D89-2DD0-47C6-9F76-2A9C069B4097}
+=======
+		SolutionGuid = {F65C7998-54BB-4BF4-A64B-02DE446A33DE}
+>>>>>>> uros
 	EndGlobalSection
 EndGlobal
