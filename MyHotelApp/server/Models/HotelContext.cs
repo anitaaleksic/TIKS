@@ -17,6 +17,7 @@ public class HotelContext : DbContext
     public DbSet<RoomService> RoomServices { get; set; }
     public DbSet<Guest> Guests { get; set; }
     public DbSet<ExtraService> ExtraServices { get; set; }
+    
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,7 +32,7 @@ public class HotelContext : DbContext
         modelBuilder.Entity<RoomService>()
             .Property(e => e.RoomServiceID)
             .ValueGeneratedOnAdd();
-            
+
         // Your configuration goes here:
         modelBuilder.Entity<Reservation>()
             .Property(e => e.ReservationID)

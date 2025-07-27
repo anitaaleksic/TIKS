@@ -22,3 +22,12 @@ public class ExtraService
 
     public List<Reservation> AddedToReservations { get; set; } = new List<Reservation>();
 }
+
+public class ExtraServiceDto
+{
+    public int ExtraServiceID { get; set; }
+    public string ServiceName { get; set; } = default!;
+    public decimal Price { get; set; }
+    public string? Description { get; set; }
+}
+

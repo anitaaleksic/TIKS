@@ -20,3 +20,11 @@ public class RoomService
     public string? Description { get; set; }
     public List<Reservation> AddedToReservations { get; set; } = new List<Reservation>();
 }
+
+public class RoomServiceDto
+{
+    public int RoomServiceID { get; set; }
+    public string ItemName { get; set; } = default!;
+    public decimal ItemPrice { get; set; }
+    public string? Description { get; set; }
+}

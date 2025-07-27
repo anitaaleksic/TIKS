@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/Reservation.css';
+import axios from 'axios';
 
 export default function Reservation() {
+  
   const [showRoomServices, setShowRoomServices] = useState(false);
   const [showExtraServices, setShowExtraServices] = useState(false);
+  const [roomServices, setRoomServices] = useState([]);
+  const [extraServices, setExtraServices] = useState([]);
 
-  const roomServices = ['Breakfast', 'Laundry', 'Room Cleaning'];
-  const extraServices = ['Spa Access', 'Airport Pickup', 'Gym'];
+  useEffect(() => {
+    axios.get('/api/RoomService/GetAllRoomServices')
+      .then(res => setRoomServices(res.data))
+      .catch(err => console.error('Greška pri učitavanju RoomService:', err));
+
+    axios.get('/api/ExtraService/GetAllExtraServices')
+      .then(res => setExtraServices(res.data))
+      .catch(err => console.error('Greška pri učitavanju ExtraService:', err));
+  }, []);
 
   return (
     <form className="reservation-form">
@@ -56,10 +67,10 @@ export default function Reservation() {
           {showRoomServices && (
             <div className="checkbox-group">
               <label className="form-label">Room Services:</label>
-              {roomServices.map((service, index) => (
-                <label key={index} className="checkbox-item">
-                  <input type="checkbox" name="roomServices" value={service} />
-                  {service}
+              {roomServices.map((service) => (
+                <label key={service.roomServiceID} className="checkbox-item">
+                  <input type="checkbox" name="roomServices" value={service.roomServiceID} />
+                  {service.itemName}
                 </label>
               ))}
             </div>
@@ -77,10 +88,10 @@ export default function Reservation() {
           {showExtraServices && (
             <div className="checkbox-group">
               <label className="form-label">Extra Services:</label>
-              {extraServices.map((service, index) => (
-                <label key={index} className="checkbox-item">
-                  <input type="checkbox" name="extraServices" value={service} />
-                  {service}
+              {extraServices.map((service) => (
+                <label key={service.extraServiceID} className="checkbox-item">
+                  <input type="checkbox" name="extraServices" value={service.extraServiceID} />
+                  {service.serviceName}
                 </label>
               ))}
             </div>

@@ -8,20 +8,20 @@ import RoomService from './Components/RoomService';
 import ExtraService from './Components/ExtraService';
 import Reservation from './Components/Reservation';
 function App() {
-
   return (
     <>
       <Navbar />
 
-      <Routes>
+        <Routes>
+          <Route path="/" element={<Guest />} />
           <Route path="/guest" element={<Guest />} />
-          <Route path="/room" element= {<Room />} />
-          <Route path="/roomservice" element= {<RoomService />} />
-          <Route path="/extraservice" element= {<ExtraService />} />
-          <Route path="/reservation" element= {<Reservation />} />
+          <Route path="/room" element={<Room />} />
+          <Route path="/roomservice" element={<RoomService />} />
+          <Route path="/extraservice" element={<ExtraService />} />
+          <Route path="/reservation" element={<Reservation />} />
         </Routes>
     </>
-  )
+  );
 }
 
 export default App

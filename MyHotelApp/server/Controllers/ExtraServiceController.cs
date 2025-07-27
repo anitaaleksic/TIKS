@@ -18,7 +18,7 @@ public class ExtraServiceController : ControllerBase
     }
 
     [HttpPost("CreateExtraService")]
-    public async Task<IActionResult> CreateExtraService([FromBody] ExtraService extraService)
+    public async Task<IActionResult> CreateExtraService([FromBody] ExtraServiceDto extraService)
     {
         try
         {
@@ -41,7 +41,7 @@ public class ExtraServiceController : ControllerBase
                 return BadRequest("Price must be a positive value.");
             }
 
-            ExtraService newExtraService = new ExtraService
+            var newExtraService = new ExtraService
             {
                 ServiceName = extraService.ServiceName,
                 Price = extraService.Price,
@@ -111,7 +111,7 @@ public class ExtraServiceController : ControllerBase
         }
     }
     [HttpPut("UpdateExtraService/{id}")]
-    public async Task<IActionResult> UpdateExtraService(int id, [FromBody] ExtraService extraService)
+    public async Task<IActionResult> UpdateExtraService(int id, [FromBody] ExtraServiceDto extraService)
     {
         try
         {
@@ -153,7 +153,7 @@ public class ExtraServiceController : ControllerBase
         }
     }
     [HttpPut("UpdateExtraServiceByName/{serviceName}")]
-    public async Task<IActionResult> UpdateExtraServiceByName(string serviceName, [FromBody] ExtraService extraService)
+    public async Task<IActionResult> UpdateExtraServiceByName(string serviceName, [FromBody] ExtraServiceDto extraService)
     {
         try
         {
@@ -216,7 +216,7 @@ public class ExtraServiceController : ControllerBase
         }
     }
 
-    [HttpDelete("DeleteExtraServiceByName/{serviceName}")]
+    [HttpDelete("DeleteExtraServiceByName/{serviceName}")] //NE RADIV!!
     public async Task<IActionResult> DeleteExtraServiceByName(string serviceName)
     {
         try

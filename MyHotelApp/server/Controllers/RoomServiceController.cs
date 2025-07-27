@@ -18,7 +18,7 @@ public class RoomServiceController : ControllerBase
     }
 
     [HttpPost("CreateRoomService")]
-    public async Task<IActionResult> CreateRoomService([FromBody] RoomService roomService)
+    public async Task<IActionResult> CreateRoomService([FromBody] RoomServiceDto roomService)
     {
         try
         {
@@ -41,7 +41,7 @@ public class RoomServiceController : ControllerBase
                 return BadRequest("Price must be a positive value.");
             }
 
-            RoomService newRoomService = new RoomService
+            var newRoomService = new RoomService
             {
                 ItemName = roomService.ItemName,
                 ItemPrice = roomService.ItemPrice,
@@ -112,7 +112,7 @@ public class RoomServiceController : ControllerBase
     }
 
     [HttpPut("UpdateRoomService/{id}")]
-    public async Task<IActionResult> UpdateRoomService(int id, [FromBody] RoomService roomService)
+    public async Task<IActionResult> UpdateRoomService(int id, [FromBody] RoomServiceDto roomService)
     {
         try
         {
@@ -155,7 +155,7 @@ public class RoomServiceController : ControllerBase
     }
 
     [HttpPut("UpdateRoomServiceByName/{serviceName}")]
-    public async Task<IActionResult> UpdateRoomServiceByName(string serviceName, [FromBody] RoomService roomService)
+    public async Task<IActionResult> UpdateRoomServiceByName(string serviceName, [FromBody] RoomServiceDto roomService)
     {
         try
         {

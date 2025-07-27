@@ -18,7 +18,7 @@ public class RoomController : ControllerBase
     }
 
     [HttpPost("CreateRoom")]
-    public async Task<IActionResult> CreateRoom([FromBody] Room room)
+    public async Task<IActionResult> CreateRoom([FromBody] RoomDto room)
     {
         try
         {
@@ -28,6 +28,10 @@ public class RoomController : ControllerBase
             }
 
             var existingRoom = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == room.RoomNumber);
+            if (room.RoomNumber < 101 || room.RoomNumber > 699)
+{
+                return BadRequest("Room number must be between 101 and 699.");
+}
             if (existingRoom != null)
             {
                 return BadRequest($"Room with number {room.RoomNumber} already exists.");
@@ -53,20 +57,20 @@ public class RoomController : ControllerBase
                 return BadRequest("Invalid room type.");
             }
 
-            Room r = new Room
+            var newRoom = new Room
             {
                 RoomNumber = room.RoomNumber,
                 RoomType = room.RoomType,
                 Capacity = room.Capacity,
-                Floor = room.Floor,
+                Floor = room.RoomNumber / 100,
                 IsAvailable = room.IsAvailable,
                 PricePerNight = room.PricePerNight,
                 ImageUrl = room.ImageUrl
             };
 
-            await _context.Rooms.AddAsync(r);
+            await _context.Rooms.AddAsync(newRoom);
             await _context.SaveChangesAsync();
-            return Ok($"Room with number {room.RoomNumber} created successfully.");
+            return Ok($"Room with number {newRoom.RoomNumber} created successfully.");
         }
         catch (Exception ex)
         {
@@ -74,15 +78,15 @@ public class RoomController : ControllerBase
         }
     }
 
-    [HttpGet("GetRoom")]
-    public async Task<IActionResult> GetRoom(int RoomNumber)
+    [HttpGet("GetRoom/{roomnumber}")]
+    public async Task<IActionResult> GetRoom(int roomnumber)
     {
         try
         {
-            var room = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == RoomNumber);
+            var room = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == roomnumber);
             if (room == null)
             {
-                return NotFound($"Room with number {RoomNumber} not found.");
+                return NotFound($"Room with number {roomnumber} not found.");
             }
             return Ok(room);
         }
@@ -110,7 +114,7 @@ public class RoomController : ControllerBase
     }
 
     [HttpPut("UpdateRoom/{roomNumber}")]
-    public async Task<IActionResult> UpdateRoom(int roomNumber, [FromBody] Room room)
+    public async Task<IActionResult> UpdateRoom(int roomNumber, [FromBody] RoomDto room)
     {
         try
         {

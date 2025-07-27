@@ -30,8 +30,20 @@ public class Room
     [Required]
     public bool IsAvailable { get; set; } = true;//na osnovu datuma mora da se proveri
     [Required]
-    public required int PricePerNight { get; set; }//na osnovu tipa sobe i sprata
+    public required decimal PricePerNight { get; set; }//na osnovu tipa sobe i sprata
     public string? ImageUrl { get; set; }
     [JsonIgnore]
     public List<Reservation> Reservations { get; set; } = new List<Reservation>();
 }
+
+public class RoomDto
+{
+    public int RoomNumber { get; set; }
+    public RoomType RoomType { get; set; }
+    public int Capacity { get; set; }
+    public int Floor { get; set; }
+    public bool IsAvailable { get; set; }
+    public decimal PricePerNight { get; set; }
+    public string? ImageUrl { get; set; }
+}
+

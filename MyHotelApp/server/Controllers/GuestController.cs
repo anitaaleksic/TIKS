@@ -18,7 +18,7 @@ public class GuestController : ControllerBase
     }
 
     [HttpPost("CreateGuest")]
-    public async Task<IActionResult> CreateGuest([FromBody] Guest guest)
+    public async Task<IActionResult> CreateGuest([FromBody] GuestDto guest)
     {
         try
         {
@@ -50,7 +50,7 @@ public class GuestController : ControllerBase
                 return BadRequest("Phone number must be between 12 and 13 characters long.");
             }
 
-            Guest newGuest = new Guest
+            var newGuest = new Guest
             {
                 JMBG = guest.JMBG,
                 FullName = guest.FullName,
@@ -110,7 +110,7 @@ public class GuestController : ControllerBase
     }
 
     [HttpPut("UpdateGuest/{jmbg}")]
-    public async Task<IActionResult> UpdateGuest(string jmbg, [FromBody] Guest guest)
+    public async Task<IActionResult> UpdateGuest(string jmbg, [FromBody] GuestDto guest)
     {
         try
         {

@@ -35,3 +35,16 @@ public class Reservation
     [JsonIgnore]
     public List<ExtraService> ExtraServices { get; set; } = new List<ExtraService>();
 }
+
+public class ReservationDto
+{
+    public int ReservationID { get; set; }
+    public int RoomNumber { get; set; }
+    public string GuestID { get; set; }
+    public DateTime CheckInDate { get; set; }
+    public DateTime CheckOutDate { get; set; }
+    public decimal TotalPrice { get; set; }
+
+    public List<int> RoomServiceIDs { get; set; } = new();
+    public List<int> ExtraServiceIDs { get; set; } = new();
+}

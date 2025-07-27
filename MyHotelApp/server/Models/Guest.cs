@@ -23,3 +23,10 @@ public class Guest
     public List<Reservation> Reservations { get; set; } = new List<Reservation>();
 
 }
+
+public class GuestDto
+{
+    public string JMBG { get; set; } = default!;
+    public string FullName { get; set; } = default!;
+    public string PhoneNumber { get; set; } = default!;
+}
