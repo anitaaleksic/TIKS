@@ -19,9 +19,6 @@ public class Reservation
     [ForeignKey("GuestID")]
     public Guest Guest { get; set; }
 
-    // public int EmployeeID { get; set; }
-    // public Employee Employee { get; set; }
-
     [Required]
     [DataType(DataType.Date)]
     public required DateTime CheckInDate { get; set; }
@@ -36,7 +33,7 @@ public class Reservation
     public List<ExtraService> ExtraServices { get; set; } = new List<ExtraService>();
 }
 
-public class ReservationDto
+public class ReservationDTO
 {
     public int ReservationID { get; set; }
     public int RoomNumber { get; set; }

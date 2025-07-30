@@ -21,7 +21,7 @@ public class RoomService
     public List<Reservation> AddedToReservations { get; set; } = new List<Reservation>();
 }
 
-public class RoomServiceDto
+public class RoomServiceDTO
 {
     public int RoomServiceID { get; set; }
     public string ItemName { get; set; } = default!;

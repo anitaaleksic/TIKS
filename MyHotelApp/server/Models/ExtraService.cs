@@ -23,7 +23,7 @@ public class ExtraService
     public List<Reservation> AddedToReservations { get; set; } = new List<Reservation>();
 }
 
-public class ExtraServiceDto
+public class ExtraServiceDTO
 {
     public int ExtraServiceID { get; set; }
     public string ServiceName { get; set; } = default!;

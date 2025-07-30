@@ -18,7 +18,7 @@ public class RoomServiceController : ControllerBase
     }
 
     [HttpPost("CreateRoomService")]
-    public async Task<IActionResult> CreateRoomService([FromBody] RoomServiceDto roomService)
+    public async Task<IActionResult> CreateRoomService([FromBody] RoomServiceDTO roomService)
     {
         try
         {
@@ -112,7 +112,7 @@ public class RoomServiceController : ControllerBase
     }
 
     [HttpPut("UpdateRoomService/{id}")]
-    public async Task<IActionResult> UpdateRoomService(int id, [FromBody] RoomServiceDto roomService)
+    public async Task<IActionResult> UpdateRoomService(int id, [FromBody] RoomServiceDTO roomService)
     {
         try
         {
@@ -155,7 +155,7 @@ public class RoomServiceController : ControllerBase
     }
 
     [HttpPut("UpdateRoomServiceByName/{serviceName}")]
-    public async Task<IActionResult> UpdateRoomServiceByName(string serviceName, [FromBody] RoomServiceDto roomService)
+    public async Task<IActionResult> UpdateRoomServiceByName(string serviceName, [FromBody] RoomServiceDTO roomService)
     {
         try
         {

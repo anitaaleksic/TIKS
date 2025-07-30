@@ -12,7 +12,7 @@ using MyHotelApp.server.Models;
 namespace MyHotelApp.Migrations
 {
     [DbContext(typeof(HotelContext))]
-    [Migration("20250723143644_v1")]
+    [Migration("20250730141635_v1")]
     partial class v1
     {
         /// <inheritdoc />
@@ -123,25 +123,18 @@ namespace MyHotelApp.Migrations
                     b.Property<int>("RoomNumber")
                         .HasColumnType("int");
 
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
                     b.Property<int>("Floor")
                         .HasColumnType("int");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsAvailable")
                         .HasColumnType("bit");
 
-                    b.Property<int>("PricePerNight")
-                        .HasColumnType("int");
-
-                    b.Property<int>("RoomType")
+                    b.Property<int>("RoomTypeID")
                         .HasColumnType("int");
 
                     b.HasKey("RoomNumber");
+
+                    b.HasIndex("RoomTypeID");
 
                     b.ToTable("Rooms");
                 });
@@ -168,6 +161,26 @@ namespace MyHotelApp.Migrations
                     b.HasKey("RoomServiceID");
 
                     b.ToTable("RoomServices");
+                });
+
+            modelBuilder.Entity("MyHotelApp.server.Models.RoomType", b =>
+                {
+                    b.Property<int>("RoomTypeID")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PricePerNight")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("RoomTypeID");
+
+                    b.ToTable("RoomTypes");
                 });
 
             modelBuilder.Entity("ReservationRoomService", b =>
@@ -219,6 +232,17 @@ namespace MyHotelApp.Migrations
                     b.Navigation("Room");
                 });
 
+            modelBuilder.Entity("MyHotelApp.server.Models.Room", b =>
+                {
+                    b.HasOne("MyHotelApp.server.Models.RoomType", "RoomType")
+                        .WithMany("Rooms")
+                        .HasForeignKey("RoomTypeID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("RoomType");
+                });
+
             modelBuilder.Entity("ReservationRoomService", b =>
                 {
                     b.HasOne("MyHotelApp.server.Models.Reservation", null)
@@ -242,6 +266,11 @@ namespace MyHotelApp.Migrations
             modelBuilder.Entity("MyHotelApp.server.Models.Room", b =>
                 {
                     b.Navigation("Reservations");
+                });
+
+            modelBuilder.Entity("MyHotelApp.server.Models.RoomType", b =>
+                {
+                    b.Navigation("Rooms");
                 });
 #pragma warning restore 612, 618
         }

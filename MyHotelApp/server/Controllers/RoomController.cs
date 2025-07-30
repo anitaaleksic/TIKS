@@ -18,7 +18,7 @@ public class RoomController : ControllerBase
     }
 
     [HttpPost("CreateRoom")]
-    public async Task<IActionResult> CreateRoom([FromBody] RoomDto room)
+    public async Task<IActionResult> CreateRoom([FromBody] RoomDTO room)
     {
         try
         {
@@ -37,37 +37,24 @@ public class RoomController : ControllerBase
                 return BadRequest($"Room with number {room.RoomNumber} already exists.");
             }
 
-            if (room.Capacity < 1 || room.Capacity > 5)
-            {
-                return BadRequest("Capacity must be between 1 and 5.");
-            }
-
             if (room.Floor < 1 || room.Floor > 6)
             {
                 return BadRequest("Floor must be between 1 and 6.");
             }
-
-            if (room.PricePerNight < 0)
+            var existingRoomType = await _context.RoomTypes.FirstOrDefaultAsync(rt => rt.RoomTypeID == room.RoomTypeID);
+            if (existingRoomType == null)
             {
-                return BadRequest("Price per night must be a positive value.");
-            }
-            //proveri da li je RoomType validan
-            if (!Enum.IsDefined(typeof(RoomType), room.RoomType))
-            {
-                return BadRequest("Invalid room type.");
+                return BadRequest($"Room type with ID {room.RoomTypeID} does not exist.");
             }
 
             var newRoom = new Room
             {
                 RoomNumber = room.RoomNumber,
-                RoomType = room.RoomType,
-                Capacity = room.Capacity,
+                RoomTypeID = room.RoomTypeID, // Assuming RoomTypeID is the ID of the RoomType
                 Floor = room.RoomNumber / 100,
-                IsAvailable = room.IsAvailable,
-                PricePerNight = room.PricePerNight,
-                ImageUrl = room.ImageUrl
+                IsAvailable = room.IsAvailable
             };
-
+ 
             await _context.Rooms.AddAsync(newRoom);
             await _context.SaveChangesAsync();
             return Ok($"Room with number {newRoom.RoomNumber} created successfully.");
@@ -114,7 +101,7 @@ public class RoomController : ControllerBase
     }
 
     [HttpPut("UpdateRoom/{roomNumber}")]
-    public async Task<IActionResult> UpdateRoom(int roomNumber, [FromBody] RoomDto room)
+    public async Task<IActionResult> UpdateRoom(int roomNumber, [FromBody] RoomDTO room)
     {
         try
         {
@@ -132,36 +119,26 @@ public class RoomController : ControllerBase
             {
                 return BadRequest("Room number must be a positive integer.");
             }
-            if (roomNumber != room.RoomNumber)
-            {
-                return BadRequest("Room number in the URL does not match the room number in the body.");
-            }
-            if (room.Capacity < 1 || room.Capacity > 5)
-            {
-                return BadRequest("Capacity must be between 1 and 5.");
-            }
+            // if (roomNumber != room.RoomNumber)
+            // {
+            //     return BadRequest("Room number in the URL does not match the room number in the body.");
+            // }
 
             if (room.Floor < 1 || room.Floor > 6)
             {
                 return BadRequest("Floor must be between 1 and 6.");
             }
 
-            if (room.PricePerNight <= 0)
+            var existingRoomType = await _context.RoomTypes.FirstOrDefaultAsync(rt => rt.RoomTypeID == room.RoomTypeID);
+            if (existingRoomType == null)
             {
-                return BadRequest("Price per night must be a positive value.");
+                return BadRequest($"Room type with ID {room.RoomTypeID} does not exist.");
             }
-            //proveri da li je RoomType validan
-            if (!Enum.IsDefined(typeof(RoomType), room.RoomType))
-            {
-                return BadRequest("Invalid room type.");
-            }
-
-            existingRoom.RoomType = room.RoomType;
-            existingRoom.Capacity = room.Capacity;
+            
+            existingRoom.RoomNumber = room.RoomNumber;
+            existingRoom.RoomTypeID = room.RoomTypeID;
             existingRoom.Floor = room.Floor;
             existingRoom.IsAvailable = room.IsAvailable;
-            existingRoom.PricePerNight = room.PricePerNight;
-            existingRoom.ImageUrl = room.ImageUrl;
 
             await _context.SaveChangesAsync();
             return Ok($"Room with number {roomNumber} updated successfully.");

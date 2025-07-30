@@ -18,7 +18,7 @@ public class ExtraServiceController : ControllerBase
     }
 
     [HttpPost("CreateExtraService")]
-    public async Task<IActionResult> CreateExtraService([FromBody] ExtraServiceDto extraService)
+    public async Task<IActionResult> CreateExtraService([FromBody] ExtraServiceDTO extraService)
     {
         try
         {
@@ -111,7 +111,7 @@ public class ExtraServiceController : ControllerBase
         }
     }
     [HttpPut("UpdateExtraService/{id}")]
-    public async Task<IActionResult> UpdateExtraService(int id, [FromBody] ExtraServiceDto extraService)
+    public async Task<IActionResult> UpdateExtraService(int id, [FromBody] ExtraServiceDTO extraService)
     {
         try
         {
@@ -153,7 +153,7 @@ public class ExtraServiceController : ControllerBase
         }
     }
     [HttpPut("UpdateExtraServiceByName/{serviceName}")]
-    public async Task<IActionResult> UpdateExtraServiceByName(string serviceName, [FromBody] ExtraServiceDto extraService)
+    public async Task<IActionResult> UpdateExtraServiceByName(string serviceName, [FromBody] ExtraServiceDTO extraService)
     {
         try
         {

@@ -40,23 +40,6 @@ namespace MyHotelApp.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Rooms",
-                columns: table => new
-                {
-                    RoomNumber = table.Column<int>(type: "int", nullable: false),
-                    RoomType = table.Column<int>(type: "int", nullable: false),
-                    Capacity = table.Column<int>(type: "int", nullable: false),
-                    Floor = table.Column<int>(type: "int", nullable: false),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false),
-                    PricePerNight = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Rooms", x => x.RoomNumber);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RoomServices",
                 columns: table => new
                 {
@@ -69,6 +52,40 @@ namespace MyHotelApp.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RoomServices", x => x.RoomServiceID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RoomTypes",
+                columns: table => new
+                {
+                    RoomTypeID = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    PricePerNight = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoomTypes", x => x.RoomTypeID);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Rooms",
+                columns: table => new
+                {
+                    RoomNumber = table.Column<int>(type: "int", nullable: false),
+                    RoomTypeID = table.Column<int>(type: "int", nullable: false),
+                    Floor = table.Column<int>(type: "int", nullable: false),
+                    IsAvailable = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rooms", x => x.RoomNumber);
+                    table.ForeignKey(
+                        name: "FK_Rooms_RoomTypes_RoomTypeID",
+                        column: x => x.RoomTypeID,
+                        principalTable: "RoomTypes",
+                        principalColumn: "RoomTypeID",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,6 +184,11 @@ namespace MyHotelApp.Migrations
                 name: "IX_Reservations_RoomNumber",
                 table: "Reservations",
                 column: "RoomNumber");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Rooms_RoomTypeID",
+                table: "Rooms",
+                column: "RoomTypeID");
         }
 
         /// <inheritdoc />
@@ -192,6 +214,9 @@ namespace MyHotelApp.Migrations
 
             migrationBuilder.DropTable(
                 name: "Rooms");
+
+            migrationBuilder.DropTable(
+                name: "RoomTypes");
         }
     }
 }

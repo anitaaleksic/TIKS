@@ -18,7 +18,7 @@ public class GuestController : ControllerBase
     }
 
     [HttpPost("CreateGuest")]
-    public async Task<IActionResult> CreateGuest([FromBody] GuestDto guest)
+    public async Task<IActionResult> CreateGuest([FromBody] GuestDTO guest)
     {
         try
         {
@@ -110,7 +110,7 @@ public class GuestController : ControllerBase
     }
 
     [HttpPut("UpdateGuest/{jmbg}")]
-    public async Task<IActionResult> UpdateGuest(string jmbg, [FromBody] GuestDto guest)
+    public async Task<IActionResult> UpdateGuest(string jmbg, [FromBody] GuestDTO guest)
     {
         try
         {

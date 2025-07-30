@@ -13,10 +13,10 @@ public class HotelContext : DbContext
 
     public DbSet<Room> Rooms { get; set; }
     public DbSet<Reservation> Reservations { get; set; }
-    //public DbSet<Employee> Employees { get; set; }
     public DbSet<RoomService> RoomServices { get; set; }
     public DbSet<Guest> Guests { get; set; }
     public DbSet<ExtraService> ExtraServices { get; set; }
+    public DbSet<RoomType> RoomTypes { get; set; }
     
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

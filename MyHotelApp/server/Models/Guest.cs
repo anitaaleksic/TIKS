@@ -24,7 +24,7 @@ public class Guest
 
 }
 
-public class GuestDto
+public class GuestDTO
 {
     public string JMBG { get; set; } = default!;
     public string FullName { get; set; } = default!;
