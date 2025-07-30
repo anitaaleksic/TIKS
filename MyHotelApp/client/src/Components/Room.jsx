@@ -34,7 +34,7 @@ export default function Room() {
     } else {
       setFormData(prev => ({
         ...prev,
-        [name]: name === 'roomType' ? Number(value) : value
+        [name]: name === 'roomTypeID' ? Number(value) : value
       }));
     }
   };
@@ -105,9 +105,9 @@ export default function Room() {
       <div className="form-group">
         <label className="form-label">Room Type:</label>
         <select
-        name="roomType"
+        name="roomTypeID"
         className="form-input"
-        value={formData.roomType}
+        value={formData.roomTypeID}
         onChange={handleChange}
       >
         <option value="">Choose Room Type</option>

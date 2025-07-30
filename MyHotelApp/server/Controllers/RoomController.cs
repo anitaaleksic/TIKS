@@ -46,7 +46,7 @@ public class RoomController : ControllerBase
             {
                 return BadRequest($"Room type with ID {room.RoomTypeID} does not exist.");
             }
-
+            
             var newRoom = new Room
             {
                 RoomNumber = room.RoomNumber,
@@ -70,7 +70,7 @@ public class RoomController : ControllerBase
     {
         try
         {
-            var room = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == roomnumber);
+            var room = await _context.Rooms.Include(r=>r.RoomType).FirstOrDefaultAsync(r => r.RoomNumber == roomnumber);
             if (room == null)
             {
                 return NotFound($"Room with number {roomnumber} not found.");
@@ -91,7 +91,7 @@ public class RoomController : ControllerBase
             {
                 return NotFound("No rooms found.");
             }
-            var rooms = await _context.Rooms.ToListAsync();
+            var rooms = await _context.Rooms.Include(r=>r.RoomType).ToListAsync();
             return Ok(rooms);
         }
         catch (Exception ex)

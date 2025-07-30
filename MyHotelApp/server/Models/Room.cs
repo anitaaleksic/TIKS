@@ -15,7 +15,7 @@ public class Room
     [Required]
     public required int RoomTypeID { get; set; }
     [ForeignKey("RoomTypeID")]
-    public RoomType? RoomType { get; set; }
+    public RoomType RoomType { get; set; }
     [Required]
     [Range(1, 6, ErrorMessage = "Floor must be between 1 and 6.")]
     public required int Floor { get; set; }

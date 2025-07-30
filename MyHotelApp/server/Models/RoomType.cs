@@ -18,6 +18,7 @@ public class RoomType
     public required int Capacity { get; set; } //kroz konstrukotr stavi default capacity
     [Required]
     public required decimal PricePerNight { get; set; }//na osnovu tipa sobe
+    [JsonIgnore]
     public List<Room> Rooms { get; set; } = new List<Room>();
 }
 
