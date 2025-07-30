@@ -10,7 +10,7 @@ public class RoomType
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
-    public required int RoomTypeID { get; set; }
+    public int RoomTypeID { get; set; }
     [Required]
     public required string Type { get; set; }
     [Required]
