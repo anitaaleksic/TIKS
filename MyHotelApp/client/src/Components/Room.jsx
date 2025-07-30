@@ -1,19 +1,23 @@
 import '../css/Room.css';
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import axios from 'axios';
 
 export default function Room() {
   const [formData, setFormData] = useState({
     roomNumber: '',
-    roomType: 0,
-    capacity: 1,
+    roomTypeID: 0,
     floor: '', // automatski se računa
-    pricePerNight: '',
     isAvailable: true,
-    imageUrl: ''
   });
 
   const [errorMessages, setErrorMessages] = useState([]);
+  const [roomTypes, setRoomTypes] = useState([]);
+
+  useEffect(() => {
+    axios.get('/api/RoomType/GetAllRoomTypes')
+      .then(res => setRoomTypes(res.data))
+      .catch(err => console.error('Greška pri učitavanju RoomType:', err));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,9 +34,7 @@ export default function Room() {
     } else {
       setFormData(prev => ({
         ...prev,
-        [name]: ['capacity', 'roomType'].includes(name)
-          ? Number(value)
-          : value
+        [name]: name === 'roomType' ? Number(value) : value
       }));
     }
   };
@@ -57,14 +59,8 @@ export default function Room() {
       return;
     }
 
-    if (formData.pricePerNight === '' || isNaN(formData.pricePerNight)) {
-      setErrorMessages(['Cena mora biti validan broj.']);
-      return;
-    }
-
     const roomToSend = {
       ...formData,
-      pricePerNight: parseFloat(formData.pricePerNight)
     };
 
     console.log('Šaljem na backend:', roomToSend);
@@ -75,11 +71,8 @@ export default function Room() {
         setFormData({
           roomNumber: '',
           roomType: 0,
-          capacity: 1,
           floor: '',
-          pricePerNight: '',
           isAvailable: true,
-          imageUrl: ''
         });
         setErrorMessages([]);
       })
@@ -112,67 +105,27 @@ export default function Room() {
       <div className="form-group">
         <label className="form-label">Room Type:</label>
         <select
-          name="roomType"
-          className="form-input"
-          value={formData.roomType}
-          onChange={handleChange}
-        >
-          <option value={0}>Single</option>
-          <option value={1}>Double</option>
-          <option value={2}>Suite</option>
-          <option value={3}>Deluxe</option>
-        </select>
+        name="roomType"
+        className="form-input"
+        value={formData.roomType}
+        onChange={handleChange}
+      >
+        <option value="">Choose Room Type</option>
+        {roomTypes.map((type) => (
+          <option key={type.roomTypeID} value={type.roomTypeID}>
+            {type.type}
+          </option>
+        ))}
+      </select>
       </div>
 
       <div className="form-group">
-        <label className="form-label">Capacity:</label>
-        <input
-          type="number"
-          name="capacity"
-          className="form-input"
-          min="1"
-          max="5"
-          value={formData.capacity}
-          onChange={handleChange}
-          required
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Floor (auto):</label>
+        <label className="form-label">Floor:</label>
         <input
           type="number"
           className="form-input"
           value={formData.floor}
           readOnly
-        />
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Price Per Night:</label>
-        <div className="price-input-wrapper">
-          <span className="currency-symbol">$</span>
-          <input
-            type="text"
-            name="pricePerNight"
-            className="form-input price-input"
-            placeholder="0.00"
-            value={formData.pricePerNight}
-            onChange={handleChange}
-            required
-          />
-        </div>
-      </div>
-
-      <div className="form-group">
-        <label className="form-label">Image URL:</label>
-        <input
-          type="text"
-          name="imageUrl"
-          className="form-input"
-          placeholder="https://..."
-          value={formData.imageUrl}
-          onChange={handleChange}
         />
       </div>
 

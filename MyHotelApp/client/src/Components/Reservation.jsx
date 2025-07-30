@@ -41,19 +41,6 @@ export default function Reservation() {
         <input type="date" name="checkOutDate" className="form-input" />
       </div>
 
-      <div className="form-group">
-        <label className="form-label">Total Price:</label>
-        <div className="price-input-wrapper">
-          <span className="currency-symbol">$</span>
-          <input
-            type="text"
-            name="totalPrice"
-            className="form-input price-input"
-            placeholder="0.00"
-            readOnly
-          />
-        </div>
-      </div>
 
       <div className="button-pair-row">
         <div className="toggle-group-inline">
@@ -99,6 +86,20 @@ export default function Reservation() {
         </div>
       </div>
 
+      <div className="form-group">
+        <label className="form-label">Total Price:</label>
+        <div className="price-input-wrapper">
+          <span className="currency-symbol">$</span>
+          <input
+            type="text"
+            name="totalPrice"
+            className="form-input price-input"
+            placeholder="0.00"
+            readOnly
+          />
+        </div>
+      </div>
+      
       <button type="submit" className="form-button">Submit</button>
     </form>
   );
