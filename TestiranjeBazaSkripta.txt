@@ -1,0 +1,235 @@
+-- DROP tabele po redosledu
+
+DROP TABLE IF EXISTS dbo.ExtraServiceReservation;
+DROP TABLE IF EXISTS dbo.ReservationRoomService;
+DROP TABLE IF EXISTS dbo.Reservations;
+DROP TABLE IF EXISTS dbo.RoomServices;
+DROP TABLE IF EXISTS dbo.ExtraServices;
+DROP TABLE IF EXISTS dbo.Guests;
+DROP TABLE IF EXISTS dbo.Rooms;
+DROP TABLE IF EXISTS dbo.RoomTypes
+GO
+
+-- CREATE Guest tabela
+
+CREATE TABLE dbo.Guests (
+    JMBG NVARCHAR(13) NOT NULL PRIMARY KEY,
+    FullName NVARCHAR(100) NOT NULL,
+    PhoneNumber NVARCHAR(13) NOT NULL
+);
+GO
+
+-- CREATE RoomType tabela
+
+CREATE TABLE dbo.RoomTypes (
+    RoomTypeID INT IDENTITY(1,1) PRIMARY KEY,
+    Type NVARCHAR(50) NOT NULL, 
+    Capacity INT NOT NULL, 
+    PricePerNight DECIMAL(18,2) NOT NULL,
+);
+
+
+-- CREATE Room tabela
+
+CREATE TABLE dbo.Rooms (
+    RoomNumber INT NOT NULL PRIMARY KEY,
+    RoomTypeID INT NOT NULL,
+    Floor INT NOT NULL,
+    IsAvailable BIT NOT NULL,
+    CONSTRAINT FK_ROOM_ROOMTYPE FOREIGN KEY (RoomTypeID) REFERENCES dbo.ROOMTYPES(RoomTypeID),
+);
+GO
+
+-- CREATE RoomService tabela
+
+CREATE TABLE dbo.RoomServices (
+    RoomServiceID INT IDENTITY(1,1) PRIMARY KEY,
+    ItemName NVARCHAR(50) NOT NULL,
+    ItemPrice DECIMAL(18,2) NOT NULL,
+    Description NVARCHAR(MAX) NULL
+);
+GO
+
+-- CREATE ExtraService tabela
+
+CREATE TABLE dbo.ExtraServices (
+    ExtraServiceID INT IDENTITY(1,1) PRIMARY KEY,
+    ServiceName NVARCHAR(100) NOT NULL,
+    Price DECIMAL(18,2) NOT NULL,
+    Description NVARCHAR(MAX) NULL
+);
+GO
+
+-- CREATE Reservation tabela
+
+CREATE TABLE dbo.Reservations (
+    ReservationID INT IDENTITY(1,1) PRIMARY KEY,
+    RoomNumber INT NOT NULL,
+    GuestID NVARCHAR(13) NOT NULL,
+    CheckInDate DATE NOT NULL,
+    CheckOutDate DATE NOT NULL,
+    TotalPrice DECIMAL(18,2) NOT NULL,
+    CONSTRAINT FK_Reservations_Room FOREIGN KEY (RoomNumber) REFERENCES dbo.Rooms(RoomNumber),
+    CONSTRAINT FK_Reservations_Guest FOREIGN KEY (GuestID) REFERENCES dbo.Guests(JMBG)
+);
+GO
+
+-- CREATE junction tabela ReservationRoomService (many-to-many)
+
+CREATE TABLE dbo.ReservationRoomService (
+    ReservationID INT NOT NULL,
+    RoomServiceID INT NOT NULL,
+    PRIMARY KEY (ReservationID, RoomServiceID),
+    CONSTRAINT FK_ReservationRoomService_Reservation FOREIGN KEY (ReservationID) REFERENCES dbo.Reservations(ReservationID),
+    CONSTRAINT FK_ReservationRoomService_RoomService FOREIGN KEY (RoomServiceID) REFERENCES dbo.RoomServices(RoomServiceID)
+);
+GO
+
+-- CREATE junction tabela ExtraServiceReservation (many-to-many)
+
+CREATE TABLE dbo.ExtraServiceReservation (
+    ReservationID INT NOT NULL,
+    ExtraServiceID INT NOT NULL,
+    PRIMARY KEY (ReservationID, ExtraServiceID),
+    CONSTRAINT FK_ExtraServiceReservation_Reservation FOREIGN KEY (ReservationID) REFERENCES dbo.Reservations(ReservationID),
+    CONSTRAINT FK_ExtraServiceReservation_ExtraService FOREIGN KEY (ExtraServiceID) REFERENCES dbo.ExtraServices(ExtraServiceID)
+);
+GO
+
+-- INSERT 10 Guests
+
+INSERT INTO dbo.Guests (JMBG, FullName, PhoneNumber) VALUES
+('1234567890123', 'Ana Petrović', '+381641112223'),
+('2345678901234', 'Marko Jovanović', '+381631234567'),
+('3456789012345', 'Ivana Nikolić', '+381645556677'),
+('4567890123456', 'Petar Lukić', '+381601112233'),
+('5678901234567', 'Jelena Kovačević', '+381658889999'),
+('6789012345678', 'Nikola Ilić', '+381607778885'),
+('7890123456789', 'Milica Stanković', '+381603334455'),
+('8901234567890', 'Stefan Pavlović', '+381648889999'),
+('9012345678901', 'Tamara Đorđević', '+381662224445'),
+('0123456789012', 'Lazar Živković', '+381696969696');
+GO
+
+-- INSERT RoomTypes
+
+INSERT INTO dbo.RoomTypes (Type, Capacity, PricePerNight) VALUES
+('Single', 1, 50.00),
+('Double', 2, 80.00),
+('Suite', 3, 150.00),
+('Deluxe', 4, 120.00);
+
+-- INSERT 10 Rooms
+
+INSERT INTO dbo.Rooms (RoomNumber, RoomTypeID, Floor, IsAvailable) VALUES
+(101, 1, 1, 1),
+(102, 1, 1, 1), 
+(201, 2, 2, 1), 
+(202, 2, 2, 0), 
+(301, 3, 3, 1), 
+(302, 3, 3, 1), 
+(401, 4, 4, 1), 
+(402, 4, 4, 0), 
+(501, 2, 5, 1), 
+(502, 1, 5, 1); 
+
+
+-- INSERT 10 RoomServices
+
+INSERT INTO dbo.RoomServices (ItemName, ItemPrice, Description) VALUES
+('Breakfast', 10.00, 'Continental breakfast'),
+('Laundry', 15.00, 'Laundry service'),
+('Room Cleaning', 20.00, 'Daily room cleaning'),
+('Airport Pickup', 30.00, 'Transfer from airport'),
+('Spa Access', 25.00, 'Access to spa facilities'),
+('Gym Access', 15.00, 'Access to gym'),
+('Minibar', 5.00, 'Minibar items'),
+('Extra Towels', 3.00, 'Additional towels'),
+('Late Checkout', 40.00, 'Late room checkout'),
+('Breakfast in Bed', 20.00, 'Breakfast served in bed');
+GO
+
+-- INSERT 10 ExtraServices
+
+INSERT INTO dbo.ExtraServices (ServiceName, Price, Description) VALUES
+('Parking Spot', 10.00, 'Reserved parking space'),
+('Restaurant Access', 25.00, 'Access to hotel restaurant'),
+('Wellness Access', 30.00, 'Access to wellness center'),
+('Airport Shuttle', 20.00, 'Shuttle service to airport'),
+('City Tour', 50.00, 'Guided city tour'),
+('Laundry Service', 15.00, 'Laundry for clothes'),
+('Breakfast Buffet', 12.00, 'Buffet breakfast'),
+('Car Rental', 100.00, 'Car rental service'),
+('WiFi Access', 0.00, 'Free WiFi'),
+('Room Decoration', 40.00, 'Special room decoration');
+GO
+
+-- INSERT 10 Reservations
+
+-- INSERT 10 Reservations sa izračunatim total price
+
+INSERT INTO dbo.Reservations (RoomNumber, GuestID, CheckInDate, CheckOutDate, TotalPrice) VALUES
+(101, '1234567890123', '2025-01-10', '2025-01-14', 290.00),  
+(102, '2345678901234', '2025-02-05', '2025-02-09', 415.00),  
+(201, '3456789012345', '2025-03-15', '2025-03-21', 690.00),  
+(202, '4567890123456', '2025-04-01', '2025-04-04', 540.00),  
+(301, '5678901234567', '2025-05-12', '2025-05-14', 257.00),  
+(302, '6789012345678', '2025-06-01', '2025-06-05', 380.00),  
+(401, '7890123456789', '2025-07-10', '2025-07-14', 695.00),  
+(402, '8901234567890', '2025-08-03', '2025-08-08', 587.00),  
+(501, '9012345678901', '2025-09-15', '2025-09-17', 390.00),  
+(502, '0123456789012', '2025-10-05', '2025-10-08', 482.00);  
+GO
+
+
+
+-- INSERT u junction tabelu ReservationRoomService
+
+INSERT INTO dbo.ReservationRoomService (ReservationID, RoomServiceID) VALUES
+(1, 1),
+(1, 3),
+(1, 5),
+(2, 2),
+(2, 4),
+(3, 1),
+(3, 6),
+(4, 2),
+(4, 3),
+(4, 5),
+(5, 7),
+(6, 4),
+(6, 8),
+(7, 6),
+(8, 1),
+(8, 2),
+(9, 9),
+(9, 10),
+(10, 5),
+(10, 7);
+GO
+
+-- INSERT u junction tabelu ExtraServiceReservation
+
+INSERT INTO dbo.ExtraServiceReservation (ReservationID, ExtraServiceID) VALUES
+(1, 1),
+(1, 2),
+(2, 3),
+(2, 4),
+(3, 5),
+(3, 6),
+(4, 1),
+(5, 2),
+(5, 7),
+(6, 8),
+(6, 9),
+(7, 10),
+(8, 3),
+(8, 4),
+(9, 5),
+(9, 6),
+(10, 7),
+(10, 8),
+(10, 9),
+(10, 10);
+GO
+
