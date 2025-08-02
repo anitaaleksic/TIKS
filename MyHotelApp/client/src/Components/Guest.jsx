@@ -1,4 +1,3 @@
-import '../css/Guest.css';
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -71,7 +70,7 @@ export default function Guest() {
         />
       </div>
 
-      <button type="submit" className="form-button">Dodaj gosta</button>
+      <button type="submit" className="form-button">Add guest</button>
     </form>
   );
 }

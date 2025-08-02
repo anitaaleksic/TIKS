@@ -1,5 +1,5 @@
 //import { useState } from 'react'
-import './App.css'
+import './css/App.css'
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './Components/Navbar'
 import Guest from './Components/Guest'
@@ -13,7 +13,7 @@ function App() {
       <Navbar />
 
         <Routes>
-          <Route path="/" element={<Guest />} />
+          <Route path="/" element={<Reservation />} />
           <Route path="/guest" element={<Guest />} />
           <Route path="/room" element={<Room />} />
           <Route path="/roomservice" element={<RoomService />} />

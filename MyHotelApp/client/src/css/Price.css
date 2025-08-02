@@ -1,0 +1,18 @@
+.price-input-wrapper {
+  display: flex;
+  align-items: center;
+  max-width: 150px;
+}
+
+.currency-symbol {
+  margin-right: 6px;
+  font-weight: bold;
+  color: #37475a;
+  user-select: none;
+}
+
+.price-input {
+  flex: 1;
+}
+
+

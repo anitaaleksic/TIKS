@@ -3,7 +3,11 @@ body {
   font-family: Arial, sans-serif;
 }
 
-.extraservice-form {
+.reservation-form,
+.extraservice-form,
+.roomservice-form,
+.guest-form,
+.room-form {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -34,37 +38,16 @@ body {
   outline: none;
 }
 
-.textarea-input {
-  resize: vertical;
-}
-
 .form-input:focus {
   border-color: #37475a;
   box-shadow: 0 0 0 2px rgba(55, 71, 90, 0.2);
-}
-
-.price-input-wrapper {
-  display: flex;
-  align-items: center;
-  max-width: 150px;
-}
-
-.currency-symbol {
-  margin-right: 6px;
-  font-weight: bold;
-  color: #37475a;
-  user-select: none;
-}
-
-.price-input {
-  flex: 1;
 }
 
 .form-button {
   padding: 0.6rem;
   background-color: #37475a;
   color: white;
-  font-size: 1rem;
+  font-size: 16px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -73,4 +56,8 @@ body {
 
 .form-button:hover {
   background-color: #2c394d;
+}
+
+.textarea-input {
+  resize: vertical;
 }

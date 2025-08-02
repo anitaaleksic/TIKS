@@ -1,4 +1,3 @@
-import '../css/Room.css';
 import { useState, useEffect} from 'react';
 import axios from 'axios';
 
@@ -129,7 +128,7 @@ export default function Room() {
         />
       </div>
 
-      <button type="submit" className="form-button">Dodaj sobu</button>
+      <button type="submit" className="form-button">Add room</button>
 
       {errorMessages.length > 0 && (
         <div className="error-messages" style={{ color: 'red', marginTop: '1rem' }}>

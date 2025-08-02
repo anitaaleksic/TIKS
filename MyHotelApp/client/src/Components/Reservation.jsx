@@ -46,7 +46,7 @@ export default function Reservation() {
         <div className="toggle-group-inline">
           <button
             type="button"
-            className="form-button1"
+            className="form-button"
             onClick={() => setShowRoomServices(!showRoomServices)}
           >
             Room Services
@@ -67,7 +67,7 @@ export default function Reservation() {
         <div className="toggle-group-inline">
           <button
             type="button"
-            className="form-button1"
+            className="form-button"
             onClick={() => setShowExtraServices(!showExtraServices)}
           >
             Extra Services
@@ -100,7 +100,7 @@ export default function Reservation() {
         </div>
       </div>
       
-      <button type="submit" className="form-button">Submit</button>
+      <button type="submit" className="form-button">Add reservation</button>
     </form>
   );
 }

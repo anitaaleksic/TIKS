@@ -1,4 +1,4 @@
-import '../css/RoomService.css';
+import '../css/Price.css';
 import { useState } from 'react';
 import axios from 'axios';
 
@@ -104,7 +104,7 @@ export default function RoomService() {
         ></textarea>
       </div>
 
-      <button type="submit" className="form-button">Dodaj uslugu</button>
+      <button type="submit" className="form-button">Add room service</button>
 
       {errorMessages.length > 0 && (
         <div className="error-messages" style={{ color: 'red', marginTop: '1rem' }}>
