@@ -15,7 +15,7 @@ export default function Room() {
   useEffect(() => {
     axios.get('/api/RoomType/GetAllRoomTypes')
       .then(res => setRoomTypes(res.data))
-      .catch(err => console.error('Greška pri učitavanju RoomType:', err));
+      .catch(err => console.error('An error has occurred while loading RoomType', err));
   }, []);
 
   const handleChange = (e) => {
@@ -50,11 +50,13 @@ export default function Room() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (
-      formData.roomNumber < 101 ||
-      formData.roomNumber > 699
-    ) {
-      setErrorMessages(['Broj sobe mora biti između 101 i 699.']);
+    if (formData.roomNumber < 101 || formData.roomNumber > 699) {
+      setErrorMessages(['Room number is required and must be between 1 and 699.']);
+      return;
+    }
+
+    if(!formData.roomTypeID) {
+      setErrorMessages(['Room type is required.']);
       return;
     }
 
@@ -62,11 +64,11 @@ export default function Room() {
       ...formData,
     };
 
-    console.log('Šaljem na backend:', roomToSend);
+    //console.log('Šaljem na backend:', roomToSend);
 
     axios.post('/api/Room/CreateRoom', roomToSend)
       .then(() => {
-        alert('Soba uspešno dodata!');
+        alert('Room added successfully!');
         setFormData({
           roomNumber: '',
           roomType: 0,
@@ -76,7 +78,7 @@ export default function Room() {
         setErrorMessages([]);
       })
       .catch(err => {
-        console.error('Greška pri dodavanju sobe:', err.response || err);
+        console.error('Error:', err.response || err);
         if (err.response?.data?.errors) {
           setErrorMessages(formatErrors(err.response.data.errors));
         } else {
@@ -132,7 +134,7 @@ export default function Room() {
 
       {errorMessages.length > 0 && (
         <div className="error-messages" style={{ color: 'red', marginTop: '1rem' }}>
-          <h4>Greške:</h4>
+          <h4>Errors:</h4>
           <ul>
             {errorMessages.map((msg, idx) => (
               <li key={idx}>{msg}</li>

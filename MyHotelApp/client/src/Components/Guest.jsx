@@ -8,6 +8,8 @@ export default function Guest() {
     phoneNumber: ''
   });
 
+  const [errorMessages, setErrorMessages] = useState([]);
+
   const handleChange = (e) => {
     setFormData(prev => ({
       ...prev,
@@ -15,19 +17,48 @@ export default function Guest() {
     }));
   };
 
+  const formatErrors = (errorsObj) => {
+    let messages = [];
+    for (const field in errorsObj) {
+      const errors = errorsObj[field];
+      messages.push(`${field}: ${errors.join(', ')}`);
+    }
+    return messages;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    //validacije
+    if(!formData.fullName || formData.fullName.length > 100) {
+      setErrorMessages(['Full name is required and cannot exceed 100 characters.']);
+      return;
+    }
+
+    if(!formData.jmbg || formData.jmbg.length !== 13) {
+      setErrorMessages(['JMBG is required and must be 13 characters long.']);
+      return;
+    }
+
+    if(!formData.phoneNumber || formData.phoneNumber.length > 13 || formData.phoneNumber.length < 12) {
+      setErrorMessages(['Phone number is required and must be between 12 and 13 characters long.']);
+      return;
+    }
+
     axios.post('/api/Guest/CreateGuest', formData)
-    .then(res => {
-      console.log('Server je vratio:', res.data);
-      alert('Gost dodat!');
-      setFormData({ fullName: '', jmbg: '', phoneNumber: '' }); // resetuj formu
-    })
-    .catch(err => {
-      console.error('Greška pri pozivu API-ja:', err.response || err);
-      alert('Greška pri dodavanju gosta: ' + (err.response?.data?.message || err.message));
-    });
+      .then(() => {
+        alert('Guest added successfully!');
+        setFormData({ fullName: '', jmbg: '', phoneNumber: ''});
+        setErrorMessages([]);
+      })
+      .catch(err => {
+        console.error('Error:', err.response || err);
+        if (err.response?.data?.errors) {
+          setErrorMessages(formatErrors(err.response.data.errors));
+        } else {
+          setErrorMessages([err.response?.data?.message || err.message]);
+        }
+      });
 
   };
 
@@ -71,6 +102,18 @@ export default function Guest() {
       </div>
 
       <button type="submit" className="form-button">Add guest</button>
+
+      {errorMessages.length > 0 && (
+        <div className="error-messages" style={{ color: 'red', marginTop: '1rem' }}>
+          <h4>Errors:</h4>
+          <ul>
+            {errorMessages.map((msg, idx) => (
+              <li key={idx}>{msg}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
     </form>
   );
 }

@@ -35,7 +35,7 @@ public class ReservationController : ControllerBase
             {
                 return BadRequest("Check-out date must be after check-in date.");
             }
-            var existingRoom = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == reservation.RoomNumber);
+            var existingRoom = await _context.Rooms.Include(r => r.RoomType).FirstOrDefaultAsync(r => r.RoomNumber == reservation.RoomNumber);
             if (existingRoom == null)
             {
                 return BadRequest($"Room with number {reservation.RoomNumber} does not exist.");
@@ -100,7 +100,7 @@ public class ReservationController : ControllerBase
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+            return BadRequest(ex.InnerException?.Message ?? ex.Message);
         }
     }
 
@@ -139,6 +139,18 @@ public class ReservationController : ControllerBase
         {
             return BadRequest(ex.Message);
         }
+    }
+
+    [HttpGet("IsRoomAvailable/{roomNumber}/{checkIn}/{checkOut}")]
+    public async Task<IActionResult> IsRoomAvailable(int roomNumber, DateTime checkIn, DateTime checkOut)
+    {
+        var overlappingReservation = await _context.Reservations
+        .Where(r => r.RoomNumber == roomNumber &&
+                    checkIn < r.CheckOutDate &&
+                    checkOut > r.CheckInDate)
+        .FirstOrDefaultAsync();
+
+        return Ok(new { available = overlappingReservation == null });
     }
 
     [HttpPut("UpdateReservation/{id}")]

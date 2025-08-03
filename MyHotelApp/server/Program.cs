@@ -17,6 +17,11 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddControllers();
+// builder.Services.AddControllers().AddJsonOptions(options =>
+// {
+//     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+// });
+
 builder.Services.AddDbContext<HotelContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("HotelDB")));
 

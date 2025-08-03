@@ -34,12 +34,12 @@ export default function RoomService() {
 
     // Frontend validacija
     if (!formData.itemName || formData.itemName.length > 50) {
-      setErrorMessages(['Naziv usluge je obavezan i ne sme biti duži od 50 karaktera.']);
+      setErrorMessages(['Item name is required and cannot exceed 50 characters.']);
       return;
     }
 
     if (formData.itemPrice === '' || isNaN(formData.itemPrice) || parseFloat(formData.itemPrice) <= 0) {
-      setErrorMessages(['Cena mora biti pozitivan broj.']);
+      setErrorMessages(['Price is required and must be a positive number.']);
       return;
     }
 
@@ -51,12 +51,12 @@ export default function RoomService() {
 
     axios.post('/api/RoomService/CreateRoomService', roomServiceToSend)
       .then(() => {
-        alert('Room service usluga uspešno dodata!');
+        alert('Room service added successfully!');
         setFormData({ itemName: '', itemPrice: '', description: '' });
         setErrorMessages([]);
       })
       .catch(err => {
-        console.error('Greška:', err.response || err);
+        console.error('Error:', err.response || err);
         if (err.response?.data?.errors) {
           setErrorMessages(formatErrors(err.response.data.errors));
         } else {
@@ -99,6 +99,7 @@ export default function RoomService() {
           name="description"
           className="form-input textarea-input"
           rows="4"
+          maxLength={300}
           value={formData.description}
           onChange={handleChange}
         ></textarea>
@@ -108,7 +109,7 @@ export default function RoomService() {
 
       {errorMessages.length > 0 && (
         <div className="error-messages" style={{ color: 'red', marginTop: '1rem' }}>
-          <h4>Greške:</h4>
+          <h4>Errors:</h4>
           <ul>
             {errorMessages.map((msg, idx) => (
               <li key={idx}>{msg}</li>
