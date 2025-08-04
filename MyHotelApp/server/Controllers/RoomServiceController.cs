@@ -29,7 +29,7 @@ public class RoomServiceController : ControllerBase
             var rs = await _context.RoomServices.FirstOrDefaultAsync(rs => rs.ItemName == roomService.ItemName);
             if (rs != null)
             {
-                return BadRequest($"Room service with the name {roomService.ItemName} already exists.");
+                return NotFound($"Room service with the name {roomService.ItemName} already exists.");
             }
             if (string.IsNullOrEmpty(roomService.ItemName) || roomService.ItemName.Length > 50)
             {
@@ -65,7 +65,7 @@ public class RoomServiceController : ControllerBase
         {
             if (_context.RoomServices == null || !_context.RoomServices.Any())
             {
-                return BadRequest("No room services found.");
+                return NotFound("No room services found.");
             }
             var roomServices = await _context.RoomServices.ToListAsync();
             return Ok(roomServices);
@@ -206,7 +206,7 @@ public class RoomServiceController : ControllerBase
             var roomService = await _context.RoomServices.FirstOrDefaultAsync(rs => rs.RoomServiceID == id);
             if (roomService == null)
             {
-                return BadRequest($"Room service with ID {id} not found.");
+                return NotFound($"Room service with ID {id} not found.");
             }
 
             _context.RoomServices.Remove(roomService);
@@ -227,7 +227,7 @@ public class RoomServiceController : ControllerBase
             var roomService = await _context.RoomServices.FirstOrDefaultAsync(rs => rs.ItemName == serviceName);
             if (roomService == null)
             {
-                return BadRequest($"Room service with name {serviceName} not found.");
+                return NotFound($"Room service with name {serviceName} not found.");
             }
 
             _context.RoomServices.Remove(roomService);

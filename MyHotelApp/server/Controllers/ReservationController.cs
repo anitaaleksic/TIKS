@@ -38,11 +38,11 @@ public class ReservationController : ControllerBase
             var existingRoom = await _context.Rooms.Include(r => r.RoomType).FirstOrDefaultAsync(r => r.RoomNumber == reservation.RoomNumber);
             if (existingRoom == null)
             {
-                return BadRequest($"Room with number {reservation.RoomNumber} does not exist.");
+                return NotFound($"Room with number {reservation.RoomNumber} does not exist.");
             }
             if (!await _context.Guests.AnyAsync(g => g.JMBG == reservation.GuestID))
             {
-                return BadRequest($"Guest with ID {reservation.GuestID} does not exist.");
+                return NotFound($"Guest with ID {reservation.GuestID} does not exist.");
             }
 
             var existingReservation = await _context.Reservations
@@ -113,6 +113,8 @@ public class ReservationController : ControllerBase
                 .Include(r => r.Room)
                 .Include(r => r.Guest)
                 .ToListAsync();
+            if (reservations.Count == 0)
+                return NotFound("No reservations found!");
             return Ok(reservations);
         }
         catch (Exception ex)
@@ -120,6 +122,7 @@ public class ReservationController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
     [HttpGet("GetReservationById/{id}")]
     public async Task<IActionResult> GetReservationById(int id)
     {
@@ -141,16 +144,46 @@ public class ReservationController : ControllerBase
         }
     }
 
+    [HttpGet("GetReservationsByGuest/{jmbg}")]
+    public async Task<IActionResult> GetReservationsByGuest(string jmbg)
+    {
+        try
+        {
+            var reservations = await _context.Reservations
+                .Include(r => r.Room)
+                .Include(r => r.Guest)
+                .Where(r => r.GuestID == jmbg)
+                .ToListAsync();
+            if (reservations.Count == 0)
+            {
+                return NotFound($"No reservations with GuestID {jmbg} found.");
+            }
+            return Ok(reservations);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpGet("IsRoomAvailable/{roomNumber}/{checkIn}/{checkOut}")]
     public async Task<IActionResult> IsRoomAvailable(int roomNumber, DateTime checkIn, DateTime checkOut)
     {
-        var overlappingReservation = await _context.Reservations
-        .Where(r => r.RoomNumber == roomNumber &&
-                    checkIn < r.CheckOutDate &&
-                    checkOut > r.CheckInDate)
-        .FirstOrDefaultAsync();
+        try
+        {
+            var overlappingReservation = await _context.Reservations
+                        .Where(r => r.RoomNumber == roomNumber &&
+                                    checkIn < r.CheckOutDate &&
+                                    checkOut > r.CheckInDate)
+                        .FirstOrDefaultAsync();
 
-        return Ok(new { available = overlappingReservation == null });
+            return Ok(new { available = overlappingReservation == null });
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        
     }
 
     [HttpPut("UpdateReservation/{id}")]
@@ -173,11 +206,11 @@ public class ReservationController : ControllerBase
             var existingRoom = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == reservation.RoomNumber);
             if (existingRoom == null)
             {
-                return BadRequest($"Room with number {reservation.RoomNumber} does not exist.");
+                return NotFound($"Room with number {reservation.RoomNumber} does not exist.");
             }
             if (!await _context.Guests.AnyAsync(g => g.JMBG == reservation.GuestID))
             {
-                return BadRequest($"Guest with ID {reservation.GuestID} does not exist.");
+                return NotFound($"Guest with ID {reservation.GuestID} does not exist.");
             }
 
             var existingReservation = await _context.Reservations
@@ -239,16 +272,10 @@ public class ReservationController : ControllerBase
         try
         {
             var reservation = await _context.Reservations.FindAsync(id);
-            // .Include(r => r.RoomServices) 
-            // .Include(r => r.ExtraServices)
             if (reservation == null)
             {
                 return NotFound($"Reservation with ID {id} not found.");
             }
-            // reservation.RoomServices.Clear();
-            // reservation.ExtraServices.Clear();
-            // reservation.Guest.Reservations.Remove(reservation);
-            // reservation.Room.Reservations.Remove(reservation);
 
             _context.Reservations.Remove(reservation);
             await _context.SaveChangesAsync();

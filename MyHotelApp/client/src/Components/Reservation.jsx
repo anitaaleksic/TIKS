@@ -140,15 +140,6 @@ export default function Reservation() {
       return;
     }
 
-    // const reservationToSend = {
-    //   ...formData,
-    //   guestID: guestId 
-    // };
-
-    console.log("Sending to backend:", formData);
-    console.log("total price: ", totalPrice);
-
-
     axios.post('/api/Reservation/CreateReservation', {
           ...formData,
           totalPrice: totalPrice
@@ -202,11 +193,11 @@ export default function Reservation() {
 
   useEffect(() => {
     const calculateTotal = async () => {
-      //const { checkInDate, checkOutDate, roomNumber, roomServiceIDs, extraServiceIDs } = formData;
+      
       if(!formData.checkInDate || !formData.checkOutDate || !formData.roomNumber)
         return;
 
-      const days = (new Date(formData.checkOutDate) - new Date(formData.checkInDate)) / (1000 * 60 * 60 * 24); //jer je rez u ms?
+      const days = (new Date(formData.checkOutDate) - new Date(formData.checkInDate)) / (1000 * 60 * 60 * 24); //jer je rez u ms
 
       if(days <= 0) 
         return;
@@ -240,7 +231,6 @@ export default function Reservation() {
       if (roundedTotal !== totalPrice) {
         setTotalPrice(roundedTotal);
       }
-
 
     };
 

@@ -65,7 +65,7 @@ public class ExtraServiceController : ControllerBase
         {
             if (_context.ExtraServices == null || !_context.ExtraServices.Any())
             {
-                return BadRequest("No extra services found.");
+                return NotFound("No extra services found.");
             }
             var extraServices = await _context.ExtraServices.ToListAsync();
             return Ok(extraServices);
@@ -203,7 +203,7 @@ public class ExtraServiceController : ControllerBase
             var extraService = await _context.ExtraServices.FirstOrDefaultAsync(es => es.ExtraServiceID == id);
             if (extraService == null)
             {
-                return BadRequest($"Extra service with ID {id} not found.");
+                return NotFound($"Extra service with ID {id} not found.");
             }
 
             _context.ExtraServices.Remove(extraService);

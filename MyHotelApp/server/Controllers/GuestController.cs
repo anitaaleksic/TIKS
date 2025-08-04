@@ -161,7 +161,7 @@ public class GuestController : ControllerBase
             var guest = await _context.Guests.FirstOrDefaultAsync(g => g.JMBG == jmbg);
             if (guest == null)
             {
-                return BadRequest($"Guest with JMBG {jmbg} not found.");
+                return NotFound($"Guest with JMBG {jmbg} not found.");
             }
 
             _context.Guests.Remove(guest);

@@ -62,7 +62,7 @@ public class RoomTypeController : ControllerBase
     }
 
     [HttpGet("GetRoomType/{type}")]
-    public async Task<IActionResult> GetRoom(string type)
+    public async Task<IActionResult> GetRoomType(string type)
     {
         try
         {
@@ -80,7 +80,7 @@ public class RoomTypeController : ControllerBase
     }
 
     [HttpGet("GetRoomTypeById/{id}")]
-    public async Task<IActionResult> GetRoom(int id)
+    public async Task<IActionResult> GetRoomTypeById(int id)
     {
         try
         {
