@@ -204,7 +204,9 @@ public class ReservationController : ControllerBase
                                     checkOut > r.CheckInDate)
                         .FirstOrDefaultAsync();
 
-            return Ok(new { available = overlappingReservation == null });
+            bool isAvailable = overlappingReservation == null;
+
+            return Ok(isAvailable);
         }
         catch (Exception ex)
         {

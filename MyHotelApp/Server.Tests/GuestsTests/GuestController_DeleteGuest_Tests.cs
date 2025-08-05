@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using MyHotelApp.server.Models;
 using MyHotelApp.Controllers;
+using Microsoft.AspNetCore.Mvc;
 using NUnit.Framework;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using Microsoft.Identity.Client;
 
@@ -15,8 +15,9 @@ public class GuestController_DeleteGuest_Tests
 {
     private static HotelContext _context;
     private static GuestController _controllerGuest;
-    // private static RoomController _controllerRoom;
     private static ReservationController _controllerReservation;
+
+    private Reservation _reservation;
 
     [SetUp]
     public void SetUp()
@@ -40,22 +41,6 @@ public class GuestController_DeleteGuest_Tests
         });
         _context.SaveChanges();
 
-        _context.Guests.Add(new Guest
-        {
-            JMBG = "1234512345321",
-            FullName = "Uros Miladinovic",
-            PhoneNumber = "+381657654321"
-        });
-        _context.SaveChanges();
-
-        _context.Guests.Add(new Guest
-        {
-            JMBG = "1234512345555",
-            FullName = "Mila Aleksic",
-            PhoneNumber = "+381651234333"
-        });
-        _context.SaveChanges();
-
         //ZAKLJUCAK 
         //moraju da se dodaju sobe inace nece da napravi rezervaciju 
         //fja GetReservationByGuest mora da vraca listu a ne IActionResult 
@@ -66,22 +51,10 @@ public class GuestController_DeleteGuest_Tests
             Floor = 1
         };
 
-
         _context.Rooms.Add(room);
         _context.SaveChanges();
 
-        var room1 = new Room
-        {
-            RoomNumber = 124,
-            RoomTypeID = 1,
-            Floor = 1
-        };
-
-
-        _context.Rooms.Add(room1);
-        _context.SaveChanges();
-
-        var reservation = new Reservation
+        _reservation = new Reservation
         {
             ReservationID = 1,
             RoomNumber = 123,
@@ -91,21 +64,48 @@ public class GuestController_DeleteGuest_Tests
             TotalPrice = 320.00m
         };
 
-        _context.Reservations.Add(reservation);
+        _context.Reservations.Add(_reservation);
         _context.SaveChanges();
 
-        var reservation1 = new Reservation
-        {
-            ReservationID = 2,
-            RoomNumber = 124,
-            GuestID = "1234512345123",
-            CheckInDate = new DateTime(2025, 9, 1),
-            CheckOutDate = new DateTime(2025, 9, 3),
-            TotalPrice = 320.00m
-        };
+        // _context.Guests.Add(new Guest
+        // {
+        //     JMBG = "1234512345321",
+        //     FullName = "Uros Miladinovic",
+        //     PhoneNumber = "+381657654321"
+        // });
+        // _context.SaveChanges();
 
-        _context.Reservations.Add(reservation1);
-        _context.SaveChanges();
+        // _context.Guests.Add(new Guest
+        // {
+        //     JMBG = "1234512345555",
+        //     FullName = "Mila Aleksic",
+        //     PhoneNumber = "+381651234333"
+        // });
+        // _context.SaveChanges();
+
+        //var room1 = new Room
+        // {
+        //     RoomNumber = 124,
+        //     RoomTypeID = 1,
+        //     Floor = 1
+        // };
+
+
+        // _context.Rooms.Add(room1);
+        // _context.SaveChanges();
+
+        // var reservation1 = new Reservation
+        // {
+        //     ReservationID = 2,
+        //     RoomNumber = 124,
+        //     GuestID = "1234512345123",
+        //     CheckInDate = new DateTime(2025, 9, 1),
+        //     CheckOutDate = new DateTime(2025, 9, 3),
+        //     TotalPrice = 320.00m
+        // };
+
+        // _context.Reservations.Add(reservation1);
+        // _context.SaveChanges();
 
 
     }
@@ -122,15 +122,10 @@ public class GuestController_DeleteGuest_Tests
     }
 
     [Test]
-    public async Task DeleteGuest_WithReservedRooms_DeletesReservations()
-    {
-        
+    public async Task DeleteGuest_WithReservedRoom_DeletesReservation()
+    {        
         var jmbg = "1234512345123";
 
-        // var existingGuest = await _controllerGuest.GetGuestByJMBG(jmbg);
-        // Assert.That(existingGuest, Is.InstanceOf<OkObjectResult>());
-
-        //Console.WriteLine("Upomocyyy");
         await _controllerGuest.DeleteGuest(jmbg);
         _context.SaveChanges();
 
@@ -139,7 +134,11 @@ public class GuestController_DeleteGuest_Tests
         var notFoundResult = result as NotFoundObjectResult;
         Assert.That(notFoundResult, Has.Property("Value").EqualTo($"No reservations with GuestID {jmbg} found."));
 
+        //provere
+        // var existingGuest = await _controllerGuest.GetGuestByJMBG(jmbg);
+        // Assert.That(existingGuest, Is.InstanceOf<OkObjectResult>());
 
+        //Console.WriteLine("Upomocyyy");
 
         // var okResult = result as OkObjectResult;
         // var guestReservations = okResult.Value as List<Reservation>;
@@ -172,27 +171,48 @@ public class GuestController_DeleteGuest_Tests
 
     }
 
-    // [Test]
-    // public async Task DeleteGuest_WithReservedRooms_RoomsBecomeAvailable()
-    // {
-    //     var jmbg = "1234512345123";
-    //     var existingGuest = await _controllerGuest.GetGuestByJMBG(jmbg);
-    //     Assert.That(existingGuest, Is.InstanceOf<OkObjectResult>());
+    [Test]
+    public async Task DeleteGuest_WithReservedRooms_RoomsBecomeAvailable()
+    {
+        var jmbg = "1234512345123";
 
-    //     var result = await _controllerReservation.GetReservationsByGuest(jmbg);
-    //     var okResult = result as OkObjectResult;
-    //     var guestReservations = okResult.Value as List<Reservation>;
-    //     Assert.That(guestReservations.Count, Is.EqualTo(2));
+        await _controllerGuest.DeleteGuest(jmbg);
+        _context.SaveChanges();
 
-    //     //var roomNums = new List<Room>();
-    //     foreach (var res in guestReservations)
-    //     {
-    //         Console.Write($"reservation: {res.RoomNumber}, {res.CheckInDate}, {res.CheckOutDate}, status: {res.Room.IsAvailable}");
-    //     }
+        var roomAvailability = await _controllerReservation.IsRoomAvailable(_reservation.RoomNumber, _reservation.CheckInDate, _reservation.CheckOutDate);
+        var okAvailability = roomAvailability as OkObjectResult;
 
+        Assert.That(okAvailability.Value, Is.True);
 
-        
-    // }
+        //CHECKING 
+        // var existingGuest = await _controllerGuest.GetGuestByJMBG(jmbg);
+        // Assert.That(existingGuest, Is.InstanceOf<OkObjectResult>());
+
+        // var result = await _controllerReservation.GetReservationsByGuest(jmbg);
+        // var okResult = result as OkObjectResult;
+        // var guestReservations = okResult.Value as List<Reservation>;
+        // Assert.That(guestReservations.Count, Is.EqualTo(2));
+
+        // foreach (var res in guestReservations)
+        // {
+        //     Console.WriteLine($"reservation: {res.RoomNumber}, {res.CheckInDate}, {res.CheckOutDate}");
+        //     var resultAvailable = await _controllerReservation.IsRoomAvailable(res.RoomNumber, res.CheckInDate, res.CheckOutDate);
+        //     var okResultAvailable = resultAvailable as OkObjectResult;
+        //     Console.WriteLine($"status: {okResultAvailable.Value}");
+        // }
+
+        // await _controllerGuest.DeleteGuest(jmbg);
+        // _context.SaveChanges();
+
+        // foreach (var res in guestReservations)
+        // {
+        //     Console.WriteLine($"reservation: {res.RoomNumber}, {res.CheckInDate}, {res.CheckOutDate}");
+        //     var resultAvailable = await _controllerReservation.IsRoomAvailable(res.RoomNumber, res.CheckInDate, res.CheckOutDate);
+        //     var okResultAvailable = resultAvailable as OkObjectResult;
+        //     Console.WriteLine($"status: {okResultAvailable.Value}");
+        // }
+
+    }
 
     [TearDown]
     public void TearDown()

@@ -41,13 +41,14 @@ public class GuestController : ControllerBase
             {
                 return BadRequest("Full name is required and cannot exceed 100 characters.");
             }
+            //is valid proverava razmak, /, -
             if (!string.IsNullOrEmpty(guest.PhoneNumber) && !new PhoneAttribute().IsValid(guest.PhoneNumber))
             {
                 return BadRequest("Invalid phone number.");
             }
-            if (guest.PhoneNumber.Length < 12 || guest.PhoneNumber.Length > 13)
+            if (string.IsNullOrEmpty(guest.PhoneNumber) || guest.PhoneNumber.Length < 12 || guest.PhoneNumber.Length > 13)
             {
-                return BadRequest("Phone number must be between 12 and 13 characters long.");
+                return BadRequest("Phone number is required and must be between 12 and 13 characters long.");
             }
 
             var newGuest = new Guest
@@ -95,7 +96,6 @@ public class GuestController : ControllerBase
             {
                 return BadRequest("JMBG must be exactly 13 characters long.");
             }
-
             var guest = await _context.Guests.FirstOrDefaultAsync(g => g.JMBG == jmbg);
             if (guest == null)
             {
@@ -123,10 +123,10 @@ public class GuestController : ControllerBase
                 return BadRequest("JMBG must be exactly 13 characters long.");
             }
 
-            var g = await _context.Guests.FirstOrDefaultAsync(g => g.JMBG == guest.JMBG);
+            var g = await _context.Guests.FirstOrDefaultAsync(g => g.JMBG == jmbg);
             if (g == null)
             {
-                return NotFound($"Guest with the JMBG {guest.JMBG} not found.");
+                return NotFound($"Guest with JMBG {jmbg} not found.");
             }
             if (string.IsNullOrEmpty(guest.FullName) || guest.FullName.Length > 100)
             {
@@ -138,7 +138,7 @@ public class GuestController : ControllerBase
             }
             if (guest.PhoneNumber.Length < 12 || guest.PhoneNumber.Length > 13)
             {
-                return BadRequest("Phone number must be between 12 and 13 characters long.");
+                return BadRequest("Phone number is required and must be between 12 and 13 characters long.");
             }
 
             g.FullName = guest.FullName;
@@ -150,8 +150,8 @@ public class GuestController : ControllerBase
         catch (Exception ex)
         {
             return BadRequest(ex.Message);
-        }
-    }
+        }
+    }
     
     [HttpDelete("DeleteGuest/{jmbg}")]
     public async Task<IActionResult> DeleteGuest(string jmbg)
