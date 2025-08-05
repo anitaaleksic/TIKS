@@ -32,16 +32,14 @@ public class RoomController_DeleteRoom_Tests
         {
             RoomNumber = 123,
             RoomTypeID = 1,
-            Floor = 1,
-            IsAvailable = false
+            Floor = 1
         });
 
         _context.Rooms.Add(new Room
         {
             RoomNumber = 202,
             RoomTypeID = 2,
-            Floor = 2,
-            IsAvailable = true
+            Floor = 2
         });
     }
 

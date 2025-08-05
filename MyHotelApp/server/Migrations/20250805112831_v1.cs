@@ -74,8 +74,7 @@ namespace MyHotelApp.Migrations
                 {
                     RoomNumber = table.Column<int>(type: "int", nullable: false),
                     RoomTypeID = table.Column<int>(type: "int", nullable: false),
-                    Floor = table.Column<int>(type: "int", nullable: false),
-                    IsAvailable = table.Column<bool>(type: "bit", nullable: false)
+                    Floor = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -121,21 +120,21 @@ namespace MyHotelApp.Migrations
                 name: "ExtraServiceReservation",
                 columns: table => new
                 {
-                    AddedToReservationsReservationID = table.Column<int>(type: "int", nullable: false),
-                    ExtraServicesExtraServiceID = table.Column<int>(type: "int", nullable: false)
+                    ExtraServiceID = table.Column<int>(type: "int", nullable: false),
+                    ReservationID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExtraServiceReservation", x => new { x.AddedToReservationsReservationID, x.ExtraServicesExtraServiceID });
+                    table.PrimaryKey("PK_ExtraServiceReservation", x => new { x.ExtraServiceID, x.ReservationID });
                     table.ForeignKey(
-                        name: "FK_ExtraServiceReservation_ExtraServices_ExtraServicesExtraServiceID",
-                        column: x => x.ExtraServicesExtraServiceID,
+                        name: "FK_ExtraServiceReservation_ExtraServices_ExtraServiceID",
+                        column: x => x.ExtraServiceID,
                         principalTable: "ExtraServices",
                         principalColumn: "ExtraServiceID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ExtraServiceReservation_Reservations_AddedToReservationsReservationID",
-                        column: x => x.AddedToReservationsReservationID,
+                        name: "FK_ExtraServiceReservation_Reservations_ReservationID",
+                        column: x => x.ReservationID,
                         principalTable: "Reservations",
                         principalColumn: "ReservationID",
                         onDelete: ReferentialAction.Cascade);
@@ -145,35 +144,35 @@ namespace MyHotelApp.Migrations
                 name: "ReservationRoomService",
                 columns: table => new
                 {
-                    AddedToReservationsReservationID = table.Column<int>(type: "int", nullable: false),
-                    RoomServicesRoomServiceID = table.Column<int>(type: "int", nullable: false)
+                    ReservationID = table.Column<int>(type: "int", nullable: false),
+                    RoomServiceID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ReservationRoomService", x => new { x.AddedToReservationsReservationID, x.RoomServicesRoomServiceID });
+                    table.PrimaryKey("PK_ReservationRoomService", x => new { x.ReservationID, x.RoomServiceID });
                     table.ForeignKey(
-                        name: "FK_ReservationRoomService_Reservations_AddedToReservationsReservationID",
-                        column: x => x.AddedToReservationsReservationID,
+                        name: "FK_ReservationRoomService_Reservations_ReservationID",
+                        column: x => x.ReservationID,
                         principalTable: "Reservations",
                         principalColumn: "ReservationID",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ReservationRoomService_RoomServices_RoomServicesRoomServiceID",
-                        column: x => x.RoomServicesRoomServiceID,
+                        name: "FK_ReservationRoomService_RoomServices_RoomServiceID",
+                        column: x => x.RoomServiceID,
                         principalTable: "RoomServices",
                         principalColumn: "RoomServiceID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExtraServiceReservation_ExtraServicesExtraServiceID",
+                name: "IX_ExtraServiceReservation_ReservationID",
                 table: "ExtraServiceReservation",
-                column: "ExtraServicesExtraServiceID");
+                column: "ReservationID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ReservationRoomService_RoomServicesRoomServiceID",
+                name: "IX_ReservationRoomService_RoomServiceID",
                 table: "ReservationRoomService",
-                column: "RoomServicesRoomServiceID");
+                column: "RoomServiceID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Reservations_GuestID",

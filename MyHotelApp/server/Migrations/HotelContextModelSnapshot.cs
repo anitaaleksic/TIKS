@@ -24,15 +24,15 @@ namespace MyHotelApp.Migrations
 
             modelBuilder.Entity("ExtraServiceReservation", b =>
                 {
-                    b.Property<int>("AddedToReservationsReservationID")
+                    b.Property<int>("ExtraServiceID")
                         .HasColumnType("int");
 
-                    b.Property<int>("ExtraServicesExtraServiceID")
+                    b.Property<int>("ReservationID")
                         .HasColumnType("int");
 
-                    b.HasKey("AddedToReservationsReservationID", "ExtraServicesExtraServiceID");
+                    b.HasKey("ExtraServiceID", "ReservationID");
 
-                    b.HasIndex("ExtraServicesExtraServiceID");
+                    b.HasIndex("ReservationID");
 
                     b.ToTable("ExtraServiceReservation");
                 });
@@ -123,9 +123,6 @@ namespace MyHotelApp.Migrations
                     b.Property<int>("Floor")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("bit");
-
                     b.Property<int>("RoomTypeID")
                         .HasColumnType("int");
 
@@ -182,30 +179,30 @@ namespace MyHotelApp.Migrations
 
             modelBuilder.Entity("ReservationRoomService", b =>
                 {
-                    b.Property<int>("AddedToReservationsReservationID")
+                    b.Property<int>("ReservationID")
                         .HasColumnType("int");
 
-                    b.Property<int>("RoomServicesRoomServiceID")
+                    b.Property<int>("RoomServiceID")
                         .HasColumnType("int");
 
-                    b.HasKey("AddedToReservationsReservationID", "RoomServicesRoomServiceID");
+                    b.HasKey("ReservationID", "RoomServiceID");
 
-                    b.HasIndex("RoomServicesRoomServiceID");
+                    b.HasIndex("RoomServiceID");
 
                     b.ToTable("ReservationRoomService");
                 });
 
             modelBuilder.Entity("ExtraServiceReservation", b =>
                 {
-                    b.HasOne("MyHotelApp.server.Models.Reservation", null)
+                    b.HasOne("MyHotelApp.server.Models.ExtraService", null)
                         .WithMany()
-                        .HasForeignKey("AddedToReservationsReservationID")
+                        .HasForeignKey("ExtraServiceID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyHotelApp.server.Models.ExtraService", null)
+                    b.HasOne("MyHotelApp.server.Models.Reservation", null)
                         .WithMany()
-                        .HasForeignKey("ExtraServicesExtraServiceID")
+                        .HasForeignKey("ReservationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -244,13 +241,13 @@ namespace MyHotelApp.Migrations
                 {
                     b.HasOne("MyHotelApp.server.Models.Reservation", null)
                         .WithMany()
-                        .HasForeignKey("AddedToReservationsReservationID")
+                        .HasForeignKey("ReservationID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyHotelApp.server.Models.RoomService", null)
                         .WithMany()
-                        .HasForeignKey("RoomServicesRoomServiceID")
+                        .HasForeignKey("RoomServiceID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
