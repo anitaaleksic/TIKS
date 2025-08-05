@@ -144,6 +144,32 @@ public class ReservationController : ControllerBase
         }
     }
 
+    // [HttpGet("GetReservationsByGuest/{jmbg}")]
+    // public async Task<List<Reservation>> GetReservationsByGuest(string jmbg)
+    // {
+    //     try
+    //     {
+    //         var reservations = await _context.Reservations
+    //             .Include(r => r.Room)
+    //             .Include(r => r.Guest)
+    //             .Where(r => r.GuestID == jmbg)
+    //             .ToListAsync();
+    //         // if (reservations.Count == 0)
+    //         // {
+    //         //     return NotFound($"No reservations with GuestID {jmbg} found.");
+    //         // }
+    //         return reservations;
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         List<Reservation> prazna = new List<Reservation>();
+    //         return prazna;
+    //         //return BadRequest(ex.Message);
+    //     }
+    // }
+
+    //prethodna da bi moglo da se istestira 
+    //normalna fja: 
     [HttpGet("GetReservationsByGuest/{jmbg}")]
     public async Task<IActionResult> GetReservationsByGuest(string jmbg)
     {
@@ -165,6 +191,7 @@ public class ReservationController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
 
     [HttpGet("IsRoomAvailable/{roomNumber}/{checkIn}/{checkOut}")]
     public async Task<IActionResult> IsRoomAvailable(int roomNumber, DateTime checkIn, DateTime checkOut)

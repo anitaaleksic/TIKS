@@ -5,6 +5,7 @@ using NUnit.Framework;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace GuestTests;
 
@@ -58,29 +59,48 @@ public class GuestController_DeleteGuest_Tests
 
     }
 
-    // [Test]
-    // public async Task DeleteGuest_WithNonExistingId_ReturnsNotFound()
-    // {
-    //     string nonExistingId = "9999999999999";
-    //     var result = await _controllerGuest.DeleteGuest(nonExistingId);
+    [Test]
+    public async Task DeleteGuest_WithNonExistingId_ReturnsNotFound()
+    {
+        string nonExistingId = "9999999999999";
+        var result = await _controllerGuest.DeleteGuest(nonExistingId);
 
-    //     Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
-    //     var notFoundResult = result as NotFoundObjectResult;
-    //     Assert.That(notFoundResult, Has.Property("Value").EqualTo($"Guest with JMBG {nonExistingId} not found."));
-    // }
+        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.That(notFoundResult, Has.Property("Value").EqualTo($"Guest with JMBG {nonExistingId} not found."));
+    }
 
     [Test]
     public async Task DeleteGuest_WithReservedRooms_DeletesReservations()
     {
-        // var roomDto = new RoomDTO
-        // {
-        //     RoomNumber = 123,
-        //     RoomTypeID = 1,
-        //     Floor = 1,
-        //     IsAvailable = false
-        // };
+        //ZAKLJUCAK 
+        //moraju da se dodaju sobe inace nece da napravi rezervaciju 
+        //fja GetReservationByGuest mora da vraca listu a ne IActionResult 
+        var room = new Room
+        {
+            RoomNumber = 123,
+            RoomTypeID = 1,
+            Floor = 1,
+            IsAvailable = false
+        };
 
-        var reservationDto = new ReservationDTO
+
+        _context.Rooms.Add(room);
+        _context.SaveChanges();
+
+        var room1 = new Room
+        {
+            RoomNumber = 124,
+            RoomTypeID = 1,
+            Floor = 1,
+            IsAvailable = false
+        };
+
+
+        _context.Rooms.Add(room1);
+        _context.SaveChanges();
+
+        var reservation = new Reservation
         {
             ReservationID = 1,
             RoomNumber = 123,
@@ -90,7 +110,10 @@ public class GuestController_DeleteGuest_Tests
             TotalPrice = 320.00m
         };
 
-        var reservationDto1 = new ReservationDTO
+        _context.Reservations.Add(reservation);
+        _context.SaveChanges();
+
+        var reservation1 = new Reservation
         {
             ReservationID = 2,
             RoomNumber = 124,
@@ -100,12 +123,46 @@ public class GuestController_DeleteGuest_Tests
             TotalPrice = 320.00m
         };
 
+        _context.Reservations.Add(reservation1);
+        _context.SaveChanges();
+
         var jmbg = "1234512345123";
 
-        var guestReservations = await _controllerReservation.GetReservationsByGuest(jmbg);
-        Assert.That(guestReservations.Count, Is.EqualTo(2));
-        
+        // var existingGuest = await _controllerGuest.GetGuestByJMBG(jmbg);
+        // Assert.That(existingGuest, Is.InstanceOf<OkObjectResult>());
 
+        Console.WriteLine("Upomocyyy");
+        await _controllerGuest.DeleteGuest(jmbg);
+        _context.SaveChanges();
+
+        var result = await _controllerReservation.GetReservationsByGuest(jmbg);
+        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.That(notFoundResult, Has.Property("Value").EqualTo($"No reservations with GuestID {jmbg} found."));
+
+
+
+        // var okResult = result as OkObjectResult;
+        // var guestReservations = okResult.Value as List<Reservation>;
+        // Assert.That(guestReservations.Count, Is.EqualTo(0));
+
+        // Assert.That(guestReservations2.Count, Is.EqualTo(0));
+        /*
+
+                //Assert.That(result, Is.InstanceOf<OkObjectResult>());
+
+                //Assert.That(guestReservations.Count, Is.EqualTo(2));
+
+        */
+
+
+        // var guestReservations = await _controllerReservation.GetReservationsByGuest(jmbg);
+        // Assert.That(guestReservations.Count, Is.EqualTo(2));
+
+        //Assert.That(guestReservations, Has.Length(2));
+        //CollectionAssert.IsNotEmpty(guestReservations);
+
+        //Assert.That(guestReservations, Is.Not.Empty);
 
         // var result = await _controllerGuest.DeleteGuest(jmbg);
         // var guestReservations = await _controllerReservation.GetReservationsByGuest(jmbg);
