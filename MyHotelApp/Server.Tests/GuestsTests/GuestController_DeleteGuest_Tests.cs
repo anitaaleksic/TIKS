@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using Microsoft.Identity.Client;
 
 namespace GuestTests;
 
@@ -55,24 +56,6 @@ public class GuestController_DeleteGuest_Tests
         });
         _context.SaveChanges();
 
-        //_context
-
-    }
-
-    [Test]
-    public async Task DeleteGuest_WithNonExistingId_ReturnsNotFound()
-    {
-        string nonExistingId = "9999999999999";
-        var result = await _controllerGuest.DeleteGuest(nonExistingId);
-
-        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
-        var notFoundResult = result as NotFoundObjectResult;
-        Assert.That(notFoundResult, Has.Property("Value").EqualTo($"Guest with JMBG {nonExistingId} not found."));
-    }
-
-    [Test]
-    public async Task DeleteGuest_WithReservedRooms_DeletesReservations()
-    {
         //ZAKLJUCAK 
         //moraju da se dodaju sobe inace nece da napravi rezervaciju 
         //fja GetReservationByGuest mora da vraca listu a ne IActionResult 
@@ -126,12 +109,30 @@ public class GuestController_DeleteGuest_Tests
         _context.Reservations.Add(reservation1);
         _context.SaveChanges();
 
+
+    }
+
+    [Test]
+    public async Task DeleteGuest_WithNonExistingId_ReturnsNotFound()
+    {
+        string nonExistingId = "9999999999999";
+        var result = await _controllerGuest.DeleteGuest(nonExistingId);
+
+        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.That(notFoundResult, Has.Property("Value").EqualTo($"Guest with JMBG {nonExistingId} not found."));
+    }
+
+    [Test]
+    public async Task DeleteGuest_WithReservedRooms_DeletesReservations()
+    {
+        
         var jmbg = "1234512345123";
 
         // var existingGuest = await _controllerGuest.GetGuestByJMBG(jmbg);
         // Assert.That(existingGuest, Is.InstanceOf<OkObjectResult>());
 
-        Console.WriteLine("Upomocyyy");
+        //Console.WriteLine("Upomocyyy");
         await _controllerGuest.DeleteGuest(jmbg);
         _context.SaveChanges();
 
@@ -172,6 +173,28 @@ public class GuestController_DeleteGuest_Tests
         // Assert.That(notFoundResult, Has.Property("Value").EqualTo($"No reservations with GuestID {jmbg} found."));
 
     }
+
+    // [Test]
+    // public async Task DeleteGuest_WithReservedRooms_RoomsBecomeAvailable()
+    // {
+    //     var jmbg = "1234512345123";
+    //     var existingGuest = await _controllerGuest.GetGuestByJMBG(jmbg);
+    //     Assert.That(existingGuest, Is.InstanceOf<OkObjectResult>());
+
+    //     var result = await _controllerReservation.GetReservationsByGuest(jmbg);
+    //     var okResult = result as OkObjectResult;
+    //     var guestReservations = okResult.Value as List<Reservation>;
+    //     Assert.That(guestReservations.Count, Is.EqualTo(2));
+
+    //     //var roomNums = new List<Room>();
+    //     foreach (var res in guestReservations)
+    //     {
+    //         Console.Write($"reservation: {res.RoomNumber}, {res.CheckInDate}, {res.CheckOutDate}, status: {res.Room.IsAvailable}");
+    //     }
+
+
+        
+    // }
 
     [TearDown]
     public void TearDown()
