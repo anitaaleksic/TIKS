@@ -51,8 +51,7 @@ public class RoomController : ControllerBase
             {
                 RoomNumber = room.RoomNumber,
                 RoomTypeID = room.RoomTypeID, // Assuming RoomTypeID is the ID of the RoomType
-                Floor = room.RoomNumber / 100,
-                IsAvailable = room.IsAvailable
+                Floor = room.RoomNumber / 100
             };
  
             await _context.Rooms.AddAsync(newRoom);
@@ -138,7 +137,6 @@ public class RoomController : ControllerBase
             existingRoom.RoomNumber = room.RoomNumber;
             existingRoom.RoomTypeID = room.RoomTypeID;
             existingRoom.Floor = room.Floor;
-            existingRoom.IsAvailable = room.IsAvailable;
 
             await _context.SaveChangesAsync();
             return Ok($"Room with number {roomNumber} updated successfully.");

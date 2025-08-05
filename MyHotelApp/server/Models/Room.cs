@@ -19,8 +19,7 @@ public class Room
     [Required]
     [Range(1, 6, ErrorMessage = "Floor must be between 1 and 6.")]
     public required int Floor { get; set; }
-    [Required]
-    public bool IsAvailable { get; set; } = true;//na osnovu datuma mora da se proveri
+
     [JsonIgnore]
     public List<Reservation> Reservations { get; set; } = new List<Reservation>();
 }
@@ -32,6 +31,5 @@ public class RoomDTO
     public int RoomNumber { get; set; }
     public int RoomTypeID { get; set; }
     public int Floor { get; set; }
-    public bool IsAvailable { get; set; }
 }
 
