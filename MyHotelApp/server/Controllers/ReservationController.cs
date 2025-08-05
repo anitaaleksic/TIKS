@@ -192,6 +192,28 @@ public class ReservationController : ControllerBase
         }
     }
 
+    [HttpGet("GetReservationsByRoom/{roomnumber}")]
+    public async Task<IActionResult> GetReservationsByRoom(int roomnumber)
+    {
+        try
+        {
+            var reservations = await _context.Reservations
+                .Include(r => r.Room)
+                .Include(r => r.Guest)
+                .Where(r => r.RoomNumber == roomnumber)
+                .ToListAsync();
+            if (reservations.Count == 0)
+            {
+                return NotFound($"No reservations with RoomNumber {roomnumber} found.");
+            }
+            return Ok(reservations);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
 
     [HttpGet("IsRoomAvailable/{roomNumber}/{checkIn}/{checkOut}")]
     public async Task<IActionResult> IsRoomAvailable(int roomNumber, DateTime checkIn, DateTime checkOut)
