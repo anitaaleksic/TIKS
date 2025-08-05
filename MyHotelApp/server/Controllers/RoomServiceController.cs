@@ -111,6 +111,30 @@ public class RoomServiceController : ControllerBase
         }
     }
 
+    [HttpGet("GetReservationsByRoomServiceId/{roomServiceId}")]
+    public async Task<IActionResult> GetReservationsByRoomServiceId(int roomServiceId)
+    {
+        try
+        {
+            var roomService = await _context.RoomServices
+                .Include(rs => rs.AddedToReservations)  // Učitaj povezane rezervacije
+                .FirstOrDefaultAsync(rs => rs.RoomServiceID == roomServiceId);
+
+            if (roomService == null)
+            {
+                return NotFound($"Room service with ID {roomServiceId} not found.");
+            }
+
+            var reservations = roomService.AddedToReservations;
+
+            // Možeš vratiti direktno reservations ili mapirati u DTO ako želiš:
+            return Ok(reservations);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
     [HttpPut("UpdateRoomService/{id}")]
     public async Task<IActionResult> UpdateRoomService(int id, [FromBody] RoomServiceDTO roomService)
     {
@@ -170,9 +194,9 @@ public class RoomServiceController : ControllerBase
                 return NotFound($"Room service with name {serviceName} not found.");
             }
 
-            if (string.IsNullOrEmpty(roomService.ItemName) || roomService.ItemName.Length > 100)
+            if (string.IsNullOrEmpty(roomService.ItemName) || roomService.ItemName.Length > 50)
             {
-                return BadRequest("Service name is required and cannot exceed 100 characters.");
+                return BadRequest("Service name is required and cannot exceed 50 characters.");
             }
 
             if(await _context.RoomServices.AnyAsync(rserv => rserv.ItemName == roomService.ItemName && rserv.RoomServiceID != rs.RoomServiceID))

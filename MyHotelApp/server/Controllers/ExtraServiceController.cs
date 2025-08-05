@@ -31,9 +31,9 @@ public class ExtraServiceController : ControllerBase
             {
                 return BadRequest($"Extra service with the name {extraService.ServiceName} already exists.");
             }
-            if (string.IsNullOrEmpty(extraService.ServiceName) || extraService.ServiceName.Length > 100)
+            if (string.IsNullOrEmpty(extraService.ServiceName) || extraService.ServiceName.Length > 50)
             {
-                return BadRequest("Service name is required and cannot exceed 100 characters.");
+                return BadRequest("Service name is required and cannot exceed 50 characters.");
             }
 
             if (extraService.Price <= 0)
@@ -126,9 +126,9 @@ public class ExtraServiceController : ControllerBase
                 return NotFound($"Extra service with ID {id} not found.");
             }
 
-            if (string.IsNullOrEmpty(extraService.ServiceName) || extraService.ServiceName.Length > 100)
+            if (string.IsNullOrEmpty(extraService.ServiceName) || extraService.ServiceName.Length > 50)
             {
-                return BadRequest("Service name is required and cannot exceed 100 characters.");
+                return BadRequest("Service name is required and cannot exceed 50 characters.");
             }
             if(await _context.ExtraServices.AnyAsync(es => es.ServiceName == extraService.ServiceName && es.ExtraServiceID != id))
             {
@@ -168,9 +168,9 @@ public class ExtraServiceController : ControllerBase
                 return NotFound($"Extra service with name {serviceName} not found.");
             }
 
-            if (string.IsNullOrEmpty(extraService.ServiceName) || extraService.ServiceName.Length > 100)
+            if (string.IsNullOrEmpty(extraService.ServiceName) || extraService.ServiceName.Length > 50)
             {
-                return BadRequest("Service name is required and cannot exceed 100 characters.");
+                return BadRequest("Service name is required and cannot exceed 50 characters.");
             }
             if(await _context.ExtraServices.AnyAsync(eserv => eserv.ServiceName == extraService.ServiceName && eserv.ExtraServiceID != es.ExtraServiceID))
             {

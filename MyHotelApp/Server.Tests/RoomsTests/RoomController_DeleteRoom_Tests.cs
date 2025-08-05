@@ -15,6 +15,7 @@ public class RoomController_DeleteRoom_Tests
 {
     private static HotelContext _context;
     private static RoomController _controllerRoom;
+     private static ReservationController _controllerReservation;
 
     [SetUp]
     public void SetUp()
@@ -26,7 +27,7 @@ public class RoomController_DeleteRoom_Tests
         _context = new HotelContext(options);
 
         _controllerRoom = new RoomController(_context);
-        // _controllerReservation = new ReservationController(_context);
+        _controllerReservation = new ReservationController(_context);
 
         _context.Rooms.Add(new Room
         {
@@ -34,13 +35,60 @@ public class RoomController_DeleteRoom_Tests
             RoomTypeID = 1,
             Floor = 1
         });
-
+        
         _context.Rooms.Add(new Room
         {
             RoomNumber = 202,
             RoomTypeID = 2,
             Floor = 2
         });
+        
+         var guest = new Guest
+        {
+            JMBG = "9473859483721",
+            FullName = "Uros Miladinovic",
+            PhoneNumber = "+381641336643"
+        };
+
+
+        _context.Guests.Add(guest);
+    
+
+        var guest1 = new Guest
+        {
+            JMBG = "8463859583790",
+            FullName = "Anita Aleksic",
+            PhoneNumber = "+381636547743"
+        };
+
+
+        _context.Guests.Add(guest1);
+       
+
+        var reservation = new Reservation
+        {
+            ReservationID = 1,
+            RoomNumber = 202,
+            GuestID = "9473859483721",
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+            TotalPrice = 320.00m
+        };
+
+        _context.Reservations.Add(reservation);
+
+        var reservation1 = new Reservation
+        {
+            ReservationID = 2,
+            RoomNumber = 123,
+            GuestID = "8463859583790",
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+            TotalPrice = 320.00m
+        };
+
+        _context.Reservations.Add(reservation1);
+        _context.SaveChanges();
     }
 
     [Test]
@@ -62,7 +110,6 @@ public class RoomController_DeleteRoom_Tests
 
         
         var getRoom = await _context.Rooms.FindAsync(existingRoomNumber);
-        Console.WriteLine(getRoom);
         Assert.That(getRoom, Is.Not.Null);
         
         var result = await _controllerRoom.DeleteRoom(existingRoomNumber);
@@ -74,8 +121,19 @@ public class RoomController_DeleteRoom_Tests
         var deletedRoom = await _context.Rooms.FindAsync(existingRoomNumber);
         Assert.That(deletedRoom, Is.Null);
     }
+    [Test]
+    public async Task DeleteRoom_WithReservations_DeletesReservations()
+    {
 
-    
+        var roomnumber = 202;
+        await _controllerRoom.DeleteRoom(roomnumber);
+        _context.SaveChanges();
+
+        var result = await _controllerReservation.GetReservationsByRoom(roomnumber);
+        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.That(notFoundResult, Has.Property("Value").EqualTo($"No reservations with RoomNumber {roomnumber} found."));
+    }
     
     [TearDown]
     public void TearDown()
