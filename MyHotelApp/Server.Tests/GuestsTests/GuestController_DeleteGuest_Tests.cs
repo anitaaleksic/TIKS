@@ -63,8 +63,7 @@ public class GuestController_DeleteGuest_Tests
         {
             RoomNumber = 123,
             RoomTypeID = 1,
-            Floor = 1,
-            IsAvailable = false
+            Floor = 1
         };
 
 
@@ -75,8 +74,7 @@ public class GuestController_DeleteGuest_Tests
         {
             RoomNumber = 124,
             RoomTypeID = 1,
-            Floor = 1,
-            IsAvailable = false
+            Floor = 1
         };
 
 
