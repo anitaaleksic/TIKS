@@ -181,7 +181,7 @@ public class ReservationController_DeleteReservation_Tests
     }
 
     [Test]
-    public async Task DeleteReservation_RemovesReservationFromRoomServicesReservations()
+    public async Task DeleteReservation_WithRoomService_RemovesReservationFromRoomServicesReservations()
     {
         int existingId = 1;
         //pull added roomServices and check if they exist
@@ -243,7 +243,7 @@ public class ReservationController_DeleteReservation_Tests
 
     //ista provera za extra service kao za room service
     [Test]
-    public async Task DeleteReservation_RemovesReservationFromExtraServicesReservations()
+    public async Task DeleteReservation_WithExtraService_RemovesReservationFromExtraServicesReservations()
     {
         int existingId = 1;
         int esId = 1;

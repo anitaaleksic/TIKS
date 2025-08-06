@@ -34,7 +34,7 @@ public class GuestController_UpdateGuest_Tests
         
     }
 
-    [Test] //add to all Update and Update tests
+    [Test] //add to all Create and Update tests
     public async Task UpdateGuest_WithModelStateInvalid_ReturnsBadRequest()
     {
         // Arrange

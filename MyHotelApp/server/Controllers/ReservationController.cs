@@ -27,9 +27,13 @@ public class ReservationController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-            if (reservation.RoomNumber <= 0)
+            if (reservation.RoomNumber < 101 || reservation.RoomNumber > 699)
             {
-                return BadRequest("Room number must be a positive integer.");
+                return BadRequest("Room number must be between 101 and 699.");
+            }
+            if (string.IsNullOrEmpty(reservation.GuestID) || reservation.GuestID.Length != 13)
+            {
+                return BadRequest("JMBG must be exactly 13 characters long.");
             }
             if (reservation.CheckInDate >= reservation.CheckOutDate)
             {
