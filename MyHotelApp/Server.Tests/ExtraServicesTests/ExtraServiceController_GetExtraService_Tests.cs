@@ -28,25 +28,6 @@ public class ExtraServiceController_GetExtraService_Tests
         _controllerExtraService = new ExtraServiceController(_context);
         // _controllerReservation = new ReservationController(_context);
 
-        _context.ExtraServices.Add(new ExtraService
-        {
-            ExtraServiceID = 1,
-            ServiceName = "Parking Spot",
-            Price = 10m,
-            Description = "Reserved parking space"
-        });
-
-        _context.SaveChanges();
-
-        _context.ExtraServices.Add(new ExtraService
-        {
-            ExtraServiceID = 2,
-            ServiceName = "Restaurant Access",
-            Price = 25m,
-            Description = "Access to hotel restaurant"
-        });
-
-        _context.SaveChanges();
 
     }
     [Test]

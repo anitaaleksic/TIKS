@@ -15,6 +15,7 @@ public class RoomServiceController_GetRoomService_Tests
 {
     private static HotelContext _context;
     private static RoomServiceController _controllerRoomService;
+    private static Reservation _reservation;
 
     [SetUp]
     public void SetUp()
@@ -28,25 +29,6 @@ public class RoomServiceController_GetRoomService_Tests
         _controllerRoomService = new RoomServiceController(_context);
         // _controllerReservation = new ReservationController(_context);
 
-        _context.RoomServices.Add(new RoomService
-        {
-            RoomServiceID = 1,
-            ItemName = "Breakfast",
-            ItemPrice = 10m,
-            Description = "Continental breakfast"
-        });
-
-        _context.SaveChanges();
-
-        _context.RoomServices.Add(new RoomService
-        {
-            RoomServiceID = 2,
-            ItemName = "Laundry",
-            ItemPrice = 15m,
-            Description = "Laundry service"
-        });
-
-        _context.SaveChanges();
 
     }
     [Test]
@@ -151,6 +133,7 @@ public class RoomServiceController_GetRoomService_Tests
 
         Assert.That(service, Has.Property("Description").EqualTo(expectedDescription));
     }
+
 
     [TearDown]
     public void TearDown()

@@ -88,22 +88,6 @@ public class ExtraServiceController_PutExtraService_Tests
         Assert.That(notFound?.Value, Is.EqualTo("Extra service with name New Service not found."));
     }
 
-    [Test]
-    public async Task UpdateExtraServiceByName_InvalidModelState_ReturnsBadRequest()
-    {
-        _controllerExtraService.ModelState.AddModelError("Price", "Required");
-
-        var dto = new ExtraServiceDTO
-        {
-            ServiceName = "Restaurant Access Updated",
-            Price = 0,
-            Description = "Description"
-        };
-
-        var result = await _controllerExtraService.UpdateExtraServiceByName("Restaurant Access", dto);
-
-        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    }
 
     [Test]
     public async Task UpdateExtraServiceByName_PriceLessThanOrEqualZero_ReturnsBadRequest()
@@ -171,6 +155,19 @@ public class ExtraServiceController_PutExtraService_Tests
 
         Assert.That(badRequestResult, Is.Not.Null);
         Assert.That(badRequestResult.Value, Is.EqualTo("Service name is required and cannot exceed 50 characters."));
+    }
+
+    [Test] 
+    public async Task UpdateExtraService_WithModelStateInvalid_ReturnsBadRequest()
+    {
+        // Arrange
+        _controllerExtraService.ModelState.AddModelError("error", "some model state error");
+        var extraServiceDTO = new ExtraServiceDTO();
+        var someValidID = 1;
+
+        var result = await _controllerExtraService.UpdateExtraService(someValidID, extraServiceDTO);
+
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }
     [TearDown]
     public void TearDown()

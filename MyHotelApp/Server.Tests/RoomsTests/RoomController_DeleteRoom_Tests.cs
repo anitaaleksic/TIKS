@@ -28,6 +28,23 @@ public class RoomController_DeleteRoom_Tests
 
         _controllerRoom = new RoomController(_context);
         _controllerReservation = new ReservationController(_context);
+        _context.RoomTypes.AddRange(
+            new RoomType
+            {
+                RoomTypeID = 1,
+                Type = "Single",
+                Capacity = 1,
+                PricePerNight = 50.00m
+            },
+            new RoomType
+            {
+                RoomTypeID = 2,
+                Type = "Double",
+                Capacity = 2,
+                PricePerNight = 80.00m
+            }
+        );
+        _context.SaveChanges();
 
         _context.Rooms.Add(new Room
         {
@@ -106,7 +123,7 @@ public class RoomController_DeleteRoom_Tests
     public async Task DeleteRoom_WithExistingId_ReturnsOk()
     {
         int existingRoomNumber = 123;
-        await _context.SaveChangesAsync();
+        //await _context.SaveChangesAsync();
 
         
         var getRoom = await _context.Rooms.FindAsync(existingRoomNumber);

@@ -60,7 +60,7 @@ public class RoomController_PutRoom_Tests
         {
             RoomNumber = 404,
             RoomTypeID = 1,
-            Floor = 2
+            Floor = 4
         };
 
         var result = await _controllerRoom.UpdateRoom(404, dto);
@@ -136,6 +136,19 @@ public class RoomController_PutRoom_Tests
         Assert.That(updatedRoom, Is.Not.Null);
         Assert.That(updatedRoom.RoomTypeID, Is.EqualTo(2));
         Assert.That(updatedRoom.Floor, Is.EqualTo(4));
+    }
+
+    [Test] //add to all Update and Update tests
+    public async Task UpdateRoom_WithModelStateInvalid_ReturnsBadRequest()
+    {
+        // Arrange
+        _controllerRoom.ModelState.AddModelError("error", "some model state error");
+        var roomDTO = new RoomDTO();
+        var someValidID = 301;
+
+        var result = await _controllerRoom.UpdateRoom(someValidID, roomDTO);
+
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }
     [TearDown]
     public void TearDown()

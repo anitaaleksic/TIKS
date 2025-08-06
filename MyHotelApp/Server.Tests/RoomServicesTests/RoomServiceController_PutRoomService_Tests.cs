@@ -88,19 +88,15 @@ public class RoomServiceController_PutRoomService_Tests
         Assert.That(notFound?.Value, Is.EqualTo("Room service with name New Service not found."));
     }
 
-    [Test]
-    public async Task UpdateRoomServiceByName_InvalidModelState_ReturnsBadRequest()
+    [Test] 
+    public async Task UpdateRoomService_WithModelStateInvalid_ReturnsBadRequest()
     {
-        _controllerRoomService.ModelState.AddModelError("ItemPrice", "Required");
+        // Arrange
+        _controllerRoomService.ModelState.AddModelError("error", "some model state error");
+        var roomServiceDTO = new RoomServiceDTO();
+        var someValidID = 1;
 
-        var dto = new RoomServiceDTO
-        {
-            ItemName = "Laundry Updated",
-            ItemPrice = 0,
-            Description = "Description"
-        };
-
-        var result = await _controllerRoomService.UpdateRoomServiceByName("Laundry", dto);
+        var result = await _controllerRoomService.UpdateRoomService(someValidID, roomServiceDTO);
 
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }

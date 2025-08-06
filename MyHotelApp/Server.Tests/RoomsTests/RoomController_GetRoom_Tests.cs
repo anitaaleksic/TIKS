@@ -15,6 +15,7 @@ public class RoomController_GetRoom_Tests
 {
     private static HotelContext _context;
     private static RoomController _controllerRoom;
+    private static Reservation _reservation;
 
     [SetUp]
     public void SetUp()
@@ -26,6 +27,7 @@ public class RoomController_GetRoom_Tests
         _context = new HotelContext(options);
 
         _controllerRoom = new RoomController(_context);
+        
 
         _context.RoomTypes.AddRange(
             new RoomType
@@ -127,6 +129,40 @@ public class RoomController_GetRoom_Tests
 
         Assert.That(room, Has.Property("RoomNumber").EqualTo(existingRoomNumber));
     }
+
+    [Test]
+    public async Task GetRoomHasReservation_ReturnsRoomWithReservation()
+    {
+        _context.Guests.Add(new Guest
+        {
+            JMBG = "1234512345123",
+            FullName = "Anita Aleksic",
+            PhoneNumber = "+381651234567"
+        });
+        _context.SaveChanges();
+
+        _reservation = new Reservation
+        {
+            ReservationID = 1,
+            RoomNumber = 202,
+            GuestID = "1234512345123",
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+            TotalPrice = 320.00m
+        };
+
+        _context.Reservations.Add(_reservation);
+        _context.SaveChanges();
+
+        var result = await _controllerRoom.GetRoom(202);
+        var okResult = result as OkObjectResult;
+
+        var room = okResult.Value as Room;
+        Assert.That(room.Reservations, Is.Not.Null);
+
+    }
+
+    
 
     [TearDown]
     public void TearDown()

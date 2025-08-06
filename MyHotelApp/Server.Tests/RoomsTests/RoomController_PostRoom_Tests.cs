@@ -168,6 +168,18 @@ public class RoomController_PostRoom_Tests
         Assert.That(savedRoom.Floor, Is.EqualTo(3)); // Backend je izračunao sprat na osnovu RoomNumber
     }
 
+    [Test] //add to all Create tests
+    public async Task CreateRoom_WithModelStateInvalid_ReturnsBadRequest()
+    {
+        // Arrange
+        _controllerRoom.ModelState.AddModelError("error", "some model state error");
+        var roomDTO = new RoomDTO();
+
+        var result = await _controllerRoom.CreateRoom(roomDTO);
+
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+    }
+
     [TearDown]
     public void TearDown()
     {
