@@ -250,9 +250,13 @@ public class ReservationController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-            if (reservation.RoomNumber <= 0)
+            if (reservation.RoomNumber < 101 || reservation.RoomNumber > 699)
             {
-                return BadRequest("Room number must be a positive integer.");
+                return BadRequest("Room number must be between 101 and 699.");
+            }
+            if (string.IsNullOrEmpty(reservation.GuestID) || reservation.GuestID.Length != 13)
+            {
+                return BadRequest("JMBG must be exactly 13 characters long.");
             }
             if (reservation.CheckInDate >= reservation.CheckOutDate)
             {
@@ -273,6 +277,16 @@ public class ReservationController : ControllerBase
             if (existingReservation == null)
             {
                 return NotFound($"Reservation with ID {id} not found.");
+            }
+
+            var overlapingReservation = await _context.Reservations
+                .FirstOrDefaultAsync(r => r.RoomNumber == reservation.RoomNumber &&
+                                          r.CheckInDate < reservation.CheckOutDate &&
+                                          r.CheckOutDate > reservation.CheckInDate);
+
+            if (overlapingReservation != null)
+            {
+                return BadRequest("The room is already reserved for the selected dates.");
             }
 
             decimal esTotalPrice = 0.0m;

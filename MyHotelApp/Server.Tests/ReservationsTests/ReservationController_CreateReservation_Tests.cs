@@ -391,6 +391,7 @@ public class ReservationController_CreateReservation_Tests
         });       
     }
 
+    //ove za dodavanje rs i es u price potvrdjuju da ima price i bez toga
     [Test]
     public async Task CreateReservation_WithRoomService_AddsRoomServiceToTotalPrice()
     {
