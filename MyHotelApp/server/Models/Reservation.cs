@@ -41,7 +41,6 @@ public class ReservationDTO
     public DateTime CheckInDate { get; set; }
     public DateTime CheckOutDate { get; set; }
     public decimal TotalPrice { get; set; }
-
     public List<int> RoomServiceIDs { get; set; } = new();
     public List<int> ExtraServiceIDs { get; set; } = new();
 }

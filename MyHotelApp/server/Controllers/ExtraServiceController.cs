@@ -110,6 +110,32 @@ public class ExtraServiceController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpGet("GetReservationsByExtraServiceId/{extraServiceId}")]
+    public async Task<IActionResult> GetReservationsByExtraServiceId(int extraServiceId)
+    {
+        try
+        {
+            var extraService = await _context.ExtraServices
+                .Include(es => es.AddedToReservations)  // Učitaj povezane rezervacije
+                .FirstOrDefaultAsync(es => es.ExtraServiceID == extraServiceId);
+
+            if (extraService == null)
+            {
+                return NotFound($"Extra service with ID {extraServiceId} not found.");
+            }
+
+            var reservations = extraService.AddedToReservations;
+
+            // Možeš vratiti direktno reservations ili mapirati u DTO ako želiš:
+            return Ok(reservations);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
     [HttpPut("UpdateExtraService/{id}")]
     public async Task<IActionResult> UpdateExtraService(int id, [FromBody] ExtraServiceDTO extraService)
     {
