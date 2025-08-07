@@ -250,6 +250,13 @@ public class ReservationController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
+            
+            var existingReservation = await _context.Reservations
+                .FirstOrDefaultAsync(r => r.ReservationID == id);
+            if (existingReservation == null)
+            {
+                return NotFound($"Reservation with ID {id} not found.");
+            }
             if (reservation.RoomNumber < 101 || reservation.RoomNumber > 699)
             {
                 return BadRequest("Room number must be between 101 and 699.");
@@ -267,17 +274,12 @@ public class ReservationController : ControllerBase
             {
                 return NotFound($"Room with number {reservation.RoomNumber} does not exist.");
             }
-            if (!await _context.Guests.AnyAsync(g => g.JMBG == reservation.GuestID))
+            var existingGuest = await _context.Guests.FirstOrDefaultAsync(g => g.JMBG == reservation.GuestID);
+            if (existingGuest == null)
             {
                 return NotFound($"Guest with ID {reservation.GuestID} does not exist.");
             }
 
-            var existingReservation = await _context.Reservations
-                .FirstOrDefaultAsync(r => r.ReservationID == id);
-            if (existingReservation == null)
-            {
-                return NotFound($"Reservation with ID {id} not found.");
-            }
 
             var overlapingReservation = await _context.Reservations
                 .FirstOrDefaultAsync(r => r.RoomNumber == reservation.RoomNumber &&
@@ -317,6 +319,15 @@ public class ReservationController : ControllerBase
             {
                 return BadRequest("Total price must be a non-negative value.");
             }
+
+            // if (existingReservation.RoomNumber != reservation.RoomNumber)
+            // {
+            //     existingRoom.Reservations.Remove(existingReservation);
+            // }
+            // if (existingReservation.GuestID != reservation.GuestID)
+            // {
+            //     existingGuest.Reservations.Remove(existingReservation);
+            // }
 
             existingReservation.RoomNumber = reservation.RoomNumber;
             existingReservation.GuestID = reservation.GuestID;

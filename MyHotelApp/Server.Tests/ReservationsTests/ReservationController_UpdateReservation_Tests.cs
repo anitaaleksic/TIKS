@@ -397,9 +397,10 @@ public class ReservationController_UpdateReservation_Tests
         });       
     }
 
-    //TREBA DA PROVERIM JE L DODAJE RS I ES U LISTE I DODA IH U PRICE
+    //ovde je provereno i da ce es da obrise ako ga ne posaljemo u update
 
-    [Test]//jedna provera kad je lista prazna jedna kad vec ima neki rs
+    //provera je l izbacilo rez iz es ???????????
+    [Test]//da li je potrebna jedna provera kad je lista prazna jedna kad vec ima neki rs
     public async Task UpdateReservation_AddingRoomService_AddsRoomServiceToListAndTotalPrice()
     {
         //provera da je lista prazna pre nego sto dodam
@@ -458,225 +459,416 @@ public class ReservationController_UpdateReservation_Tests
 
     }
 
-    // [Test]
-    // public async Task UpdateReservation_WithExtraService_AddsExtraServiceToTotalPrice()
-    // {
-    //     decimal expectedTotal = 280m;
-    //     int roomNum = 500;
-    //     ReservationDTO reservationDTO = new ReservationDTO
-    //     {
-    //         RoomNumber = roomNum,
-    //         GuestID = "1234512345123",
-    //         CheckInDate = new DateTime(2025, 9, 6),
-    //         CheckOutDate = new DateTime(2025, 9, 8),
-    //         ExtraServiceIDs = { 1 }
-    //     };
+    [Test]
+    public async Task UpdateReservation_RemovingExtraService_RemovesReservationFromExtraServiceReservations()
+    {
+        int testResId = 2;
+        //PROVERA JE L BILO U LISTI ES PRE TOGA
+        var resultEs = await _controllerExtraService.GetReservationsByExtraServiceId(1);
+        var resultEsReservations = resultEs as OkObjectResult;
+        var reservationsList = resultEsReservations.Value as List<Reservation>;
+        Assert.Multiple(() =>
+        {
+            //Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
+            //reservation with id 1 is removed and now it only has reservation with id 2
+            Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == 2));
+        });
 
-    //     //rezervisana soba tipa 1 (cena po noci 120) na dva dana (240) sa extraServ koj kosta 20 total = 280
+        ReservationDTO reservationDTO = new ReservationDTO
+        { //ostali param su isti samo dodajemo rs u praznu listu
+            //ReservationID = 2, //da znam koju menjam
+            RoomNumber = 123,
+            GuestID = "1234512345123",
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+            RoomServiceIDs = { 1 }//kosta 10
+        };
 
-    //     var result = await _controllerReservation.UpdateReservation(reservationDTO);
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(result, Is.InstanceOf<OkObjectResult>());
-    //         var okResult = result as OkObjectResult;
-    //         Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation created successfully for room {roomNum}."));
-    //     });
-
-    //     //jedina rezervacija za ovu sobu 
-    //     var resultGet = await _controllerReservation.GetReservationsByRoom(roomNum);
-    //     var okResultGet = resultGet as OkObjectResult;
-    //     var createdReservationList = okResultGet.Value as List<Reservation>;
-    //     var myReservation = createdReservationList.FirstOrDefault();
-
-    //     Assert.That(myReservation.TotalPrice, Is.EqualTo(expectedTotal));
-    // }
-
-    // //VRATI NEGDE SOBU DA POGLEDAS TOTAL PRICE --radi dobro
-    // //PROVERI JE L RADI KAD POSALJES REZ BEZ TOTAL PRICE -- radi moz i da se obrise svuda al ne mora
-    // //PROVERA JE L DODAJE TU REZ SVIMA U LISTE I GOST I SOBA I ROOMSERV I EXTRASERV ubicu se - gotovo fala gadu
-
-    // [Test]//prvo proveri da li nema tu rez pa dodaj pa proveri je l ima
-    // public async Task UpdateReservation_WithExtraService_AddsReservationToExtraServiceReservations()
-    // {        
-    //     int esId = 2;
-    //     var resultEs = await _controllerExtraService.GetReservationsByExtraServiceId(esId);
-    //     var resultEsReservations = resultEs as OkObjectResult;
-    //     var reservationsList = resultEsReservations.Value as List<Reservation>;
-    //     Assert.That(reservationsList, Is.Empty);
-
-    //     int roomNum = 500;
-    //     ReservationDTO reservationDTO = new ReservationDTO
-    //     {
-    //         RoomNumber = roomNum,
-    //         GuestID = "1234512345123",
-    //         CheckInDate = new DateTime(2025, 9, 11),
-    //         CheckOutDate = new DateTime(2025, 9, 13),
-    //         ExtraServiceIDs = { esId }
-    //     };
-
-    //     //kreiraj rez proveri je l kreirana
-    //     var result = await _controllerReservation.UpdateReservation(reservationDTO);
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(result, Is.InstanceOf<OkObjectResult>());
-    //         var okResult = result as OkObjectResult;
-    //         Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation created successfully for room {roomNum}."));
-    //     });
-
-    //     //proveri je l je sad ima
-    //     var resultEsAfter = await _controllerExtraService.GetReservationsByExtraServiceId(esId);
-    //     var resultEsReservationsAfter = resultEsAfter as OkObjectResult;
-    //     var reservationsListAfter = resultEsReservationsAfter.Value as List<Reservation>;
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
-    //         //reservation with id 1 is removed and now it only has reservation with id 2
-    //         Assert.That(reservationsListAfter, Has.Some.Matches<Reservation>(r => r.GuestID == reservationDTO.GuestID &&
-    //                                                                               r.RoomNumber == reservationDTO.RoomNumber &&
-    //                                                                               r.CheckInDate == reservationDTO.CheckInDate &&
-    //                                                                               r.CheckOutDate == reservationDTO.CheckOutDate));
-    //     }); 
-    // }
-
-    // [Test]
-    // public async Task UpdateReservation_WithRoomService_AddsReservationToRoomServiceReservations()
-    // {
-    //     //int existingId = 1;
-    //     int rsId = 2;
-    //     var resultRs = await _controllerRoomService.GetReservationsByRoomServiceId(rsId);
-    //     var resultRsReservations = resultRs as OkObjectResult;
-    //     var reservationsList = resultRsReservations.Value as List<Reservation>;
-    //     Assert.That(reservationsList, Is.Empty);
-
-    //     int roomNum = 500;
-    //     ReservationDTO reservationDTO = new ReservationDTO
-    //     {
-    //         RoomNumber = roomNum,
-    //         GuestID = "1234512345123",
-    //         CheckInDate = new DateTime(2025, 9, 11),
-    //         CheckOutDate = new DateTime(2025, 9, 13),
-    //         RoomServiceIDs = { rsId }
-    //     };
-
-    //     //kreiraj rez proveri je l kreirana
-    //     var result = await _controllerReservation.UpdateReservation(reservationDTO);
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(result, Is.InstanceOf<OkObjectResult>());
-    //         var okResult = result as OkObjectResult;
-    //         Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation created successfully for room {roomNum}."));
-    //     });
-
-    //     //proveri je l je sad ima
-
-    //     var resultRsAfter = await _controllerRoomService.GetReservationsByRoomServiceId(rsId);
-    //     var resultRsReservationsAfter = resultRsAfter as OkObjectResult;
-    //     var reservationsListAfter = resultRsReservationsAfter.Value as List<Reservation>;
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
-    //         Assert.That(reservationsListAfter, Has.Some.Matches<Reservation>(r => r.GuestID == reservationDTO.GuestID &&
-    //                                                                               r.RoomNumber == reservationDTO.RoomNumber &&
-    //                                                                               r.CheckInDate == reservationDTO.CheckInDate &&
-    //                                                                               r.CheckOutDate == reservationDTO.CheckOutDate));
-    //     });
-    // }
-
-    // [Test]
-    // public async Task UpdateReservation_AddsReservationToRoomReservations()
-    // {        
-    //     int roomNum = 500;
-    //     var resultRoom = await _controllerRoom.GetRoom(roomNum);
-    //     var resultRoomOk = resultRoom as OkObjectResult;
-    //     var roomObject = resultRoomOk.Value as Room;
-    //     var reservationsList = roomObject.Reservations;
-
-    //     Assert.That(reservationsList, Is.Empty);
-
-    //     ReservationDTO reservationDTO = new ReservationDTO
-    //     {
-    //         RoomNumber = roomNum,
-    //         GuestID = "1234512345123",
-    //         CheckInDate = new DateTime(2025, 9, 11),
-    //         CheckOutDate = new DateTime(2025, 9, 13)
-    //     };
-
-    //     //kreiraj rez proveri je l kreirana
-    //     var result = await _controllerReservation.UpdateReservation(reservationDTO);
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(result, Is.InstanceOf<OkObjectResult>());
-    //         var okResult = result as OkObjectResult;
-    //         Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation created successfully for room {roomNum}."));
-    //     });
+        var result = await _controllerReservation.UpdateReservation(testResId, reservationDTO);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
+            Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation with ID {testResId} updated successfully."));
+        });
 
 
-    //     var resultRoomAfter = await _controllerRoom.GetRoom(roomNum);
-    //     var resultRoomOkAfter = resultRoomAfter as OkObjectResult;
-    //     var roomObjectAfter = resultRoomOkAfter.Value as Room;
-    //     var reservationsListAfter = roomObject.Reservations;
+        //PROVERA JE L IZB REZ IZ ES KOJ JE OBRISAN
+        var resultEsAfter = await _controllerExtraService.GetReservationsByExtraServiceId(1);
+        var resultEsReservationsAfter = resultEsAfter as OkObjectResult;
+        var reservationsListAfter = resultEsReservationsAfter.Value as List<Reservation>;
+        Assert.Multiple(() =>
+        {
+            //Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
+            //reservation with id 1 is removed and now it only has reservation with id 2
+            Assert.That(reservationsListAfter, Has.None.Matches<Reservation>(r => r.ReservationID == testResId));
+        });
+    }
 
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
-    //         //reservation with id 1 is removed and now it only has reservation with id 2
-    //         Assert.That(reservationsListAfter, Has.Some.Matches<Reservation>(r => r.GuestID == reservationDTO.GuestID &&
-    //                                                                               r.RoomNumber == reservationDTO.RoomNumber &&
-    //                                                                               r.CheckInDate == reservationDTO.CheckInDate &&
-    //                                                                               r.CheckOutDate == reservationDTO.CheckOutDate));
-    //     });
-    // }
+    [Test]
+    public async Task UpdateReservation_RemovingRoomService_RemovesReservationFromRoomServiceReservations()
+    {
+        int testResId = 1;
+        //uklanjamo rs 1 
+        //PROVERA JE L BILO U LISTI rS PRE TOGA
+        var resultRs = await _controllerRoomService.GetReservationsByRoomServiceId(1);
+        var resultRsReservations = resultRs as OkObjectResult;
+        var reservationsList = resultRsReservations.Value as List<Reservation>;
+        Assert.Multiple(() =>
+        {
+            //Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
+            //reservation with id 1 is removed and now it only has reservation with id 2
+            Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == testResId));
+        });
 
-    // [Test]
-    // public async Task UpdateReservation_AddsReservationToGuestReservations()
-    // {
-    //     string guestId = "1234567890123";
-
-    //     var resultGuest = await _controllerGuest.GetGuestByJMBG(guestId);
-    //     var resultGuestOk = resultGuest as OkObjectResult;
-    //     var guestObject = resultGuestOk.Value as Guest;
-    //     var reservationsList = guestObject.Reservations;
-
-    //     Assert.That(reservationsList, Is.Empty);
-    //     int roomNum = 500;
-
-    //     ReservationDTO reservationDTO = new ReservationDTO
-    //     {
-    //         RoomNumber = roomNum,
-    //         GuestID = guestId,
-    //         CheckInDate = new DateTime(2025, 9, 11),
-    //         CheckOutDate = new DateTime(2025, 9, 13)
-    //     };
-
-    //     //kreiraj rez proveri je l kreirana
-    //     var result = await _controllerReservation.UpdateReservation(reservationDTO);
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(result, Is.InstanceOf<OkObjectResult>());
-    //         var okResult = result as OkObjectResult;
-    //         Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation created successfully for room {roomNum}."));
-    //     });
+        ReservationDTO reservationDTO = new ReservationDTO
+        { //rez 1
+            RoomNumber = 699,
+            GuestID = "1234512345123",
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+        };
 
 
-    //     var resultGuestAfter = await _controllerGuest.GetGuestByJMBG(guestId);
-    //     var resultGuestOkAfter = resultGuestAfter as OkObjectResult;
-    //     var guestObjectAfter = resultGuestOkAfter.Value as Guest;
-    //     var reservationsListAfter = guestObjectAfter.Reservations;
+        var result = await _controllerReservation.UpdateReservation(testResId, reservationDTO);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
+            Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation with ID {testResId} updated successfully."));
+        });
 
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(reservationsList.Count, Is.EqualTo(1));
-    //         Assert.That(reservationsListAfter, Has.Some.Matches<Reservation>(r => r.GuestID == reservationDTO.GuestID &&
-    //                                                                               r.RoomNumber == reservationDTO.RoomNumber &&
-    //                                                                               r.CheckInDate == reservationDTO.CheckInDate &&
-    //                                                                               r.CheckOutDate == reservationDTO.CheckOutDate));
-    //     });
-    // }
+
+        //PROVERA JE L IZB REZ IZ rS KOJ JE OBRISAN
+        var resultRsAfter = await _controllerRoomService.GetReservationsByRoomServiceId(1);
+        var resultRsReservationsAfter = resultRsAfter as OkObjectResult;
+        var reservationsListAfter = resultRsReservationsAfter.Value as List<Reservation>;
+        Assert.Multiple(() =>
+        {
+            //Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
+            //reservation with id 1 is removed and now it only has reservation with id 2
+            Assert.That(reservationsListAfter, Has.None.Matches<Reservation>(r => r.ReservationID == testResId));
+        });
+    }
+
+
+    //da li je potrebna jedna provera kad je lista prazna jedna kad vec ima neki rs
+    //ova ce da bude za kad vec postoji neki es u listi
+    [Test]
+    public async Task UpdateReservation_AddingExtraService_AddsExtraServiceToListAndTotalPrice()
+    {
+        //vex ima es od 20 dodajemo od 25 dva dana 
+
+        //provera da je u listi 1 es pre nego sto dodam
+        int testResId = 2;
+
+        var resultGet = await _controllerReservation.GetReservationById(testResId);
+        var okResultGet = resultGet as OkObjectResult;
+        var existingReservation = okResultGet.Value as Reservation;
+        var extraServicesList = existingReservation.ExtraServices;
+        var totalPrice = existingReservation.TotalPrice;//120 soba x2 240 i es 20 x2 40 valjda 280
+        decimal expectedTotal = 280m;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(totalPrice, Is.EqualTo(expectedTotal));
+            Assert.That(extraServicesList.Count, Is.EqualTo(1));
+            Assert.That(extraServicesList, Has.Some.Matches<ExtraService>(es => es.ExtraServiceID == 1));
+        });
+
+        ReservationDTO reservationDTO = new ReservationDTO
+        { //ostali param su isti samo dodajemo rs u praznu listu
+            //ReservationID = 2, //da znam koju menjam
+            RoomNumber = 123,
+            GuestID = "1234512345123",
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+            ExtraServiceIDs = { 1, 2 }//20 i 25
+        };
+
+        var result = await _controllerReservation.UpdateReservation(testResId, reservationDTO);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
+            Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation with ID {testResId} updated successfully."));
+        });
+
+        //posto es ne postoji u rez koja se salje u update on se izbacuje taman provera da li i to radi 
+        //tkd 240 soba i 10 za rs 250
+
+        //provera je l dodata u listu i uracunata u cenu 
+        var resultGetAfter = await _controllerReservation.GetReservationById(testResId);
+        var okResultGetAfter = resultGetAfter as OkObjectResult;
+        var existingReservationAfter = okResultGetAfter.Value as Reservation;
+        var extraServicesListAfter = existingReservationAfter.ExtraServices;
+        var totalPriceAfter = existingReservationAfter.TotalPrice;//120 soba x2 240 i es 20 x2 40 i es 25 x2 50 valjda 330
+        decimal expectedTotalAfter = 330m;
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(totalPriceAfter, Is.EqualTo(expectedTotalAfter));
+            Assert.That(extraServicesListAfter.Count, Is.EqualTo(2));
+            Assert.That(extraServicesListAfter, Has.Some.Matches<ExtraService>(r => r.ExtraServiceID == 1));
+            Assert.That(extraServicesListAfter, Has.Some.Matches<ExtraService>(r => r.ExtraServiceID == 2));
+        });
+
+        //jedina rezervacija za ovu sobu 
+
+    }
+
+    [Test]//prvo proveri da li nema tu rez pa dodaj pa proveri je l ima
+    public async Task UpdateReservation_WithExtraService_AddsReservationToExtraServiceReservations()
+    {
+        int testResId = 2;
+        int esId = 2;
+        var resultEs = await _controllerExtraService.GetReservationsByExtraServiceId(esId);
+        var resultEsReservations = resultEs as OkObjectResult;
+        var reservationsList = resultEsReservations.Value as List<Reservation>;
+        Assert.That(reservationsList, Is.Empty);
+
+        ReservationDTO reservationDTO = new ReservationDTO
+        {
+            //ReservationID = 2, //da znam koju menjam
+            RoomNumber = 123,
+            GuestID = "1234512345123",
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+            ExtraServiceIDs = { esId }
+        };
+
+        var result = await _controllerReservation.UpdateReservation(testResId, reservationDTO);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
+            Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation with ID {testResId} updated successfully."));
+        });
+
+        //provera je l dodata u listu
+        var resultEsAfter = await _controllerExtraService.GetReservationsByExtraServiceId(esId);
+        var resultEsReservationsAfter = resultEsAfter as OkObjectResult;
+        var reservationsListAfter = resultEsReservationsAfter.Value as List<Reservation>;
+        Assert.Multiple(() =>
+        {
+            Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
+            //reservation with id 1 is removed and now it only has reservation with id 2
+            Assert.That(reservationsListAfter, Has.Some.Matches<Reservation>(r => r.GuestID == reservationDTO.GuestID &&
+                                                                                  r.RoomNumber == reservationDTO.RoomNumber &&
+                                                                                  r.CheckInDate == reservationDTO.CheckInDate &&
+                                                                                  r.CheckOutDate == reservationDTO.CheckOutDate));
+        });
+
+        
+
+
+    }
+
+    [Test]
+    public async Task UpdateReservation_WithRoomService_AddsReservationToRoomServiceReservations()
+    {
+        //int existingId = 1;
+        int testResId = 2;
+        int rsId = 2;
+        var resultRs = await _controllerRoomService.GetReservationsByRoomServiceId(rsId);
+        var resultRsReservations = resultRs as OkObjectResult;
+        var reservationsList = resultRsReservations.Value as List<Reservation>;
+        Assert.That(reservationsList, Is.Empty);
+
+        ReservationDTO reservationDTO = new ReservationDTO
+        {
+            //ReservationID = 2, //da znam koju menjam
+            RoomNumber = 123,
+            GuestID = "1234512345123",
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+            RoomServiceIDs = { rsId }
+        };
+
+        var result = await _controllerReservation.UpdateReservation(testResId, reservationDTO);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
+            Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation with ID {testResId} updated successfully."));
+        });
+
+        //proveri je l je sad ima
+
+        var resultRsAfter = await _controllerRoomService.GetReservationsByRoomServiceId(rsId);
+        var resultRsReservationsAfter = resultRsAfter as OkObjectResult;
+        var reservationsListAfter = resultRsReservationsAfter.Value as List<Reservation>;
+        Assert.Multiple(() =>
+        {
+            Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
+            Assert.That(reservationsListAfter, Has.Some.Matches<Reservation>(r => r.GuestID == reservationDTO.GuestID &&
+                                                                                  r.RoomNumber == reservationDTO.RoomNumber &&
+                                                                                  r.CheckInDate == reservationDTO.CheckInDate &&
+                                                                                  r.CheckOutDate == reservationDTO.CheckOutDate));
+        });
+    }
+
+    [Test]//menjamo rez 2 soba 123 u sobu 500
+    public async Task UpdateReservation_AddsReservationToNewRoomReservationsAndRemovesFromPrevious()
+    {
+        int resId = 2;
+        int newRoomNum = 500;
+        int currentRoomNum = 123;
+
+        //provera da je u listi trenutne sobe 
+        var resultRoom = await _controllerRoom.GetRoom(currentRoomNum);
+        var resultRoomOk = resultRoom as OkObjectResult;
+        var roomObject = resultRoomOk.Value as Room;
+        var reservationsList = roomObject.Reservations;
+
+        Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == resId));
+        // Assert.Multiple(() =>
+        // {
+        //     Assert.That(reservationsList.Count, Is.EqualTo(1));
+
+        // });
+
+        //provera da nije u listi buduce sobe
+        var resultRoom2 = await _controllerRoom.GetRoom(newRoomNum);
+        var resultRoomOk2 = resultRoom2 as OkObjectResult;
+        var roomObject2 = resultRoomOk2.Value as Room;
+        var reservationsList2 = roomObject2.Reservations;
+
+
+        Assert.That(reservationsList2, Has.None.Matches<Reservation>(r => r.ReservationID == resId));
+        // Assert.Multiple(() =>
+        // {
+        //     Assert.That(reservationsList2.Count, Is.Empty);
+        // });
+
+        ReservationDTO reservation2 = new ReservationDTO
+        {
+            //ReservationID = 2,
+            RoomNumber = newRoomNum,
+            GuestID = "1234512345123",
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+            ExtraServiceIDs = { 1 }
+        };
+
+
+        var result = await _controllerReservation.UpdateReservation(resId, reservation2);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
+            Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation with ID {resId} updated successfully."));
+        });
+
+        //provera da je nema vise u staroj sobi
+        var resultRoomAfter = await _controllerRoom.GetRoom(currentRoomNum);
+        var resultRoomOkAfter = resultRoomAfter as OkObjectResult;
+        var roomObjectAfter = resultRoomOkAfter.Value as Room;
+        var reservationsListAfter = roomObject.Reservations;
+
+        Assert.That(reservationsListAfter, Has.None.Matches<Reservation>(r => r.ReservationID == resId));
+        // Assert.Multiple(() =>
+        // {
+        //     Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
+        //     //reservation with id 1 is removed and now it only has reservation with id 2
+
+        // });
+
+        //provera da je ima u novoj
+        var resultRoomAfter2 = await _controllerRoom.GetRoom(newRoomNum);
+        var resultRoomOkAfter2 = resultRoomAfter2 as OkObjectResult;
+        var roomObjectAfter2 = resultRoomOkAfter2.Value as Room;
+        var reservationsListAfter2 = roomObject2.Reservations;
+
+        Assert.That(reservationsListAfter2, Has.Some.Matches<Reservation>(r => r.ReservationID == resId));
+    }
+
+    [Test]//menjamo rez 2 "1234512345123" -> "1234567890123" bila anita bice mila
+    public async Task UpdateReservation_AddsReservationToNewGuestReservationsAndRemovesFromPrevious()
+    {
+        int resId = 2;
+        string currentGuestId = "1234512345123";
+        string newGuestId = "1234567890123";
+
+        //provera da je u listi trenutnog gosta
+        var resultGuest = await _controllerGuest.GetGuestByJMBG(currentGuestId);
+        var resultGuestOk = resultGuest as OkObjectResult;
+        var guestObject = resultGuestOk.Value as Guest;
+        var reservationsList = guestObject.Reservations;
+
+        Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == resId));
+
+        //provera da nije u listi buduceg 
+        var resultGuest2 = await _controllerGuest.GetGuestByJMBG(newGuestId);
+        var resultGuestOk2 = resultGuest2 as OkObjectResult;
+        var guestObject2 = resultGuestOk2.Value as Guest;
+        var reservationsList2 = guestObject2.Reservations;
+
+        Assert.That(reservationsList2, Has.None.Matches<Reservation>(r => r.ReservationID == resId));
+
+        //update
+        ReservationDTO reservation2 = new ReservationDTO
+        {
+            //ReservationID = 2,
+            RoomNumber = 123,
+            GuestID = newGuestId,
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+            ExtraServiceIDs = { 1 }
+        };
+
+
+        var result = await _controllerReservation.UpdateReservation(resId, reservation2);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
+            Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation with ID {resId} updated successfully."));
+        });
+
+        //provera da vise nije kod starog gosta
+
+        var resultGuestAfter = await _controllerGuest.GetGuestByJMBG(currentGuestId);
+        var resultGuestOkAfter = resultGuestAfter as OkObjectResult;
+        var guestObjectAfter = resultGuestOkAfter.Value as Guest;
+        var reservationsListAfter = guestObjectAfter.Reservations;
+
+        Assert.That(reservationsListAfter, Has.None.Matches<Reservation>(r => r.ReservationID == resId));
+
+        //provera da je kod novog gosta
+
+        var resultGuestAfter2 = await _controllerGuest.GetGuestByJMBG(newGuestId);
+        var resultGuestOkAfter2 = resultGuestAfter2 as OkObjectResult;
+        var guestObjectAfter2 = resultGuestOkAfter2.Value as Guest;
+        var reservationsListAfter2 = guestObjectAfter2.Reservations;
+
+        Assert.That(reservationsListAfter2, Has.Some.Matches<Reservation>(r => r.ReservationID == resId));
+
+    }
 
     [Test]
     public async Task UpdateReservation_WithNonExistingReservationId_ReturnsNotFound()
     {
-        
+        int nonExistingResId = 123;
+        //update
+        ReservationDTO reservation2 = new ReservationDTO
+        {
+            //ReservationID = 2,
+            RoomNumber = 123,
+            GuestID = "1234512345123",
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+            ExtraServiceIDs = { 1 }
+        };
+
+
+        var result = await _controllerReservation.UpdateReservation(nonExistingResId, reservation2);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
+            var notFoundResult = result as NotFoundObjectResult;
+            Assert.That(notFoundResult, Has.Property("Value").EqualTo($"Reservation with ID {nonExistingResId} not found."));
+        });
     }
 
     [TearDown]
