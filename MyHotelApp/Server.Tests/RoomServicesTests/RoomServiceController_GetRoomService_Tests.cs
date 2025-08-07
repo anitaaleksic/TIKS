@@ -134,6 +134,57 @@ public class RoomServiceController_GetRoomService_Tests
         Assert.That(service, Has.Property("Description").EqualTo(expectedDescription));
     }
 
+    [Test]
+    public async Task GetRoomService_HasReservations_ReturnsRoomServiceWithReservations()
+    {
+        var roomService = new RoomService
+        {
+            RoomServiceID = 1,
+            ItemName = "Breakfast",
+            ItemPrice = 10.0m,
+            Description = "Morning breakfast"
+        };
+
+        var guest = new Guest
+        {
+            JMBG = "1112223334445",
+            FullName = "Test Guest",
+            PhoneNumber = "+381601234567"
+        };
+
+        var room = new Room
+        {
+            RoomNumber = 101,
+            RoomTypeID = 1,
+            Floor = 1
+        };
+
+        var reservation = new Reservation
+        {
+            ReservationID = 1,
+            RoomNumber = 101,
+            GuestID = guest.JMBG,
+            CheckInDate = new DateTime(2025, 10, 1),
+            CheckOutDate = new DateTime(2025, 10, 3),
+            TotalPrice = 100m,
+            RoomServices = new List<RoomService> { roomService } // povezivanje m:n
+        };
+
+        _context.Guests.Add(guest);
+        _context.Rooms.Add(room);
+        _context.RoomServices.Add(roomService);
+        _context.Reservations.Add(reservation);
+        _context.SaveChanges();
+
+        var result = await _controllerRoomService.GetRoomServiceById(1);
+        var okResult = result as OkObjectResult;
+        var rs = okResult?.Value as RoomService;
+
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(rs, Is.Not.Null);
+        Assert.That(rs!.AddedToReservations, Is.Not.Null);
+        Assert.That(rs.AddedToReservations.Count, Is.EqualTo(1));
+    }
 
     [TearDown]
     public void TearDown()
