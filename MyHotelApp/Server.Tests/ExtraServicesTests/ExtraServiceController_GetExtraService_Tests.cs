@@ -133,6 +133,59 @@ public class ExtraServiceController_GetExtraService_Tests
         Assert.That(service, Has.Property("Description").EqualTo(expectedDescription));
     }
 
+    [Test]
+    public async Task GetExtraService_HasReservations_ReturnsExtraServiceWithReservations()
+    {
+        
+        var extraService = new ExtraService
+        {
+            ExtraServiceID = 1,
+            ServiceName = "Spa Access",
+            Price = 30.0m,
+            Description = "Daily spa usage"
+        };
+
+        var guest = new Guest
+        {
+            JMBG = "9998887776665",
+            FullName = "Spa Guest",
+            PhoneNumber = "+381601112233"
+        };
+
+        var room = new Room
+        {
+            RoomNumber = 303,
+            RoomTypeID = 2,
+            Floor = 3
+        };
+
+        var reservation = new Reservation
+        {
+            ReservationID = 1,
+            RoomNumber = 303,
+            GuestID = guest.JMBG,
+            CheckInDate = new DateTime(2025, 11, 1),
+            CheckOutDate = new DateTime(2025, 11, 5),
+            TotalPrice = 500m,
+            ExtraServices = new List<ExtraService> { extraService } // povezivanje m:n
+        };
+
+        _context.Guests.Add(guest);
+        _context.Rooms.Add(room);
+        _context.ExtraServices.Add(extraService);
+        _context.Reservations.Add(reservation);
+        _context.SaveChanges();
+
+        
+        var result = await _controllerExtraService.GetExtraServiceById(1);
+        var okResult = result as OkObjectResult;
+        var es = okResult?.Value as ExtraService;
+
+        Assert.That(okResult, Is.Not.Null);
+        Assert.That(es, Is.Not.Null);
+        Assert.That(es!.AddedToReservations, Is.Not.Null);
+        Assert.That(es.AddedToReservations.Count, Is.EqualTo(1));
+    }
     [TearDown]
     public void TearDown()
     {
