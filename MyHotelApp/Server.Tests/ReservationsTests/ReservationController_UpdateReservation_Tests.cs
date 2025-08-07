@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.Identity.Client;
+using System.Threading.Tasks;
 
 namespace ReservationTests;
 
@@ -19,13 +20,12 @@ public class ReservationController_UpdateReservation_Tests
     private static ExtraServiceController _controllerExtraService;
     private static RoomController _controllerRoom;
     private static GuestController _controllerGuest;
-    private Reservation _reservation;
     //private Room _room;
     private RoomService _roomService;
     private ExtraService _extraService;
 
     [SetUp]
-    public void SetUp()
+    public async Task SetUp()
     {
         var options = new DbContextOptionsBuilder<HotelContext>()
                     .UseInMemoryDatabase(databaseName: "HotelTestDb")
@@ -82,7 +82,7 @@ public class ReservationController_UpdateReservation_Tests
 
         _context.Rooms.Add(room1);
         _context.SaveChanges();
-        
+
         Room room2 = new Room
         {
             RoomNumber = 500,
@@ -138,29 +138,39 @@ public class ReservationController_UpdateReservation_Tests
 
         _context.SaveChanges();
 
-        _reservation = new Reservation
+        ReservationDTO reservation = new ReservationDTO
         {
             ReservationID = 1,
             RoomNumber = 699,
             GuestID = "1234512345123",
             CheckInDate = new DateTime(2025, 9, 1),
             CheckOutDate = new DateTime(2025, 9, 3),
-            RoomServices = { _roomService }            
+            RoomServiceIDs = { 1 }
         };
-        _context.Reservations.Add(_reservation);
-        _context.SaveChanges();
+        await _controllerReservation.CreateReservation(reservation);
 
-        _context.Reservations.Add(new Reservation
+        ReservationDTO reservation2 = new ReservationDTO
         {
             ReservationID = 2,
             RoomNumber = 123,
             GuestID = "1234512345123",
             CheckInDate = new DateTime(2025, 9, 1),
             CheckOutDate = new DateTime(2025, 9, 3),
-            ExtraServices = { _extraService }
-        });
+            ExtraServiceIDs = { 1 }
+        };
+        await _controllerReservation.CreateReservation(reservation2);
+        //za overlaping dates 
+        ReservationDTO reservation3 = new ReservationDTO
+        {
+            ReservationID = 3,
+            RoomNumber = 699,
+            GuestID = "1234512345123",
+            CheckInDate = new DateTime(2025, 9, 5),
+            CheckOutDate = new DateTime(2025, 9, 7),
+            RoomServiceIDs = { 1 }
+        };
+        await _controllerReservation.CreateReservation(reservation3);
 
-        _context.SaveChanges();
 
     }
 
@@ -352,9 +362,10 @@ public class ReservationController_UpdateReservation_Tests
         {
             RoomNumber = 699,
             GuestID = "1234512345123",
-            CheckInDate = new DateTime(2025, 9, 2),
-            CheckOutDate = new DateTime(2025, 9, 4)
+            CheckInDate = new DateTime(2025, 9, 6),
+            CheckOutDate = new DateTime(2025, 9, 8)
         };
+        //imam jednu rez za tu sobu od 5. do 7.
 
         var result = await _controllerReservation.UpdateReservation(1, reservationDTO);
         Assert.Multiple(() =>
@@ -372,9 +383,10 @@ public class ReservationController_UpdateReservation_Tests
         {
             RoomNumber = 699,
             GuestID = "1234512345123",
-            CheckInDate = new DateTime(2025, 9, 3),
-            CheckOutDate = new DateTime(2025, 9, 4)
+            CheckInDate = new DateTime(2025, 9, 7),
+            CheckOutDate = new DateTime(2025, 9, 9)
         };
+        //imam jednu rez za tu sobu od 5. do 7.
 
         var result = await _controllerReservation.UpdateReservation(1, reservationDTO);
         Assert.Multiple(() =>
@@ -387,63 +399,64 @@ public class ReservationController_UpdateReservation_Tests
 
     //TREBA DA PROVERIM JE L DODAJE RS I ES U LISTE I DODA IH U PRICE
 
+    [Test]//jedna provera kad je lista prazna jedna kad vec ima neki rs
+    public async Task UpdateReservation_AddingRoomService_AddsRoomServiceToListAndTotalPrice()
+    {
+        //provera da je lista prazna pre nego sto dodam
+        int testResId = 2;
 
-//TREBALO BI DA VALJA ALI NE POKUPLJA CENU NA POCETKU NE KONTAM
-    // [Test]//jedna provera kad je lista prazna jedna kad vec ima neki rs
-    // public async Task UpdateReservation_AddingRoomService_AddsRoomServiceToListAndTotalPrice()
-    // {
-    //     //provera da je lista prazna pre nego sto dodam
-    //     int testResId = 2;
+        var resultGet = await _controllerReservation.GetReservationById(testResId);
+        var okResultGet = resultGet as OkObjectResult;
+        var existingReservation = okResultGet.Value as Reservation;
+        var roomServicesList = existingReservation.RoomServices;
+        var totalPrice = existingReservation.TotalPrice;//120 soba x2 240 i es 20 x2 40 valjda 280
+        decimal expectedTotal = 280m;
 
-    //     var resultGet = await _controllerReservation.GetReservationById(testResId);
-    //     var okResultGet = resultGet as OkObjectResult;
-    //     var existingReservation = okResultGet.Value as Reservation;
-    //     var roomServicesList = existingReservation.RoomServices;
-    //     var totalPrice = existingReservation.TotalPrice;//120 soba x2 240 i es 20 x2 40 valjda 280
-    //     decimal expectedTotal = 280m;
+        Assert.Multiple(() =>
+        {
+            Assert.That(totalPrice, Is.EqualTo(expectedTotal));
+            Assert.That(roomServicesList, Is.Empty);
+        });
 
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(totalPrice, Is.EqualTo(expectedTotal));
-    //         Assert.That(roomServicesList, Is.Empty);
-    //     });
+        ReservationDTO reservationDTO = new ReservationDTO
+        { //ostali param su isti samo dodajemo rs u praznu listu
+            //ReservationID = 2, //da znam koju menjam
+            RoomNumber = 123,
+            GuestID = "1234512345123",
+            CheckInDate = new DateTime(2025, 9, 1),
+            CheckOutDate = new DateTime(2025, 9, 3),
+            RoomServiceIDs = { 1 }//kosta 10
+        };
 
-    //     ReservationDTO reservationDTO = new ReservationDTO
-    //     { //ostali param su isti samo dodajemo rs u praznu listu
-    //         //ReservationID = 2, //da znam koju menjam
-    //         RoomNumber = 123,
-    //         GuestID = "1234512345123",
-    //         CheckInDate = new DateTime(2025, 9, 1),
-    //         CheckOutDate = new DateTime(2025, 9, 3),
-    //         RoomServiceIDs = { 1 }//kosta 10
-    //     };
+        var result = await _controllerReservation.UpdateReservation(testResId, reservationDTO);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result, Is.InstanceOf<OkObjectResult>());
+            var okResult = result as OkObjectResult;
+            Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation with ID {testResId} updated successfully."));
+        });
 
-    //     var result = await _controllerReservation.UpdateReservation(testResId, reservationDTO);
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(result, Is.InstanceOf<OkObjectResult>());
-    //         var okResult = result as OkObjectResult;
-    //         Assert.That(okResult, Has.Property("Value").EqualTo($"Reservation with ID {testResId} updated successfully."));
-    //     });
+        //posto es ne postoji u rez koja se salje u update on se izbacuje taman provera da li i to radi 
+        //tkd 240 soba i 10 za rs 250
 
-    //     //provera je l dodata u listu i uracunata u cenu 
-    //     var resultGetAfter = await _controllerReservation.GetReservationById(testResId);
-    //     var okResultGetAfter = resultGetAfter as OkObjectResult;
-    //     var existingReservationAfter = okResultGetAfter.Value as Reservation;
-    //     var roomServicesListAfter = existingReservationAfter.RoomServices;
-    //     var totalPriceAfter = existingReservationAfter.TotalPrice;//120 soba x2 240 i es 20 x2 40 valjda 280
-    //     decimal expectedTotalAfter = 290m;
+        //provera je l dodata u listu i uracunata u cenu 
+        var resultGetAfter = await _controllerReservation.GetReservationById(testResId);
+        var okResultGetAfter = resultGetAfter as OkObjectResult;
+        var existingReservationAfter = okResultGetAfter.Value as Reservation;
+        var roomServicesListAfter = existingReservationAfter.RoomServices;
+        var totalPriceAfter = existingReservationAfter.TotalPrice;//120 soba x2 240 i es 20 x2 40 valjda 280
+        decimal expectedTotalAfter = 250m;
 
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(totalPrice, Is.EqualTo(expectedTotalAfter));
-    //         Assert.That(roomServicesList.Count, Is.EqualTo(1));
-    //         Assert.That(roomServicesListAfter, Has.Some.Matches<RoomService>(r => r.RoomServiceID == 1));
-    //     });
+        Assert.Multiple(() =>
+        {
+            Assert.That(totalPriceAfter, Is.EqualTo(expectedTotalAfter));
+            Assert.That(roomServicesListAfter.Count, Is.EqualTo(1));
+            Assert.That(roomServicesListAfter, Has.Some.Matches<RoomService>(r => r.RoomServiceID == 1));
+        });
 
-    //     //jedina rezervacija za ovu sobu 
+        //jedina rezervacija za ovu sobu 
 
-    // }
+    }
 
     // [Test]
     // public async Task UpdateReservation_WithExtraService_AddsExtraServiceToTotalPrice()

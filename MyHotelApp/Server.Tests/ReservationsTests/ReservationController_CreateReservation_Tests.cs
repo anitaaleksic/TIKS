@@ -19,7 +19,7 @@ public class ReservationController_CreateReservation_Tests
     private static ExtraServiceController _controllerExtraService;
     private static RoomController _controllerRoom;
     private static GuestController _controllerGuest;
-    private Reservation _reservation;
+    //private Reservation _reservation;
     //private Room _room;
     private RoomService _roomService;
     private ExtraService _extraService;
@@ -138,7 +138,7 @@ public class ReservationController_CreateReservation_Tests
 
         _context.SaveChanges();
 
-        _reservation = new Reservation
+        Reservation reservation = new Reservation
         {
             ReservationID = 1,
             RoomNumber = 699,
@@ -146,7 +146,7 @@ public class ReservationController_CreateReservation_Tests
             CheckInDate = new DateTime(2025, 9, 1),
             CheckOutDate = new DateTime(2025, 9, 3)
         };
-        _context.Reservations.Add(_reservation);
+        _context.Reservations.Add(reservation);
         _context.SaveChanges();
 
         // _context.Reservations.Add(new Reservation

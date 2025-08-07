@@ -284,7 +284,7 @@ public class ReservationController : ControllerBase
                                           r.CheckInDate < reservation.CheckOutDate &&
                                           r.CheckOutDate > reservation.CheckInDate);
 
-            if (overlapingReservation != null)
+            if (overlapingReservation != null && overlapingReservation.ReservationID != id)//da nije ta ista koju sam poslala
             {
                 return BadRequest("The room is already reserved for the selected dates.");
             }
