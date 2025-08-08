@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import '../css/Reservation.css';
+import '../../css/Reservation.css'
 import axios from 'axios';
 
-export default function Reservation() {
+export default function AddReservation() {
   
   const [showRoomServices, setShowRoomServices] = useState(false);
   const [showExtraServices, setShowExtraServices] = useState(false);

@@ -1,8 +1,8 @@
-import '../css/Price.css';
+import '../../css/Price.css'
 import { useState } from 'react';
 import axios from 'axios';
 
-export default function ExtraService() {
+export default function AddExtraService() {
   const [formData, setFormData] = useState({
     serviceName: '',
     price: '',
@@ -32,7 +32,6 @@ export default function ExtraService() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Provera pre slanja (frontend validacija)
     if (!formData.serviceName || formData.serviceName.length > 100) {
       setErrorMessages(['Service name is required and cannot exceed 100 characters.']);
       return;

@@ -1,7 +1,7 @@
 import { useState, useEffect} from 'react';
 import axios from 'axios';
 
-export default function Room() {
+export default function AddRoom() {
   const [formData, setFormData] = useState({
     roomNumber: '',
     roomTypeID: 0,

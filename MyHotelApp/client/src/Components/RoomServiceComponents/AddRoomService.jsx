@@ -1,8 +1,8 @@
-import '../css/Price.css';
+import '../../css/Price.css'
 import { useState } from 'react';
 import axios from 'axios';
 
-export default function RoomService() {
+export default function AddRoomService() {
   const [formData, setFormData] = useState({
     itemName: '',
     itemPrice: '',

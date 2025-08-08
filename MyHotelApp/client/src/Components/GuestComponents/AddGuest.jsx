@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 
-export default function Guest() {
+export default function AddGuest() {
   const [formData, setFormData] = useState({
     fullName: '',
     jmbg: '',
@@ -40,10 +40,6 @@ export default function Guest() {
       return;
     }
 
-    if(!formData.phoneNumber || formData.phoneNumber.length > 13 || formData.phoneNumber.length < 12) {
-      setErrorMessages(['Phone number is required and must be between 12 and 13 characters long.']);
-      return;
-    }
 
     axios.post('/api/Guest/CreateGuest', formData)
       .then(() => {
