@@ -158,12 +158,17 @@ public class GuestController : ControllerBase
     {
         try
         {
-            var guest = await _context.Guests.FirstOrDefaultAsync(g => g.JMBG == jmbg);
+            var guest = await _context.Guests.Include(g => g.Reservations).FirstOrDefaultAsync(g => g.JMBG == jmbg);
             if (guest == null)
             {
                 return NotFound($"Guest with JMBG {jmbg} not found.");
             }
+            if (guest.Reservations != null && guest.Reservations.Any())
+            {
+                return BadRequest("You cannot delete this guest because they have existing reservations. Please delete the reservations first.");
+            }
 
+            _context.Reservations.RemoveRange(guest.Reservations);
             _context.Guests.Remove(guest);
             await _context.SaveChangesAsync();
             return Ok($"Guest with JMBG {jmbg} deleted successfully.");

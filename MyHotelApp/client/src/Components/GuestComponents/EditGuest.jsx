@@ -5,6 +5,7 @@ import axios from 'axios';
 export default function EditGuest() {
   const { jmbg } = useParams();
   const navigate = useNavigate();
+  //const [refresh, setRefresh] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -33,7 +34,28 @@ export default function EditGuest() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleDelete = async (jmbg) => {
+    if (!window.confirm(`Are you sure you want to delete guest ${jmbg}?`)) return;
+    try {
+      console.log("Deleting JMBG:", jmbg, "Type:", typeof jmbg);
+
+      await axios.delete(`/api/Guest/DeleteGuest/${jmbg}`);
+      //setRefresh(prev => !prev); // Trigger re-fetch
+      alert('Guest deleted successfully!');
+      navigate("/guest");
+    } catch (err) {
+      // If backend sends a response with a message, show it
+      if (err.response && err.response.data) {
+        alert(err.response.data);
+      } else {
+        alert("Delete failed due to an unexpected error.");
+      }
+      console.error("Delete failed:", err);
+    }
+
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validacija
@@ -55,13 +77,13 @@ export default function EditGuest() {
       return;
     }
 
-    axios.put(`/api/Guest/UpdateGuest/${jmbg}`, formData)
-      .then(() => {
-        alert('Guest updated successfully!');
-        navigate('/guest');
-      })
-      .catch(err => {
-        console.error('Error:', err.response || err);
+    try{
+      await axios.put(`/api/Guest/UpdateGuest/${jmbg}`, formData)
+      alert('Guest updated successfully!');
+      navigate('/guest');
+    }
+    catch(err) {
+      console.error('Error:', err.response || err);
         if (err.response?.data?.errors) {
           const messages = [];
           for (const field in err.response.data.errors) {
@@ -71,7 +93,7 @@ export default function EditGuest() {
         } else {
           setErrorMessages([err.response?.data?.message || err.message]);
         }
-      });
+    }
   };
 
   return (
@@ -113,6 +135,15 @@ export default function EditGuest() {
       </div>
 
       <button type="submit" className="form-button">Update Guest</button>
+      <button 
+        type="button" 
+        className="form-button delete" 
+        onClick={(e) => {
+          e.preventDefault(); 
+          handleDelete(jmbg);
+        }}>
+          Delete Guest
+        </button>
 
       {errorMessages.length > 0 && (
         <div className="error-messages" style={{ color: 'red', marginTop: '1rem' }}>

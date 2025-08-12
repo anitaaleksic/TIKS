@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddGuest() {
   const [formData, setFormData] = useState({
@@ -9,6 +10,7 @@ export default function AddGuest() {
   });
 
   const [errorMessages, setErrorMessages] = useState([]);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData(prev => ({
@@ -46,6 +48,7 @@ export default function AddGuest() {
         alert('Guest added successfully!');
         setFormData({ fullName: '', jmbg: '', phoneNumber: ''});
         setErrorMessages([]);
+        navigate("/guest");
       })
       .catch(err => {
         console.error('Error:', err.response || err);

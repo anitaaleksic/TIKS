@@ -27,10 +27,14 @@ export default function Room() {
     try {
       await axios.delete(`/api/Room/DeleteRoom/${roomNumber}`);
       setRefresh(prev => !prev); // Trigger re-fetch
-    } catch (err) {
-      console.error("Delete failed:", err);
-      alert("Delete failed");
-    }
+    } catch (err) {      
+        if (err.response && err.response.data) {
+          alert(err.response.data);
+        } else {
+          alert("Delete failed due to an unexpected error.");
+        }
+        console.error("Delete failed:", err);
+      }
   };
 
   return (
