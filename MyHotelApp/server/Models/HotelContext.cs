@@ -40,20 +40,34 @@ public class HotelContext : DbContext
 
 
         modelBuilder.Entity<Reservation>()
-            .HasMany(r => r.RoomServices)
-            .WithMany(rs => rs.AddedToReservations)
-            .UsingEntity<Dictionary<string, object>>(
-                "ReservationRoomService",  // join table name
-                j => j.HasOne<RoomService>().WithMany().HasForeignKey("RoomServiceID"),
-                j => j.HasOne<Reservation>().WithMany().HasForeignKey("ReservationID"));
+    .HasMany(r => r.RoomServices)
+    .WithMany(rs => rs.AddedToReservations)
+    .UsingEntity<Dictionary<string, object>>(
+        "ReservationRoomService",
+        j => j.HasOne<RoomService>()
+              .WithMany()
+              .HasForeignKey("RoomServiceID")
+              .OnDelete(DeleteBehavior.Cascade),
+        j => j.HasOne<Reservation>()
+              .WithMany()
+              .HasForeignKey("ReservationID")
+              .OnDelete(DeleteBehavior.Cascade))
+    .HasKey("ReservationID", "RoomServiceID");
 
         modelBuilder.Entity<Reservation>()
-            .HasMany(r => r.ExtraServices)
-            .WithMany(es => es.AddedToReservations)
-            .UsingEntity<Dictionary<string, object>>(
-                "ExtraServiceReservation",  // join table name
-                j => j.HasOne<ExtraService>().WithMany().HasForeignKey("ExtraServiceID"),
-                j => j.HasOne<Reservation>().WithMany().HasForeignKey("ReservationID"));
+    .HasMany(r => r.ExtraServices)
+    .WithMany(es => es.AddedToReservations)
+    .UsingEntity<Dictionary<string, object>>(
+        "ExtraServiceReservation",
+        j => j.HasOne<ExtraService>()
+              .WithMany()
+              .HasForeignKey("ExtraServiceID")
+              .OnDelete(DeleteBehavior.Cascade),
+        j => j.HasOne<Reservation>()
+              .WithMany()
+              .HasForeignKey("ReservationID")
+              .OnDelete(DeleteBehavior.Cascade))
+    .HasKey("ReservationID", "ExtraServiceID");
 
         modelBuilder.Entity<Guest>()
             .HasMany(g => g.Reservations)

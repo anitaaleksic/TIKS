@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MyHotelApp.Migrations
 {
     /// <inheritdoc />
-    public partial class v1 : Migration
+    public partial class U1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -120,12 +120,12 @@ namespace MyHotelApp.Migrations
                 name: "ExtraServiceReservation",
                 columns: table => new
                 {
-                    ExtraServiceID = table.Column<int>(type: "int", nullable: false),
-                    ReservationID = table.Column<int>(type: "int", nullable: false)
+                    ReservationID = table.Column<int>(type: "int", nullable: false),
+                    ExtraServiceID = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ExtraServiceReservation", x => new { x.ExtraServiceID, x.ReservationID });
+                    table.PrimaryKey("PK_ExtraServiceReservation", x => new { x.ReservationID, x.ExtraServiceID });
                     table.ForeignKey(
                         name: "FK_ExtraServiceReservation_ExtraServices_ExtraServiceID",
                         column: x => x.ExtraServiceID,
@@ -165,9 +165,9 @@ namespace MyHotelApp.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ExtraServiceReservation_ReservationID",
+                name: "IX_ExtraServiceReservation_ExtraServiceID",
                 table: "ExtraServiceReservation",
-                column: "ReservationID");
+                column: "ExtraServiceID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ReservationRoomService_RoomServiceID",

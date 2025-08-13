@@ -24,15 +24,15 @@ namespace MyHotelApp.Migrations
 
             modelBuilder.Entity("ExtraServiceReservation", b =>
                 {
-                    b.Property<int>("ExtraServiceID")
-                        .HasColumnType("int");
-
                     b.Property<int>("ReservationID")
                         .HasColumnType("int");
 
-                    b.HasKey("ExtraServiceID", "ReservationID");
+                    b.Property<int>("ExtraServiceID")
+                        .HasColumnType("int");
 
-                    b.HasIndex("ReservationID");
+                    b.HasKey("ReservationID", "ExtraServiceID");
+
+                    b.HasIndex("ExtraServiceID");
 
                     b.ToTable("ExtraServiceReservation");
                 });
