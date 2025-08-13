@@ -1,5 +1,6 @@
 import '../../css/Price.css'
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function AddRoomService() {
@@ -10,7 +11,7 @@ export default function AddRoomService() {
   });
 
   const [errorMessages, setErrorMessages] = useState([]);
-
+  const navigate = useNavigate(); 
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -54,6 +55,7 @@ export default function AddRoomService() {
         alert('Room service added successfully!');
         setFormData({ itemName: '', itemPrice: '', description: '' });
         setErrorMessages([]);
+        navigate("/roomservice");
       })
       .catch(err => {
         console.error('Error:', err.response || err);

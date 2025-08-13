@@ -7,6 +7,7 @@ export default function EditRoomService() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    roomServiceID: '',
     itemName: '',
     itemPrice: '',
     description: ''
@@ -14,6 +15,7 @@ export default function EditRoomService() {
 
   const [originalName, setOriginalName] = useState('');
   const [errorMessages, setErrorMessages] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     axios.get(`/api/RoomService/GetRoomServiceByName/${itemName}`)
@@ -34,6 +36,19 @@ export default function EditRoomService() {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm(`Are you sure you want to delete room service ${id}?`)) return;
+    try {
+      await axios.delete(`/api/RoomService/DeleteRoomService/${id}`);
+      alert('Room service deleted successfully.');
+      setRefresh(prev => !prev); 
+      navigate("/roomservice");
+    } catch (err) {
+      console.error("Delete failed:", err);
+      alert("Delete failed");
+    }
   };
 
   const handleSubmit = (e) => {
@@ -101,7 +116,16 @@ export default function EditRoomService() {
       </div>
 
       <button type="submit" className="form-button">Update Room Service</button>
-
+      <button 
+        type="button" 
+        className="form-button delete" 
+        onClick={(e) => {
+          e.preventDefault(); 
+          handleDelete(formData.roomServiceID);
+        }}>
+          Delete Room Service
+      </button>
+      
       {errorMessages.length > 0 && (
         <div style={{ color: 'red', marginTop: '1rem' }}>
           <ul>

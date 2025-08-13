@@ -242,25 +242,25 @@ public class ExtraServiceController : ControllerBase
         }
     }
 
-    [HttpDelete("DeleteExtraServiceByName/{serviceName}")] //NE RADIV!!
-    public async Task<IActionResult> DeleteExtraServiceByName(string serviceName)
-    {
-        try
-        {
-            var extraService = await _context.ExtraServices.FirstOrDefaultAsync(es => es.ServiceName == serviceName);
-            if (extraService == null)
-            {
-                return BadRequest($"Extra service with name {serviceName} not found.");
-            }
+    // [HttpDelete("DeleteExtraServiceByName/{serviceName}")] //NE RADIV!!
+    // public async Task<IActionResult> DeleteExtraServiceByName(string serviceName)
+    // {
+    //     try
+    //     {
+    //         var extraService = await _context.ExtraServices.FirstOrDefaultAsync(es => es.ServiceName == serviceName);
+    //         if (extraService == null)
+    //         {
+    //             return BadRequest($"Extra service with name {serviceName} not found.");
+    //         }
 
-            _context.ExtraServices.Remove(extraService);
-            await _context.SaveChangesAsync();
-            return Ok($"Extra service with name {serviceName} deleted successfully.");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
+    //         _context.ExtraServices.Remove(extraService);
+    //         await _context.SaveChangesAsync();
+    //         return Ok($"Extra service with name {serviceName} deleted successfully.");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return BadRequest(ex.Message);
+    //     }
+    // }
 
 }

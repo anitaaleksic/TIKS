@@ -1,54 +1,71 @@
-
-import avatarExtraService from '../../assets/ExtraServiceLogo.png'; 
-import EntityList from '../EntityList';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 export default function ExtraService() {
-  const [refresh, setRefresh] = useState(false);
+  //const [refresh, setRefresh] = useState(false);
+  const [extraServices, setExtraServices] = useState([]);
 
   const navigate = useNavigate();
+
+  async function GetAllExtraServices() {
+    const response = await axios.get("/api/ExtraService/GetAllExtraServices");
+    return response.data;
+  }
+
+  useEffect(() => {
+   async function loadExtraServices() {
+    const data = await GetAllExtraServices();
+    setExtraServices(data);
+   } 
+   loadExtraServices();
+  }, [])
+
+  const handleAdd = () => {
+    navigate("/addextraservice");
+  }
 
   const handleEdit = (extraService) => {
   console.log("Going to info page for service:", extraService);
   navigate(`/extraservice/edit/${extraService}`);
 };
 
- const handleInfo = (extraService) => {
-  console.log("Going to info page for service:", extraService);
-  navigate(`/extraservice/info/${extraService}`);
-};
-  const handleDelete = async (serviceName) => {
-    if (!window.confirm(`Are you sure you want to delete extra service "${serviceName}"?`)) return;
-
-    try {
-      await axios.delete(`/api/ExtraService/DeleteExtraServiceByName/${serviceName}`);
-      alert('Extra service deleted successfully.');
-      setRefresh(prev => !prev);
-    } catch (err) {
-      console.error('Error deleting:', err);
-      alert('Failed to delete extra service.');
-    }
-  };
+//  const handleInfo = (extraService) => {
+//   console.log("Going to info page for service:", extraService);
+//   navigate(`/extraservice/info/${extraService}`);
+// };
+  
 
   return (
-    <EntityList
-      addRoute="/addextraservice"
-      fetchUrl="/api/ExtraService/GetAllExtraServices"
-      backgroundImage={avatarExtraService}
-      renderFields={service => (
-        <>
-          <p><strong>Name:</strong> {service.serviceName}</p>
-          <p><strong>Price:</strong> ${service.price.toFixed(2)}</p>
-          <p><strong>Description:</strong> {service.description}</p>
-        </>
-      )}
-      onEdit={handleEdit}
-      onInfo={handleInfo}
-      onDelete={handleDelete}
-      idField="serviceName"
-      refreshTrigger={refresh}
-    />
+    <div className="entity-page-wrapper">
+      <div className="entity-header">
+        <button onClick={handleAdd} className="form-button large">
+          Add Extra Service
+        </button>
+      </div>
+      <div className='table-container'>
+        <table id="roomServiceTable">
+          <thead>
+            <tr>
+              <th>Extra Services</th>
+            </tr>
+          </thead>
+          <tbody>
+            {extraServices.map((extraService) => (
+              <tr key={extraService.extraServiceID} onClick={() => handleEdit(extraService.serviceName)}>
+                <td className="menu-item">
+                  <div className="name-desc">
+                    <div className="item-name">{extraService.serviceName}</div>
+                    <div className="description">({extraService.description})</div>
+                  </div>
+                  <span className="dots"></span>
+                  <span className="price">{extraService.price.toFixed(2)}$</span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>    
+    </div>
   );
 }

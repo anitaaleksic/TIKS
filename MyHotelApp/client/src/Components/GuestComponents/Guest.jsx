@@ -83,39 +83,7 @@ export default function Guest() {
             ))}
           </tbody>
         </table>
-      </div>
-
-
-
-
-
-
-
-
-
-
-    {/* <EntityList
-      addRoute="/addguest"
-      fetchUrl="/api/Guest/GetAllGuests"
-      backgroundImage={avatarGuest}
-      renderFields={guest => (
-        <>
-          <p><strong>Full Name:</strong> {guest.fullName}</p>
-          <p><strong>JMBG:</strong> {guest.jmbg}</p>
-          <p><strong>Phone:</strong> {guest.phoneNumber}</p>
-        </>
-      )}
-      onEdit={handleEdit}
-      onInfo={handleInfo}
-      onDelete={handleDelete}
-      idField="jmbg"
-      refreshTrigger={refresh} 
-      
-    /> */}
-
-
-
-    
+      </div>    
     </div>
   );
 }

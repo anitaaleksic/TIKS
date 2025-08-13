@@ -8,6 +8,7 @@ export default function EditExtraService() {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    extraServiceID: '',
     serviceName: '',
     price: '',
     description: ''
@@ -15,6 +16,7 @@ export default function EditExtraService() {
 
   const [originalName, setOriginalName] = useState('');
   const [errorMessages, setErrorMessages] = useState([]);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     axios.get(`/api/ExtraService/GetExtraServiceByName/${serviceName}`)
@@ -35,6 +37,20 @@ export default function EditExtraService() {
       ...prev,
       [name]: value
     }));
+  };
+
+  const handleDelete = async (serviceName) => {
+    if (!window.confirm(`Are you sure you want to delete extra service "${serviceName}"?`)) return;
+
+    try {
+      await axios.delete(`/api/ExtraService/DeleteExtraService/${serviceName}`);
+      alert('Extra service deleted successfully.');
+      setRefresh(prev => !prev);
+      navigate("/extraservice");
+    } catch (err) {
+      console.error('Error deleting:', err);
+      alert('Failed to delete extra service.');
+    }
   };
 
   const handleSubmit = (e) => {
@@ -97,7 +113,16 @@ export default function EditExtraService() {
         />
       </div>
 
-      <button type="submit" className="form-button">Update Service</button>
+      <button type="submit" className="form-button">Update Extra Service</button>
+      <button 
+        type="button" 
+        className="form-button delete" 
+        onClick={(e) => {
+          e.preventDefault(); 
+          handleDelete(formData.extraServiceID);
+        }}>
+          Delete Extra Service
+      </button>
 
       {errorMessages.length > 0 && (
         <div style={{ color: 'red', marginTop: '1rem' }}>

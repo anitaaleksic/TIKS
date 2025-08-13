@@ -1,5 +1,6 @@
 import '../../css/Price.css'
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 export default function AddExtraService() {
@@ -9,6 +10,7 @@ export default function AddExtraService() {
     description: ''
   });
 
+  const navigate = useNavigate(); 
   const [errorMessages, setErrorMessages] = useState([]);
 
   const handleChange = (e) => {
@@ -53,6 +55,7 @@ export default function AddExtraService() {
         alert('Extra service added successfully!');
         setFormData({ serviceName: '', price: '', description: '' });
         setErrorMessages([]);
+        navigate("/extraservice");
       })
       .catch(err => {
         console.error('Error:', err.response || err);

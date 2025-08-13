@@ -243,24 +243,24 @@ public class RoomServiceController : ControllerBase
         }
     }
 
-    [HttpDelete("DeleteRoomServiceByName/{serviceName}")]
-    public async Task<IActionResult> DeleteRoomServiceByName(string serviceName)
-    {
-        try
-        {
-            var roomService = await _context.RoomServices.FirstOrDefaultAsync(rs => rs.ItemName == serviceName);
-            if (roomService == null)
-            {
-                return NotFound($"Room service with name {serviceName} not found.");
-            }
+    // [HttpDelete("DeleteRoomServiceByName/{serviceName}")]
+    // public async Task<IActionResult> DeleteRoomServiceByName(string serviceName)
+    // {
+    //     try
+    //     {
+    //         var roomService = await _context.RoomServices.FirstOrDefaultAsync(rs => string.Equals(rs.ItemName, serviceName, StringComparison.Ordinal));
+    //         if (roomService == null)
+    //         {
+    //             return NotFound($"Room service with name {serviceName} not found.");
+    //         }
 
-            _context.RoomServices.Remove(roomService);
-            await _context.SaveChangesAsync();
-            return Ok($"Room service with name {serviceName} deleted successfully.");
-        }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
-    }
+    //         _context.RoomServices.Remove(roomService);
+    //         await _context.SaveChangesAsync();
+    //         return Ok($"Room service with name {serviceName} deleted successfully.");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         return BadRequest(ex.Message);
+    //     }
+    // }
 }
