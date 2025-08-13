@@ -12,8 +12,8 @@ using MyHotelApp.server.Models;
 namespace MyHotelApp.Migrations
 {
     [DbContext(typeof(HotelContext))]
-    [Migration("20250813111822_v1")]
-    partial class v1
+    [Migration("20250813120757_U1")]
+    partial class U1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,15 +27,15 @@ namespace MyHotelApp.Migrations
 
             modelBuilder.Entity("ExtraServiceReservation", b =>
                 {
-                    b.Property<int>("ExtraServiceID")
-                        .HasColumnType("int");
-
                     b.Property<int>("ReservationID")
                         .HasColumnType("int");
 
-                    b.HasKey("ExtraServiceID", "ReservationID");
+                    b.Property<int>("ExtraServiceID")
+                        .HasColumnType("int");
 
-                    b.HasIndex("ReservationID");
+                    b.HasKey("ReservationID", "ExtraServiceID");
+
+                    b.HasIndex("ExtraServiceID");
 
                     b.ToTable("ExtraServiceReservation");
                 });
