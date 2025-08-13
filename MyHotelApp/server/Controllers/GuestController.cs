@@ -165,10 +165,11 @@ public class GuestController : ControllerBase
             }
             if (guest.Reservations != null && guest.Reservations.Any())
             {
-                return BadRequest("You cannot delete this guest because they have existing reservations. Please delete the reservations first.");
+                _context.Reservations.RemoveRange(guest.Reservations);
+                await _context.SaveChangesAsync();
             }
 
-            _context.Reservations.RemoveRange(guest.Reservations);
+            //_context.Reservations.RemoveRange(guest.Reservations);
             _context.Guests.Remove(guest);
             await _context.SaveChangesAsync();
             return Ok($"Guest with JMBG {jmbg} deleted successfully.");
@@ -179,6 +180,4 @@ public class GuestController : ControllerBase
         }
         
     }
-
-
 }

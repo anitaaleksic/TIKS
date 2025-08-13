@@ -54,18 +54,20 @@ public class HotelContext : DbContext
                 "ExtraServiceReservation",  // join table name
                 j => j.HasOne<ExtraService>().WithMany().HasForeignKey("ExtraServiceID"),
                 j => j.HasOne<Reservation>().WithMany().HasForeignKey("ReservationID"));
-        
+
         modelBuilder.Entity<Guest>()
             .HasMany(g => g.Reservations)
             .WithOne(r => r.Guest)
             .HasForeignKey(r => r.GuestID)
+            .HasPrincipalKey(g => g.JMBG) 
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Reservation>()
-            .HasOne(r => r.Guest)
-            .WithMany(g => g.Reservations)
-            .HasForeignKey(r => r.GuestID)
-            .OnDelete(DeleteBehavior.Cascade);
+        // modelBuilder.Entity<Reservation>()
+        //     .HasOne(r => r.Guest)
+        //     .WithMany(g => g.Reservations)
+        //     .HasForeignKey(r => r.GuestID)
+        //     .HasPrincipalKey(g => g.JMBG) 
+        //     .OnDelete(DeleteBehavior.Cascade);
 
 
 

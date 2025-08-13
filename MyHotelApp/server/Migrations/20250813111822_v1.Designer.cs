@@ -12,8 +12,8 @@ using MyHotelApp.server.Models;
 namespace MyHotelApp.Migrations
 {
     [DbContext(typeof(HotelContext))]
-    [Migration("20250812124938_v2")]
-    partial class v2
+    [Migration("20250813111822_v1")]
+    partial class v1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

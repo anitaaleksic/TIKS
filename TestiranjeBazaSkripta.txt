@@ -69,7 +69,7 @@ CREATE TABLE dbo.Reservations (
     CheckOutDate DATE NOT NULL,
     TotalPrice DECIMAL(18,2) NOT NULL,
     CONSTRAINT FK_Reservations_Room FOREIGN KEY (RoomNumber) REFERENCES dbo.Rooms(RoomNumber),
-    CONSTRAINT FK_Reservations_Guest FOREIGN KEY (GuestID) REFERENCES dbo.Guests(JMBG)
+    CONSTRAINT FK_Reservations_Guest FOREIGN KEY (GuestID) REFERENCES dbo.Guests(JMBG) ON DELETE CASCADE
 );
 GO
 
