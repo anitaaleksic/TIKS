@@ -38,6 +38,7 @@ export default function AddRoom() {
     }
   };
 
+
   const formatErrors = (errorsObj) => {
     let messages = [];
     for (const field in errorsObj) {

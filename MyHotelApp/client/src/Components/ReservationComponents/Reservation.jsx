@@ -1,23 +1,36 @@
 import avatarReservation from '../../assets/ReservationLogo.png';
 import EntityList from '../EntityList';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useEffect } from 'react'; // ako nisi već
+import { useNavigate } from 'react-router-dom';
+
 export default function Reservation() {
   const [refresh, setRefresh] = useState(false);
+  const [reservations, setReservations] = useState([]);
+  const navigate = useNavigate();
 
   const handleEdit = (reservation) => {
     console.log('Edit:', reservation);
+    navigate(`/editreservation/${reservation}`);
   };
+
+  const handleAdd = () => {
+    navigate("/addreservation");
+  }
+
+  async function GetAllReservations() {
+    const response = await axios.get("/api/Reservation/GetAllReservations");
+    return response.data;
+  }
+
   useEffect(() => {
-      axios.get("/api/Reservation/GetAllReservations")
-        .then(res => {
-          console.log("Fetched reservations:", res.data);
-        })
-        .catch(err => {
-          console.error("Error fetching reservations:", err);
-        });
+      async function loadReservations() {
+        const data = await GetAllReservations();
+        setReservations(data);
+      }
+      loadReservations();
     }, []);
+
   const handleInfo = (reservation) => {
     const formatDate = (dateStr) => {
       const date = new Date(dateStr);

@@ -9,11 +9,13 @@ export default function EditRoom() {
   const [formData, setFormData] = useState({
     roomNumber: '',
     roomTypeID: '',
-    floor: '',
-    isAvailable: false
+    floor: ''//,
+    //isAvailable: false
   });
 
   const [errorMessages, setErrorMessages] = useState([]);
+  
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     axios.get(`/api/Room/GetRoom/${roomNumber}`)
@@ -23,7 +25,7 @@ export default function EditRoom() {
         alert('Failed to load room data.');
         navigate('/room');
       });
-  }, [roomNumber]);
+  }, [roomNumber, navigate]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -56,8 +58,33 @@ export default function EditRoom() {
       });
   };
 
+  
+  const handleDelete = async (roomNumber) => {
+    if (!window.confirm(`Are you sure you want to delete room ${roomNumber}?`)) return;
+    try {
+      await axios.delete(`/api/Room/DeleteRoom/${roomNumber}`);
+      setRefresh(prev => !prev); // Trigger re-fetch
+      alert('Room deleted successfully!');
+      navigate("/room");
+    } catch (err) {      
+        if (err.response && err.response.data) {
+          alert(err.response.data);
+        } else {
+          alert("Delete failed due to an unexpected error.");
+        }
+        console.error("Delete failed:", err);
+      }
+  };
+
+  const handleExit = () => {
+    navigate("/room");
+  }
+
   return (
     <form className="extraservice-form" onSubmit={handleSubmit}>
+      <button type="button" className="exit-button" onClick={handleExit}>
+        x
+      </button>
       <h2>Edit Room</h2>
 
       <div className="form-group">
@@ -95,6 +122,16 @@ export default function EditRoom() {
 
 
       <button type="submit" className="form-button">Update Room</button>
+      <button 
+        type="button" 
+        className="form-button delete" 
+        onClick={(e) => {
+          e.preventDefault(); 
+          handleDelete(roomNumber);
+        }}>
+          Delete Room
+        </button>
+
 
       {errorMessages.length > 0 && (
         <div style={{ color: 'red', marginTop: '1rem' }}>

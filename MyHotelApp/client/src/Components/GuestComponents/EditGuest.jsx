@@ -96,8 +96,15 @@ export default function EditGuest() {
     }
   };
 
+  const handleExit = () => {
+    navigate("/guest");
+  }
+
   return (
     <form className="guest-form" onSubmit={handleSubmit}>
+      <button type="button" className="exit-button" onClick={handleExit}>
+        x
+      </button>
       <h2>Edit Guest</h2>
 
       <div className="form-group">

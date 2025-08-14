@@ -78,8 +78,15 @@ export default function EditRoomService() {
       });
   };
 
+  const handleExit = () => {
+    navigate("/roomservice");
+  }
+
   return (
     <form className="extraservice-form" onSubmit={handleSubmit}>
+      <button type="button" className="exit-button" onClick={handleExit}>
+        x
+      </button>
       <h2>Edit Room Service</h2>
 
       <div className="form-group">
