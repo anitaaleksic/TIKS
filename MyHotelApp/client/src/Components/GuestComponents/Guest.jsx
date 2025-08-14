@@ -76,9 +76,9 @@ export default function Guest() {
           <tbody>
             {guests.map((guest) => (
               <tr key={guest.jmbg} onClick={() => handleEdit(guest.jmbg)}>
-                <td>{guest.fullName}</td>
-                <td>{guest.jmbg}</td>
-                <td>{guest.phoneNumber}</td>
+                <td className='td-guest'>{guest.fullName}</td>
+                <td className='td-guest'>{guest.jmbg}</td>
+                <td className='td-guest'>{guest.phoneNumber}</td>
               </tr>
             ))}
           </tbody>
