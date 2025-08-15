@@ -26,9 +26,6 @@ export default function Guest() {
     loadGuests();
   }, []);
 
-
-  
-
   const handleAdd = () => {
     navigate("/addguest");
   };

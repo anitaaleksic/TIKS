@@ -18,6 +18,7 @@ public class RoomService
     [Required]
     public required decimal ItemPrice { get; set; }
     public string? Description { get; set; }
+    [JsonIgnore]
     public List<Reservation> AddedToReservations { get; set; } = new List<Reservation>();
 }
 

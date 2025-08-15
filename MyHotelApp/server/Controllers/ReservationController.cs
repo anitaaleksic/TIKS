@@ -116,6 +116,8 @@ public class ReservationController : ControllerBase
             var reservations = await _context.Reservations
                 .Include(r => r.Room)
                 .Include(r => r.Guest)
+                .Include(r => r.RoomServices)
+                .Include(r => r.ExtraServices)
                 .ToListAsync();
             if (reservations.Count == 0)
                 return NotFound("No reservations found!");

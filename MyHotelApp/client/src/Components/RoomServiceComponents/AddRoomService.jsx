@@ -67,6 +67,10 @@ export default function AddRoomService() {
       });
   };
 
+  const handleExit = () => {
+    navigate("/roomservice");
+  }
+
   return (
     <form className="roomservice-form" onSubmit={handleSubmit}>
       <div className="form-group">
@@ -81,6 +85,9 @@ export default function AddRoomService() {
       </div>
 
       <div className="form-group">
+        <button type="button" className="exit-button" onClick={handleExit}>
+        x
+      </button>
         <label className="form-label">Item Price:</label>
         <div className="price-input-wrapper">
           <span className="currency-symbol">$</span>

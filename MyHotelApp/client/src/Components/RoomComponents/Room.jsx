@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import "../../css/Room.css";
+import stars from '../../assets/hotel-stars.jpg';
 
 
 export default function Room() {
@@ -9,50 +11,69 @@ export default function Room() {
   const navigate = useNavigate();
 
   const [rooms, setRooms] = useState([]);
-  const [roomTypes, setRoomTypes] = useState([]);
+  //const [roomTypes, setRoomTypes] = useState([]);
 
   async function GetAllRooms() {
     const response = await axios.get("/api/Room/GetAllRooms");
     return response.data;
   }
 
-  async function GetAllRoomTypes() {
-    const response = await axios.get("/api/RoomType/GetAllRoomTypes");
-    return response.data;
-  }
+  // async function GetAllRoomTypes() {
+  //   const response = await axios.get("/api/RoomType/GetAllRoomTypes");
+  //   return response.data;
+  // }
+
+  // useEffect(() => {
+  //   async function loadData() {
+  //   const [roomsData, roomTypesData] = await Promise.all([
+  //       GetAllRooms(),
+  //       GetAllRoomTypes()
+  //     ]);
+  //     setRooms(roomsData);
+  //     setRoomTypes(roomTypesData);
+  //   }
+  //   loadData();
+
+  // }, []);
 
   useEffect(() => {
-    async function loadData() {
-    const [roomsData, roomTypesData] = await Promise.all([
-        GetAllRooms(),
-        GetAllRoomTypes()
-      ]);
-      setRooms(roomsData);
-      setRoomTypes(roomTypesData);
+    async function loadRooms() {
+      const data = await GetAllRooms();
+      setRooms(data);
     }
-    loadData();
+    loadRooms();
 
   }, []);
 
   
-  const roomTypeMap = {};
-  for (const type of roomTypes) {
-    roomTypeMap[type.roomTypeID] = type.type;
-  }
+  // const roomTypeMap = {};
+  // for (const type of roomTypes) {
+  //   roomTypeMap[type.roomTypeID] = type.type;
+  // }
   
   const floors = {};
 
+  // for(const room of rooms){
+  //   const typeName = roomTypeMap[room.roomTypeID];
+
+  //   if(!floors[room.floor]){
+  //     floors[room.floor] = [];
+  //   }
+    
+  //   floors[room.floor].push({
+  //     ...room,
+  //     typeName
+  //   });
+  // }
+
   for(const room of rooms){
-    const typeName = roomTypeMap[room.roomTypeID];
+    
 
     if(!floors[room.floor]){
       floors[room.floor] = [];
     }
     
-    floors[room.floor].push({
-      ...room,
-      typeName
-    });
+    floors[room.floor].push(room);
   }
 
 
@@ -78,7 +99,7 @@ export default function Room() {
           Add Room
         </button>
       </div>
-      <img src='../../../public/hotel-stars.jpg' className='stars'></img>
+      <img src={stars} className='stars'></img>
       <table className='hotel'>
         <tbody>
           {Object.entries(floors).map(([floorNumber, floorRooms]) => (
@@ -86,7 +107,8 @@ export default function Room() {
               {floorRooms.map((room) => (
                 <td className='room-container' key={room.roomNumber} onClick={() => handleEdit(room.roomNumber)}>
                   <div>Room {room.roomNumber}</div>
-                  <div>type: {room.typeName}</div>
+                  <div>type: {room.roomType.type}</div>
+                  {/* <div>type: {room.typeName}</div> */}
                 </td>
               ))}
             </tr>

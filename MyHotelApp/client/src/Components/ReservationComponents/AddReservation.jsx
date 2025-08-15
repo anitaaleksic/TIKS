@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../css/Reservation.css'
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddReservation() {
   
@@ -8,10 +9,12 @@ export default function AddReservation() {
   const [showExtraServices, setShowExtraServices] = useState(false);
   const [roomServices, setRoomServices] = useState([]);
   const [extraServices, setExtraServices] = useState([]);
+  //
   const [guestExists, setGuestExists] = useState([]);
   const [guestID, setGuestID] = useState('');
   const [roomExists, setRoomExists] = useState([]);
   const [roomAvailable, setRoomAvailable] = useState([]);
+  //
   const [totalPrice, setTotalPrice] = useState(0);
   const [errorMessages, setErrorMessages] = useState([]);
 
@@ -24,6 +27,7 @@ export default function AddReservation() {
     extraServiceIDs: []
   });
 
+  const navigate = useNavigate();
   
   const checkGuestExists = async (guestID) => {
     if(!guestID || guestID.length !== 13){
@@ -153,6 +157,7 @@ export default function AddReservation() {
                       roomServiceIDs: [],
                       extraServiceIDs: []});
         setErrorMessages([]);
+        navigate("/reservation");
       })
       .catch(err => {
         console.error('Error:', err.response || err);
@@ -247,8 +252,15 @@ export default function AddReservation() {
       totalPrice
   ]);
 
+  const handleExit = () => {
+    navigate("/reservation");
+  }
+
   return (
     <form className="reservation-form" onSubmit={handleSubmit}>
+      <button type="button" className="exit-button" onClick={handleExit}>
+        x
+      </button>
       <div className="form-group">
         <label className="form-label">Guest JMBG:</label>
         <input type="text"

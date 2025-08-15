@@ -27,9 +27,9 @@ public class Reservation
     public required DateTime CheckOutDate { get; set; }
     [Required]
     public decimal TotalPrice { get; set; }//obracunava se
-    [JsonIgnore]
+    //[JsonIgnore]
     public List<RoomService> RoomServices { get; set; } = new List<RoomService>();
-    [JsonIgnore]
+    //[JsonIgnore]
     public List<ExtraService> ExtraServices { get; set; } = new List<ExtraService>();
 }
 

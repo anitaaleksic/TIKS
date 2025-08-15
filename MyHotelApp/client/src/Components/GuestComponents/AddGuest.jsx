@@ -61,9 +61,16 @@ export default function AddGuest() {
 
   };
 
+  const handleExit = () => {
+    navigate("/guest");
+  }
+
   return (
     <form className="guest-form" onSubmit={handleSubmit}>
       <div className="form-group">
+        <button type="button" className="exit-button" onClick={handleExit}>
+        x
+      </button>
         <label className="form-label" htmlFor="fullName">Full Name:</label>
         <input
           type="text"

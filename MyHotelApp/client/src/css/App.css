@@ -30,6 +30,7 @@ body {
 
 .entity-card {
   position: relative;
+  position: absolute;
   width: 250px;
   padding: 1.2rem;
   border: 1px solid #ccc;
@@ -148,32 +149,3 @@ body {
   resize: vertical;
 }
 
-.hotel {
-  width: 50%;  
-  border: 1px solid black;
-  border-collapse: collapse;
-}
-
-.hotel-floor{
-  display: flex;
-  justify-content: space-between; 
-  align-items: center; 
-  border: 2px solid black;
-  height: 120px;
-}
-
-.room-container{
-  background-color: rgb(172, 172, 235);
-  width: fit-content;
-  padding: 10px;
-  margin: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-  border: 1px solid black;
-}
-
-.stars{
-  width: 20%;
-}

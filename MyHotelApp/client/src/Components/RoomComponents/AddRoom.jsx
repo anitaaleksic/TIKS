@@ -1,5 +1,6 @@
 import { useState, useEffect} from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function AddRoom() {
   const [formData, setFormData] = useState({
@@ -11,6 +12,8 @@ export default function AddRoom() {
 
   const [errorMessages, setErrorMessages] = useState([]);
   const [roomTypes, setRoomTypes] = useState([]);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     axios.get('/api/RoomType/GetAllRoomTypes')
@@ -88,9 +91,16 @@ export default function AddRoom() {
       });
   };
 
+  const handleExit = () => {
+    navigate("/room");
+  }
+
   return (
     <form className="room-form" onSubmit={handleSubmit} noValidate>
       <div className="form-group">
+        <button type="button" className="exit-button" onClick={handleExit}>
+        x
+      </button>
         <label className="form-label">Room Number:</label>
         <input
           type="number"

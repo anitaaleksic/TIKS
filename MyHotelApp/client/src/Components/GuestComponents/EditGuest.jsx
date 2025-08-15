@@ -150,7 +150,7 @@ export default function EditGuest() {
           handleDelete(jmbg);
         }}>
           Delete Guest
-        </button>
+      </button>
 
       {errorMessages.length > 0 && (
         <div className="error-messages" style={{ color: 'red', marginTop: '1rem' }}>

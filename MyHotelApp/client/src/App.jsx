@@ -19,6 +19,7 @@ import ExtraServiceInfo from './Components/ExtraServiceComponents/InfoExtraServi
 import EditExtraService from './Components/ExtraServiceComponents/EditExtraService';
 import InfoRoomService from './Components/RoomServiceComponents/InfoRoomService';
 import EditRoomService from './Components/RoomServiceComponents/EditRoomService';
+import EditReservation from './Components/ReservationComponents/EditReservation';
 
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
         <Route path="/extraservice/edit/:serviceName" element={<EditExtraService />} />
         <Route path="/roomservice/info/:itemName" element={<InfoRoomService />} />
         <Route path="/roomservice/edit/:itemName" element={<EditRoomService />} />
+        <Route path="/reservation/edit/:reservationID" element={<EditReservation />} />
       </Routes>
     </>
   );

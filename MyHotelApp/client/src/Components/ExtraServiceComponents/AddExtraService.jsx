@@ -67,9 +67,16 @@ export default function AddExtraService() {
       });
   };
 
+  const handleExit = () => {
+    navigate("/extraservice");
+  }
+
   return (
     <form className="extraservice-form" onSubmit={handleSubmit}>
       <div className="form-group">
+        <button type="button" className="exit-button" onClick={handleExit}>
+        x
+      </button>
         <label className="form-label">Item Name:</label>
         <input
           type="text"

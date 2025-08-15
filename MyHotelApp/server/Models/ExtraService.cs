@@ -20,6 +20,7 @@ public class ExtraService
     //ZA PARKING BR PARKING MESTA NE MOZE DA IH BUDE REZ VISE NEGO STO IMA PARKING MESTA 
     //ISTO I ZA RESTORAN I ZA WELLNESS
 
+    [JsonIgnore]
     public List<Reservation> AddedToReservations { get; set; } = new List<Reservation>();
 }
 

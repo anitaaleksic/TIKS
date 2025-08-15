@@ -14,8 +14,16 @@ export default function EditRoom() {
   });
 
   const [errorMessages, setErrorMessages] = useState([]);
+  const [roomTypes, setRoomTypes] = useState([]);
   
-  const [refresh, setRefresh] = useState(false);
+  //const [refresh, setRefresh] = useState(false);
+
+  async function GetAllRoomTypes() {
+    const response = await axios.get("/api/RoomType/GetAllRoomTypes")
+    return response.data;
+  }
+
+
 
   useEffect(() => {
     axios.get(`/api/Room/GetRoom/${roomNumber}`)
@@ -25,6 +33,11 @@ export default function EditRoom() {
         alert('Failed to load room data.');
         navigate('/room');
       });
+    async function loadRoomTypes() {
+      const data = await GetAllRoomTypes();
+      setRoomTypes(data);      
+    }
+    loadRoomTypes();
   }, [roomNumber, navigate]);
 
   const handleChange = (e) => {
@@ -63,7 +76,7 @@ export default function EditRoom() {
     if (!window.confirm(`Are you sure you want to delete room ${roomNumber}?`)) return;
     try {
       await axios.delete(`/api/Room/DeleteRoom/${roomNumber}`);
-      setRefresh(prev => !prev); // Trigger re-fetch
+      //setRefresh(prev => !prev); // Trigger re-fetch
       alert('Room deleted successfully!');
       navigate("/room");
     } catch (err) {      
@@ -99,14 +112,17 @@ export default function EditRoom() {
       </div>
 
       <div className="form-group">
-        <label className="form-label">Room Type ID:</label>
-        <input
-          className="form-input"
-          name="roomTypeID"
-          type="text"
+        <label className="form-label">Room Type:</label>
+        <select 
+          name = "roomTypeID"
+          className="form-input" 
           value={formData.roomTypeID}
-          onChange={handleChange}
-        />
+          onChange={handleChange}>
+          {roomTypes.map((rt) => (
+            <option value={rt.roomTypeID}>{rt.type}</option>
+          ))}
+        </select>
+        
       </div>
 
       <div className="form-group">
@@ -116,7 +132,7 @@ export default function EditRoom() {
           name="floor"
           type="number"
           value={formData.floor}
-          onChange={handleChange}
+          disabled
         />
       </div>
 
