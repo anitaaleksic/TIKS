@@ -130,25 +130,30 @@ public class ReservationController : ControllerBase
     }
 
     [HttpGet("GetReservationById/{id}")]
-    public async Task<IActionResult> GetReservationById(int id)
+public async Task<IActionResult> GetReservationById(int id)
+{
+    try
     {
-        try
+        var reservation = await _context.Reservations
+            .Include(r => r.Room)
+            .Include(r => r.Guest)
+            .Include(r => r.RoomServices) 
+            .Include(r => r.ExtraServices)
+            .FirstOrDefaultAsync(r => r.ReservationID == id);
+
+        if (reservation == null)
         {
-            var reservation = await _context.Reservations
-                .Include(r => r.Room)
-                .Include(r => r.Guest)
-                .FirstOrDefaultAsync(r => r.ReservationID == id);
-            if (reservation == null)
-            {
-                return NotFound($"Reservation with ID {id} not found.");
-            }
-            return Ok(reservation);
+            return NotFound($"Reservation with ID {id} not found.");
         }
-        catch (Exception ex)
-        {
-            return BadRequest(ex.Message);
-        }
+
+        return Ok(reservation);
     }
+    catch (Exception ex)
+    {
+        return BadRequest(ex.Message);
+    }
+}
+
 
     // [HttpGet("GetReservationsByGuest/{jmbg}")]
     // public async Task<List<Reservation>> GetReservationsByGuest(string jmbg)
@@ -248,105 +253,110 @@ public class ReservationController : ControllerBase
     {
         try
         {
+
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             
             var existingReservation = await _context.Reservations
+                .Include(r => r.RoomServices)
+                .Include(r => r.ExtraServices)
                 .FirstOrDefaultAsync(r => r.ReservationID == id);
             if (existingReservation == null)
             {
                 return NotFound($"Reservation with ID {id} not found.");
             }
+
             if (reservation.RoomNumber < 101 || reservation.RoomNumber > 699)
             {
                 return BadRequest("Room number must be between 101 and 699.");
             }
+
             if (string.IsNullOrEmpty(reservation.GuestID) || reservation.GuestID.Length != 13)
             {
                 return BadRequest("JMBG must be exactly 13 characters long.");
             }
+
             if (reservation.CheckInDate >= reservation.CheckOutDate)
             {
                 return BadRequest("Check-out date must be after check-in date.");
             }
-            var existingRoom = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == reservation.RoomNumber);
-            if (existingRoom == null)
-            {
-                return NotFound($"Room with number {reservation.RoomNumber} does not exist.");
-            }
+
+            var existingRoom = await _context.Rooms
+            .Include(r => r.RoomType)
+            .FirstOrDefaultAsync(r => r.RoomNumber == reservation.RoomNumber);
+
+
             var existingGuest = await _context.Guests.FirstOrDefaultAsync(g => g.JMBG == reservation.GuestID);
             if (existingGuest == null)
             {
                 return NotFound($"Guest with ID {reservation.GuestID} does not exist.");
             }
-
-
-            var overlapingReservation = await _context.Reservations
+            
+            var overlappingReservation = await _context.Reservations
                 .FirstOrDefaultAsync(r => r.RoomNumber == reservation.RoomNumber &&
-                                          r.CheckInDate < reservation.CheckOutDate &&
-                                          r.CheckOutDate > reservation.CheckInDate);
+                                        r.CheckInDate < reservation.CheckOutDate &&
+                                        r.CheckOutDate > reservation.CheckInDate);
 
-            if (overlapingReservation != null && overlapingReservation.ReservationID != id)//da nije ta ista koju sam poslala
+            if (overlappingReservation != null && overlappingReservation.ReservationID != id)
             {
                 return BadRequest("The room is already reserved for the selected dates.");
             }
-
             decimal esTotalPrice = 0.0m;
-            foreach (var esID in reservation.ExtraServiceIDs)
+            foreach (var esID in reservation.ExtraServiceIDs.Distinct())
             {
                 var es = await _context.ExtraServices.FindAsync(esID);
                 if (es == null)
-                {
                     return BadRequest($"Extra service with ID {esID} does not exist.");
-                }
                 esTotalPrice += es.Price;
             }
-            
+
             decimal rsTotalPrice = 0.0m;
-            foreach (var rsID in reservation.RoomServiceIDs)
+            foreach (var rsID in reservation.RoomServiceIDs.Distinct())
             {
                 var rs = await _context.RoomServices.FindAsync(rsID);
                 if (rs == null)
-                {
                     return BadRequest($"Room service with ID {rsID} does not exist.");
-                }
                 rsTotalPrice += rs.ItemPrice;
             }
 
-            decimal tp = (existingRoom.RoomType.PricePerNight + esTotalPrice) * (reservation.CheckOutDate - reservation.CheckInDate).Days + rsTotalPrice; 
+            decimal tp = (existingRoom.RoomType.PricePerNight + esTotalPrice) * (reservation.CheckOutDate - reservation.CheckInDate).Days + rsTotalPrice;
 
             if (tp <= 0)
             {
                 return BadRequest("Total price must be a non-negative value.");
             }
 
-            // if (existingReservation.RoomNumber != reservation.RoomNumber)
-            // {
-            //     existingRoom.Reservations.Remove(existingReservation);
-            // }
-            // if (existingReservation.GuestID != reservation.GuestID)
-            // {
-            //     existingGuest.Reservations.Remove(existingReservation);
-            // }
+            
+            existingReservation.RoomServices.Clear();
+            existingReservation.ExtraServices.Clear();
 
             existingReservation.RoomNumber = reservation.RoomNumber;
             existingReservation.GuestID = reservation.GuestID;
             existingReservation.CheckInDate = reservation.CheckInDate;
             existingReservation.CheckOutDate = reservation.CheckOutDate;
             existingReservation.TotalPrice = tp;
-            existingReservation.RoomServices = await _context.RoomServices.Where(rs => reservation.RoomServiceIDs.Contains(rs.RoomServiceID)).ToListAsync();
-            existingReservation.ExtraServices = await _context.ExtraServices.Where(es => reservation.ExtraServiceIDs.Contains(es.ExtraServiceID)).ToListAsync();
+
+            existingReservation.RoomServices = await _context.RoomServices
+                .Where(rs => reservation.RoomServiceIDs.Distinct().Contains(rs.RoomServiceID))
+                .ToListAsync();
+
+            existingReservation.ExtraServices = await _context.ExtraServices
+                .Where(es => reservation.ExtraServiceIDs.Distinct().Contains(es.ExtraServiceID))
+                .ToListAsync();
 
             await _context.SaveChangesAsync();
             return Ok($"Reservation with ID {id} updated successfully.");
         }
         catch (Exception ex)
         {
-            return BadRequest(ex.Message);
+        
+            string detailedMessage = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+            return BadRequest(detailedMessage);
         }
     }
+
     
     [HttpDelete("DeleteReservation/{id}")]
     public async Task<IActionResult> DeleteReservation(int id)
