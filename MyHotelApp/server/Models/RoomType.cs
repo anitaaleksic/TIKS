@@ -9,7 +9,7 @@ namespace MyHotelApp.server.Models;
 public class RoomType
 {
     [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int RoomTypeID { get; set; }
     [Required]
     public required string Type { get; set; }

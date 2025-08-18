@@ -12,8 +12,8 @@ using MyHotelApp.server.Models;
 namespace MyHotelApp.Migrations
 {
     [DbContext(typeof(HotelContext))]
-    [Migration("20250813120757_U1")]
-    partial class U1
+    [Migration("20250818135206_v1")]
+    partial class v1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -163,7 +163,10 @@ namespace MyHotelApp.Migrations
             modelBuilder.Entity("MyHotelApp.server.Models.RoomType", b =>
                 {
                     b.Property<int>("RoomTypeID")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomTypeID"));
 
                     b.Property<int>("Capacity")
                         .HasColumnType("int");

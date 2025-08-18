@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MyHotelApp.Migrations
 {
     /// <inheritdoc />
-    public partial class U1 : Migration
+    public partial class v1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -58,7 +58,8 @@ namespace MyHotelApp.Migrations
                 name: "RoomTypes",
                 columns: table => new
                 {
-                    RoomTypeID = table.Column<int>(type: "int", nullable: false),
+                    RoomTypeID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Capacity = table.Column<int>(type: "int", nullable: false),
                     PricePerNight = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
