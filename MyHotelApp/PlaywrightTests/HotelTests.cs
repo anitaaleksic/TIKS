@@ -37,7 +37,7 @@ public class HotelTests : PageTest
     [Test]
     public async Task AddGuest()
     {
-        await Page.GotoAsync("http://localhost:5173/guest");//5173
+        await Page.GotoAsync("http://localhost:5173/addguest");//5173
         await Page.Locator("input[name=\"fullName\"]").ClickAsync();
         await Page.Locator("input[name=\"fullName\"]").FillAsync("Anita Aleksic");
         await Page.Locator("input[name=\"jmbg\"]").ClickAsync();

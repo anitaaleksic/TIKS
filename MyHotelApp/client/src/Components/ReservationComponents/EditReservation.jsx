@@ -107,7 +107,7 @@ export default function EditReservation() {
   e.preventDefault();
 
   // Provera datuma i ostalih grešaka
-  const errors = [];
+  //const errors = [];
   const checkIn = new Date(formData.checkInDate);
   const checkOut = new Date(formData.checkOutDate);
   if (checkOut <= checkIn) {

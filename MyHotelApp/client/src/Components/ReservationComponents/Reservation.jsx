@@ -89,11 +89,11 @@ export default function Reservation() {
                   ))}
               </div>
               <div className='property'>Extra Services: 
-                  {reservation.roomServices?.map((rs) => (
+                  {reservation.extraServices?.map((es) => (
                       <div className='services'>
-                          {rs.itemName}
+                          {es.serviceName}
                           <span className="dots"></span>
-                          <span className="price">{rs.itemPrice.toFixed(2)}$</span>
+                          <span className="price">{es.price.toFixed(2)}$</span>
                       </div>  
                   ))}
               </div>
