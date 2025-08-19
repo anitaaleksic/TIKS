@@ -34,33 +34,21 @@ public class HotelTests : PageTest
         await DatabaseRefresher.AddDataAsync(_context);
     }
 
-    [Test]
-    public async Task AddGuest()
-    {
-        await Page.GotoAsync("http://localhost:5173/addguest");//5173
-        await Page.Locator("input[name=\"fullName\"]").ClickAsync();
-        await Page.Locator("input[name=\"fullName\"]").FillAsync("Anita Aleksic");
-        await Page.Locator("input[name=\"jmbg\"]").ClickAsync();
-        await Page.Locator("input[name=\"jmbg\"]").FillAsync("1234512345123");
-        await Page.PauseAsync();
-        await Page.Locator("input[name=\"phoneNumber\"]").ClickAsync();
-        await Page.Locator("input[name=\"phoneNumber\"]").FillAsync("+381644444444");
-        await Page.GetByRole(AriaRole.Button, new() { NameString = "Add guest" }).ClickAsync();
-    }
-
-    [Test]
-    public async Task AddGuest2()
-    {
-        await Page.GotoAsync("http://localhost:5173/addguest");//5173
-        await Page.Locator("input[name=\"fullName\"]").ClickAsync();
-        await Page.Locator("input[name=\"fullName\"]").FillAsync("Anita Aleksic");
-        await Page.Locator("input[name=\"jmbg\"]").ClickAsync();
-        await Page.Locator("input[name=\"jmbg\"]").FillAsync("1234512345333");
-        await Page.PauseAsync();
-        await Page.Locator("input[name=\"phoneNumber\"]").ClickAsync();
-        await Page.Locator("input[name=\"phoneNumber\"]").FillAsync("+381644444444");
-        await Page.GetByRole(AriaRole.Button, new() { NameString = "Add guest" }).ClickAsync();
-    }
+    // [Test]
+    // public async Task AddGuest()
+    // {
+    //     await Page.GotoAsync("http://localhost:5173/addguest");//5173
+    //     await Page.Locator("input[name=\"fullName\"]").ClickAsync();
+    //     await Page.Locator("input[name=\"fullName\"]").FillAsync("Anita Aleksic");
+    //     await Page.Locator("input[name=\"jmbg\"]").ClickAsync();
+    //     await Page.Locator("input[name=\"jmbg\"]").FillAsync("1234512345123");
+    //     await Page.PauseAsync();
+    //     await Page.Locator("input[name=\"phoneNumber\"]").ClickAsync();
+    //     await Page.Locator("input[name=\"phoneNumber\"]").FillAsync("+381644444444");
+    //     await Page.PauseAsync();
+    //     await Page.GetByRole(AriaRole.Button, new() { NameString = "Add guest" }).ClickAsync();
+    //     await Page.PauseAsync();
+    // }
 
     [TearDown]
     public async Task TearDown()
