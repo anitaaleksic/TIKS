@@ -69,7 +69,7 @@ public class GuestController : ControllerBase
     }
 
     [HttpGet("GetAllGuests")]
-    public async Task<IActionResult> GetAllGuests()
+    public async Task<IActionResult> GetAllGuests()//ovde mi ne trebaju rez 
     {
         try
         {
@@ -96,12 +96,27 @@ public class GuestController : ControllerBase
             {
                 return BadRequest("JMBG must be exactly 13 characters long.");
             }
-            var guest = await _context.Guests.FirstOrDefaultAsync(g => g.JMBG == jmbg);
+            var guest = await _context.Guests.Include(g => g.Reservations).FirstOrDefaultAsync(g => g.JMBG == jmbg);
             if (guest == null)
             {
                 return NotFound($"Guest with JMBG {jmbg} not found.");
             }
-            return Ok(guest);
+
+            var guestDto = new GuestDTO
+            {
+                JMBG = guest.JMBG,
+                FullName = guest.FullName,
+                PhoneNumber = guest.PhoneNumber,
+                Reservations = guest.Reservations.Select(r => new ReservationDTO
+                {
+                    ReservationID = r.ReservationID,
+                    RoomNumber = r.RoomNumber,
+                    CheckInDate = r.CheckInDate,
+                    CheckOutDate = r.CheckOutDate,
+                    TotalPrice = r.TotalPrice
+                }).ToList()
+            };
+            return Ok(guestDto);
         }
         catch (Exception ex)
         {

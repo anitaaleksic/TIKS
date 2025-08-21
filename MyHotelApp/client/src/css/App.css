@@ -98,8 +98,9 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
-  max-width: 400px;
+  width: 400px;
   margin: 100px auto;
+  margin-bottom: 50px;
   padding: 2rem;
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -148,4 +149,13 @@ body {
 .textarea-input {
   resize: vertical;
 }
+
+.edit-guest{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
 

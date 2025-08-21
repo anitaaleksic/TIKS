@@ -8,9 +8,10 @@ export default function EditGuest() {
   //const [refresh, setRefresh] = useState(false);
 
   const [formData, setFormData] = useState({
-    fullName: '',
     jmbg: '',
-    phoneNumber: ''
+    fullName: '',
+    phoneNumber: '',
+    reservations: []
   });
 
   const [errorMessages, setErrorMessages] = useState([]);
@@ -42,7 +43,7 @@ export default function EditGuest() {
       await axios.delete(`/api/Guest/DeleteGuest/${jmbg}`);
       //setRefresh(prev => !prev); // Trigger re-fetch
       alert('Guest deleted successfully!');
-      navigate("/guest");
+      //navigate("/guest");
     } catch (err) {
       // If backend sends a response with a message, show it
       if (err.response && err.response.data) {
@@ -100,7 +101,13 @@ export default function EditGuest() {
     navigate("/guest");
   }
 
+  const formatDate = (dateStr) => {
+          const date = new Date(dateStr);
+          return isNaN(date.getTime()) ? 'Unknown' : date.toLocaleDateString();
+  };
+
   return (
+    <div className="edit-guest">
     <form className="guest-form" onSubmit={handleSubmit}>
       <button type="button" className="exit-button" onClick={handleExit}>
         x
@@ -163,5 +170,29 @@ export default function EditGuest() {
         </div>
       )}
     </form>
+    <div className='table-container'> 
+        <table id="roomReservationsTable">
+          <thead>
+            <tr>
+              <th>Room</th>
+              <th>Check-In</th>
+              <th>Check-Out</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {formData.reservations.map((res) => (
+              <tr key={res.id}  >
+                {/* onClick={() => handleEdit(res.id)} */}
+                <td className='td-guest'>{res.roomNumber}</td>
+                <td className='td-guest'>{formatDate(res.checkInDate)}</td>
+                <td className='td-guest'>{formatDate(res.checkOutDate)}</td>
+                <td className='td-guest action-cell'>{res.totalPrice}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>    
+    </div>
   );
 }

@@ -73,30 +73,8 @@ public class GuestControllerTests : PlaywrightTest
         await DatabaseRefresher.AddDataAsync(_context);
     }
 
-
-    // [Test]
-    // public async Task GetGuests()
-    // {
-    //     // await Page.GotoAsync("http://localhost:5173/api/guests");
-    //     // var response = await Page.WaitForResponseAsync("http://localhost:5173/api/guests");
-    //     // Assert.AreEqual(HttpStatusCode.OK, response.Status);
-
-
-    //     await using var response = await Request.GetAsync("http://localhost:5173/api/guests");
-
-    //     var body = await response.BodyAsync();
-    //     var jsonString = Encoding.UTF8.GetString(body);
-    //     var result = JsonNode.Parse(jsonString)?.AsArray();
-
-    //     Assert.Multiple(() =>
-    //     {
-    //         Assert.That(response, Has.Property("Status").EqualTo(200));
-    //         Assert.That(result, Has.Count.GreaterThan(0));
-    //     });
-    // }
-
     [Test]
-    public async Task GetGuests_DisplaysApiGuestsInTable()
+    public async Task GetGuests_NonEmptyGuests_ReturnsOk()
     {
         await using var response = await Request.GetAsync("/api/Guest/GetAllGuests");
 

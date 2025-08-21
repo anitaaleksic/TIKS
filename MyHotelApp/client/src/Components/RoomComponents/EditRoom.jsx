@@ -9,7 +9,8 @@ export default function EditRoom() {
   const [formData, setFormData] = useState({
     roomNumber: '',
     roomTypeID: '',
-    floor: ''//,
+    floor: '',
+    reservations: []
     //isAvailable: false
   });
 
@@ -93,7 +94,13 @@ export default function EditRoom() {
     navigate("/room");
   }
 
+  const formatDate = (dateStr) => {
+          const date = new Date(dateStr);
+          return isNaN(date.getTime()) ? 'Unknown' : date.toLocaleDateString();
+  };
+
   return (
+    <div className="edit-guest">
     <form className="extraservice-form" onSubmit={handleSubmit}>
       <button type="button" className="exit-button" onClick={handleExit}>
         x
@@ -157,5 +164,29 @@ export default function EditRoom() {
         </div>
       )}
     </form>
+    <div className='table-container'> 
+        <table id="guestReservationsTable">
+          <thead>
+            <tr>
+              <th>Guest</th>
+              <th>Check-In</th>
+              <th>Check-Out</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {formData.reservations.map((res) => (
+              <tr key={res.id}  >
+                {/* onClick={() => handleEdit(res.id)} */}
+                <td className='td-guest'>{res.guestID}</td>
+                <td className='td-guest'>{formatDate(res.checkInDate)}</td>
+                <td className='td-guest'>{formatDate(res.checkOutDate)}</td>
+                <td className='td-guest action-cell'>{res.totalPrice}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>    
+    </div>
   );
 }

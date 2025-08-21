@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import '../../css/Reservation.css'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+ 
 export default function AddReservation() {
-  
+ 
   const [showRoomServices, setShowRoomServices] = useState(false);
   const [showExtraServices, setShowExtraServices] = useState(false);
   const [roomServices, setRoomServices] = useState([]);
@@ -17,18 +17,18 @@ export default function AddReservation() {
   //
   const [totalPrice, setTotalPrice] = useState(0);
   const [errorMessages, setErrorMessages] = useState([]);
-
+ 
   const [formData, setFormData] = useState({
     roomNumber: '',
     guestID: '',    
-    checkInDate: '', 
+    checkInDate: '',
     checkOutDate: '',
     roomServiceIDs: [],
     extraServiceIDs: []
   });
-
+ 
   const navigate = useNavigate();
-  
+ 
   const checkGuestExists = async (guestID) => {
     if(!guestID || guestID.length !== 13){
       setGuestExists(null);
@@ -52,7 +52,7 @@ export default function AddReservation() {
       setGuestID(null);
     }
   };
-
+ 
   const checkRoomExists = async (roomNumber) => {
     if(!roomNumber || roomNumber < 101 || roomNumber > 699){
       setRoomExists(null);
@@ -67,12 +67,12 @@ export default function AddReservation() {
       setRoomExists(null);
     }
   };
-
+ 
   const checkRoomAvailability = async () => {
     const { roomNumber, checkInDate, checkOutDate} = formData;
-    if(!roomNumber || !checkInDate || !checkOutDate) 
+    if(!roomNumber || !checkInDate || !checkOutDate)
       return;
-
+ 
     try {
       const res = await axios.get(`/api/Reservation/IsRoomAvailable/${roomNumber}/${checkInDate}/${checkOutDate}`);
       setRoomAvailable(res.data.available);
@@ -82,16 +82,16 @@ export default function AddReservation() {
       setRoomAvailable(null);
     }
   }
-
+ 
   const handleRoomServiceChange = (rsId) => {
     setFormData(prev => {
-      const selected = prev.roomServiceIDs.includes(rsId) 
+      const selected = prev.roomServiceIDs.includes(rsId)
             ? prev.roomServiceIDs.filter(id => id !== rsId)
             : [...prev.roomServiceIDs, rsId];
       return { ...prev, roomServiceIDs: selected}
     });
   };
-
+ 
   const handleExtraServiceChange = (esId) => {
     setFormData(prev => {
       const selected = prev.extraServiceIDs.includes(esId)
@@ -100,16 +100,16 @@ export default function AddReservation() {
       return { ...prev, extraServiceIDs: selected}
     })
   }
-
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
+ 
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
-
+ 
   const formatErrors = (errorsObj) => {
     let messages = [];
     for (const field in errorsObj) {
@@ -118,18 +118,18 @@ export default function AddReservation() {
     }
     return messages;
   };
-
+ 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+ 
     const checkIn = new Date(formData.checkInDate);
     const checkOut = new Date(formData.checkOutDate);
-
+ 
     if (checkOut <= checkIn) {
       setErrorMessages(["Check-out date must be after check-in date."]);
       return;
     }
-
+ 
     if(guestExists === false){
       setErrorMessages(["Guest with that JMBG doens't exist."]);
       return;
@@ -138,12 +138,12 @@ export default function AddReservation() {
       setErrorMessages(["Room with that number doens't exist."]);
       return;
     }
-
+ 
     if(roomAvailable === false){
       setErrorMessages(["Room isn't available for selected dates."]);
       return;
     }
-
+ 
     axios.post('/api/Reservation/CreateReservation', {
           ...formData,
           totalPrice: totalPrice
@@ -152,7 +152,7 @@ export default function AddReservation() {
         alert('Reservation added successfully!');
         setFormData({ roomNumber: '',
                       guestID: '',    
-                      checkInDate: '', 
+                      checkInDate: '',
                       checkOutDate: '',
                       roomServiceIDs: [],
                       extraServiceIDs: []});
@@ -168,24 +168,24 @@ export default function AddReservation() {
         }
       });
   };
-
+ 
   useEffect(() => {
     axios.get('/api/RoomService/GetAllRoomServices')
       .then(res => setRoomServices(res.data))
       .catch(err => console.error('An error occurred loading Room Service', err));
-
+ 
     axios.get('/api/ExtraService/GetAllExtraServices')
       .then(res => setExtraServices(res.data))
       .catch(err => console.error('An error occurred loading Extra Service', err));
-
-    if(formData.guestID) 
+ 
+    if(formData.guestID)
       checkGuestExists(formData.guestID);
-    if(formData.roomNumber) 
+    if(formData.roomNumber)
       checkRoomExists(formData.roomNumber);
     if(formData.roomNumber && formData.checkInDate && formData.checkOutDate)
       checkRoomAvailability(formData.roomNumber, formData.checkInDate, formData.checkOutDate);
-    
-      
+   
+     
   }, [
       formData.guestID,
       formData.checkInDate,
@@ -194,21 +194,21 @@ export default function AddReservation() {
       formData.extraServiceIDs,
       formData.roomNumber
   ]);
-
-
+ 
+ 
   useEffect(() => {
     const calculateTotal = async () => {
-      
+     
       if(!formData.checkInDate || !formData.checkOutDate || !formData.roomNumber)
         return;
-
+ 
       const days = (new Date(formData.checkOutDate) - new Date(formData.checkInDate)) / (1000 * 60 * 60 * 24); //jer je rez u ms
-
-      if(days <= 0) 
+ 
+      if(days <= 0)
         return;
-
+ 
       let total = 0;
-
+ 
       //cena sobe
       try {
         const roomRes = await axios.get(`/api/Room/GetRoom/${formData.roomNumber}`);
@@ -217,30 +217,30 @@ export default function AddReservation() {
       catch(err){
         console.error('Room price fetch failed:', err);
       }
-
+ 
       //room serv cena
       for(let id of formData.roomServiceIDs) {
         const service = roomServices.find(s => s.roomServiceID === id);
         if(service)
           total += parseFloat(service.itemPrice || 0);
       }
-
+ 
       // extra service cene
       for (let id of formData.extraServiceIDs) {
         const service = extraServices.find(s => s.extraServiceID === id);
-        if (service) 
+        if (service)
           total += parseFloat(service.price || 0) * days;
       }
-
+ 
       const roundedTotal = parseFloat(total.toFixed(2));
       if (roundedTotal !== totalPrice) {
         setTotalPrice(roundedTotal);
       }
-
+ 
     };
-
+ 
     calculateTotal();
-
+ 
   }, [
       formData.checkInDate,
       formData.checkOutDate,
@@ -251,11 +251,11 @@ export default function AddReservation() {
       extraServices,
       totalPrice
   ]);
-
+ 
   const handleExit = () => {
     navigate("/reservation");
   }
-
+ 
   return (
     <form className="reservation-form" onSubmit={handleSubmit}>
       <button type="button" className="exit-button" onClick={handleExit}>
@@ -274,26 +274,26 @@ export default function AddReservation() {
           <span className="form-error">Guest with that JMBG doesn't exist.</span>
         )}
       </div>
-
+ 
       <div className="form-group">
         <label className="form-label">Room Number:</label>
         <input type="text"
-               name="roomNumber" 
-               className="form-input" 
+               name="roomNumber"
+               className="form-input"
                value={formData.roomNumber}
                onChange={handleChange}
-               onBlur={() => checkRoomExists(formData.roomNumber)} 
+               onBlur={() => checkRoomExists(formData.roomNumber)}
         />
         {roomExists === false && (
           <span className="form-error">Room with that number doesn't exist.</span>
         )}
       </div>
-
+ 
       <div className="form-group">
         <label className="form-label">Check-In Date:</label>
-        <input type="date" 
-               name="checkInDate" 
-               className="form-input" 
+        <input type="date"
+               name="checkInDate"
+               className="form-input"
                value={formData.checkInDate}
                onChange={handleChange}
         />
@@ -301,21 +301,21 @@ export default function AddReservation() {
           <span className="form-error">Room is not available for selected dates.</span>
         )}
       </div>
-
+ 
       <div className="form-group">
         <label className="form-label">Check-Out Date:</label>
-        <input type="date" 
-               name="checkOutDate" 
-               className="form-input" 
+        <input type="date"
+               name="checkOutDate"
+               className="form-input"
                value={formData.checkOutDate}
                onChange={handleChange}
-
+ 
         />
         {roomAvailable === false && (
           <span className="form-error">Room is not available for selected dates.</span>
         )}
       </div>
-
+ 
       <div className="button-pair-row">
         <div className="toggle-group-inline">
           <button
@@ -337,7 +337,7 @@ export default function AddReservation() {
             </div>
           )}
         </div>
-
+ 
         <div className="toggle-group-inline">
           <button
             type="button"
@@ -359,7 +359,7 @@ export default function AddReservation() {
           )}
         </div>
       </div>
-
+ 
       <div className="form-group">
         <label className="form-label">Total Price:</label>
         <div className="price-input-wrapper">
@@ -374,9 +374,9 @@ export default function AddReservation() {
           />
         </div>
       </div>
-      
+     
       <button type="submit" className="form-button">Add reservation</button>
-
+ 
       {errorMessages.length > 0 && (
         <div className="error-messages" style={{ color: 'red', marginTop: '1rem' }}>
           <h4>Errors:</h4>
@@ -387,7 +387,7 @@ export default function AddReservation() {
           </ul>
         </div>
       )}
-
+ 
     </form>
   );
 }

@@ -69,12 +69,27 @@ public class RoomController : ControllerBase
     {
         try
         {
-            var room = await _context.Rooms.Include(r=>r.RoomType).FirstOrDefaultAsync(r => r.RoomNumber == roomnumber);
+            var room = await _context.Rooms.Include(r=>r.RoomType).Include(r => r.Reservations).FirstOrDefaultAsync(r => r.RoomNumber == roomnumber);
             if (room == null)
             {
                 return NotFound($"Room with number {roomnumber} not found.");
             }
-            return Ok(room);
+
+            var roomDto = new RoomDTO
+            {
+                RoomNumber = room.RoomNumber,
+                RoomTypeID = room.RoomTypeID,
+                Floor = room.Floor,
+                Reservations = room.Reservations.Select(r => new ReservationDTO
+                {
+                    ReservationID = r.ReservationID,
+                    GuestID = r.GuestID,
+                    CheckInDate = r.CheckInDate,
+                    CheckOutDate = r.CheckOutDate,
+                    TotalPrice = r.TotalPrice
+                }).ToList()
+            };
+            return Ok(roomDto);
         }
         catch (Exception ex)
         {

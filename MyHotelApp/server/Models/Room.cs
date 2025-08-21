@@ -31,5 +31,6 @@ public class RoomDTO
     public int RoomNumber { get; set; }
     public int RoomTypeID { get; set; }
     public int Floor { get; set; }
+    public List<ReservationDTO> Reservations { get; set; } = new List<ReservationDTO>();
 }
 

@@ -29,4 +29,5 @@ public class GuestDTO
     public string JMBG { get; set; } = default!;
     public string FullName { get; set; } = default!;
     public string PhoneNumber { get; set; } = default!;
+    public List<ReservationDTO> Reservations { get; set; } = new List<ReservationDTO>();
 }
