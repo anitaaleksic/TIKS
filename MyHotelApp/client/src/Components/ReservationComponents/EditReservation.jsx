@@ -36,6 +36,7 @@ export default function EditReservation() {
     extraServiceIDs: []
   });
 
+  // Fetch reservation i servise
   useEffect(() => {
     async function fetchReservation() {
       try {
@@ -51,7 +52,6 @@ export default function EditReservation() {
         };
 
         setFormData(formattedData);
-        console.log("Fetched reservation:", data.roomServices, formattedData.roomServiceIDs);
       } catch (err) {
         console.error(err);
         alert('Failed to load reservation data.');
@@ -104,42 +104,41 @@ export default function EditReservation() {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  // Provera datuma i ostalih grešaka
-  //const errors = [];
-  const checkIn = new Date(formData.checkInDate);
-  const checkOut = new Date(formData.checkOutDate);
-  if (checkOut <= checkIn) {
-    setErrorMessages(["Check-out date must be after check-in date."]);
-    return;
-  }
-  if (guestExists === false) {
-    setErrorMessages(["Guest with that JMBG doesn't exist."]);
-    return;
-  }
-  if (roomExists === false) {
-    setErrorMessages(["Room with that number doesn't exist."]);
-    return;
-  }
-  if (roomAvailable === false) {
-    setErrorMessages(["Room isn't available for selected dates."]);
-    return;
-  }
+    const checkIn = new Date(formData.checkInDate);
+    const checkOut = new Date(formData.checkOutDate);
+    if (checkOut <= checkIn) {
+      setErrorMessages(["Check-out date must be after check-in date."]);
+      return;
+    }
+    if (guestExists === false) {
+      setErrorMessages(["Guest with that JMBG doesn't exist."]);
+      return;
+    }
+    if (roomExists === false) {
+      setErrorMessages(["Room with that number doesn't exist."]);
+      return;
+    }
+    if (roomAvailable === false) {
+      setErrorMessages(["Room isn't available for selected dates."]);
+      return;
+    }
 
-  try {
-  await axios.put(`/api/Reservation/UpdateReservation/${reservationID}`, {
-    ...formData,
-    totalPrice: totalPrice
-  });
-  alert('Reservation updated successfully!');
-  navigate("/reservation");
-} catch (err) {
-  console.error(err);
-  setErrorMessages([err.response?.data?.message || 'Update failed.']);
-}
-};
+    try {
+      await axios.put(`/api/Reservation/UpdateReservation/${reservationID}`, {
+        ...formData,
+        totalPrice: totalPrice
+      });
+      alert('Reservation updated successfully!');
+      navigate("/reservation");
+    } catch (err) {
+      console.error(err);
+      setErrorMessages([err.response?.data?.message || 'Update failed.']);
+    }
+  };
 
+  // Calculate total with correct RoomType fetch
   useEffect(() => {
     const calculateTotal = async () => {
       if (!formData.checkInDate || !formData.checkOutDate || !formData.roomNumber) return;
@@ -150,26 +149,33 @@ export default function EditReservation() {
       let total = 0;
 
       try {
+        // Dohvati Room da bi imao RoomTypeID
         const roomRes = await axios.get(`/api/Room/GetRoom/${formData.roomNumber}`);
-        total += roomRes.data.roomType.pricePerNight * days;
+        const roomTypeID = roomRes.data.roomTypeID;
+
+        // Dohvati RoomType po ID-u
+        const roomTypeRes = await axios.get(`/api/RoomType/GetRoomTypeById/${roomTypeID}`);
+        const pricePerNight = roomTypeRes.data.pricePerNight || 0;
+
+        total += pricePerNight * days;
       } catch (err) {
         console.error('Room price fetch failed:', err);
       }
 
+      // Dodaj cenu room servisa
       for (let id of formData.roomServiceIDs) {
         const service = roomServices.find(s => s.roomServiceID === id);
         if (service) total += parseFloat(service.itemPrice || 0);
       }
 
+      // Dodaj cenu extra servisa
       for (let id of formData.extraServiceIDs) {
         const service = extraServices.find(s => s.extraServiceID === id);
         if (service) total += parseFloat(service.price || 0) * days;
       }
 
       const roundedTotal = parseFloat(total.toFixed(2));
-      if (roundedTotal !== totalPrice) {
-        setTotalPrice(roundedTotal);
-      }
+      if (roundedTotal !== totalPrice) setTotalPrice(roundedTotal);
     };
 
     calculateTotal();
@@ -185,7 +191,7 @@ export default function EditReservation() {
   ]);
 
   const handleExit = () => {
-    navigate("reservation");
+    navigate("/reservation");
   };
 
   return (
