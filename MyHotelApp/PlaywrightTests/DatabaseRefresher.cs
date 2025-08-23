@@ -41,6 +41,9 @@ public class DatabaseRefresher
 
 
         //add guests
+        await _context.Guests.AddAsync(new Guest { JMBG = "0123456789012", FullName = "Lazar Živković", PhoneNumber = "+381696969696" });
+        await _context.SaveChangesAsync();
+        
         await _context.Guests.AddAsync(new Guest { JMBG = "1234567890123", FullName = "Ana Petrović", PhoneNumber = "+381641112223" });
         await _context.SaveChangesAsync();
 
@@ -68,8 +71,6 @@ public class DatabaseRefresher
         await _context.Guests.AddAsync(new Guest { JMBG = "9012345678901", FullName = "Tamara Đorđević", PhoneNumber = "+381662224445" });
         await _context.SaveChangesAsync();
         
-        await _context.Guests.AddAsync(new Guest { JMBG = "0123456789012", FullName = "Lazar Živković", PhoneNumber = "+381696969696" });
-        await _context.SaveChangesAsync();
 
         //add room types
         await _context.RoomTypes.AddAsync(new RoomType { Type = "Single", Capacity = 1, PricePerNight = 50.00m });

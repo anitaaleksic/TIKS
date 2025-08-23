@@ -33,7 +33,7 @@ public class GuestController : ControllerBase
                 return BadRequest($"Guest with the same JMBG ({guest.JMBG}) already exists.");
             }
 
-            if (guest.JMBG.Length != 13)
+            if (guest.JMBG.Length != 13 || !guest.JMBG.All(char.IsDigit))
             {
                 return BadRequest("JMBG must be exactly 13 characters long.");
             }
@@ -92,7 +92,7 @@ public class GuestController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrEmpty(jmbg) || jmbg.Length != 13)
+            if (string.IsNullOrEmpty(jmbg) || jmbg.Length != 13 || !jmbg.All(char.IsDigit))
             {
                 return BadRequest("JMBG must be exactly 13 characters long.");
             }
@@ -110,6 +110,7 @@ public class GuestController : ControllerBase
                 Reservations = guest.Reservations.Select(r => new ReservationDTO
                 {
                     ReservationID = r.ReservationID,
+                    GuestID = r.GuestID,
                     RoomNumber = r.RoomNumber,
                     CheckInDate = r.CheckInDate,
                     CheckOutDate = r.CheckOutDate,
@@ -133,7 +134,7 @@ public class GuestController : ControllerBase
             {
                 return BadRequest(ModelState);
             }
-            if (jmbg.Length != 13)
+            if (jmbg.Length != 13 || !jmbg.All(char.IsDigit))
             {
                 return BadRequest("JMBG must be exactly 13 characters long.");
             }

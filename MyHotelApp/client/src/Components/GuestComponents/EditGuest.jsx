@@ -43,7 +43,7 @@ export default function EditGuest() {
       await axios.delete(`/api/Guest/DeleteGuest/${jmbg}`);
       //setRefresh(prev => !prev); // Trigger re-fetch
       alert('Guest deleted successfully!');
-      //navigate("/guest");
+      navigate("/guest");
     } catch (err) {
       // If backend sends a response with a message, show it
       if (err.response && err.response.data) {

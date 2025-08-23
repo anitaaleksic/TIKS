@@ -9,6 +9,7 @@ public class Guest
 {
     [Key]
     [StringLength(13, ErrorMessage = "JMBG must be 13 characters long.")]
+    [RegularExpression(@"^\d{13}$", ErrorMessage = "JMBG must be a 13-digit number.")]
     public required string JMBG { get; set; }
 
     [Required]

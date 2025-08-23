@@ -84,6 +84,7 @@ public class RoomController : ControllerBase
                 {
                     ReservationID = r.ReservationID,
                     GuestID = r.GuestID,
+                    RoomNumber = r.RoomNumber,
                     CheckInDate = r.CheckInDate,
                     CheckOutDate = r.CheckOutDate,
                     TotalPrice = r.TotalPrice
