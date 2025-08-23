@@ -237,7 +237,7 @@ export default function AddReservation() {
         <div className="toggle-group-inline">
           <button type="button" className="form-button" onClick={() => setShowRoomServices(!showRoomServices)}>Room Services</button>
           {showRoomServices && (
-            <div className="checkbox-group">
+            <div className="checkbox-group" data-testid="room-services">
               <label className="form-label">Room Services:</label>
               {roomServices.map(s => (
                 <label key={s.roomServiceID} className="checkbox-item">
@@ -252,7 +252,7 @@ export default function AddReservation() {
         <div className="toggle-group-inline">
           <button type="button" className="form-button" onClick={() => setShowExtraServices(!showExtraServices)}>Extra Services</button>
           {showExtraServices && (
-            <div className="checkbox-group">
+            <div className="checkbox-group" data-testid="extra-services">
               <label className="form-label">Extra Services:</label>
               {extraServices.map(s => (
                 <label key={s.extraServiceID} className="checkbox-item">

@@ -135,6 +135,7 @@ export default function AddRoom() {
         <label className="form-label">Floor:</label>
         <input
           type="number"
+          name="floor"
           className="form-input"
           value={formData.floor}
           readOnly

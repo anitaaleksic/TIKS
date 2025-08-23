@@ -66,7 +66,7 @@ export default function Reservation() {
 
       <div className='entity-grid'>
         {reservations.map((reservation) => (
-          <div key={reservation.reservationID} className='entity-card' onClick={() => handleEdit(reservation.reservationID)}> 
+          <div key={reservation.reservationID} className='entity-card' onClick={() => handleEdit(reservation.reservationID)} data-reservation-id={reservation.reservationID}> 
             <span className='res-header'>Reservation #{reservation.reservationID}</span>
             <span className='date'>{formatDate(reservation.checkInDate)} - {formatDate(reservation.checkOutDate)}</span>
 

@@ -256,7 +256,7 @@ export default function EditReservation() {
             Room Services
           </button>
           {showRoomServices && (
-            <div className="checkbox-group">
+            <div className="checkbox-group" data-testid="room-services">
               <label className="form-label">Room Services:</label>
               {roomServices.map((service) => (
                 <label key={service.roomServiceID} className="checkbox-item">
@@ -278,7 +278,7 @@ export default function EditReservation() {
             Extra Services
           </button>
           {showExtraServices && (
-            <div className="checkbox-group">
+            <div className="checkbox-group" data-testid="extra-services">
               <label className="form-label">Extra Services:</label>
               {extraServices.map((service) => (
                 <label key={service.extraServiceID} className="checkbox-item">

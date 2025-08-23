@@ -105,7 +105,7 @@ export default function Room() {
           {Object.entries(floors).map(([floorNumber, floorRooms]) => (
             <tr className='hotel-floor' key={floorNumber}>
               {floorRooms.map((room) => (
-                <td className='room-container' key={room.roomNumber} onClick={() => handleEdit(room.roomNumber)}>
+                <td className='room-container' key={room.roomNumber} onClick={() => handleEdit(room.roomNumber)} data-roomNumber={room.roomNumber}>
                   <div>Room {room.roomNumber}</div>
                   <div>type: {room.roomType.type}</div>
                   {/* <div>type: {room.typeName}</div> */}

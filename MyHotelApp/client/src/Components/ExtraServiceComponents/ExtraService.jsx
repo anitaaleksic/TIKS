@@ -52,7 +52,7 @@ export default function ExtraService() {
           </thead>
           <tbody>
             {extraServices.map((extraService) => (
-              <tr key={extraService.extraServiceID} onClick={() => handleEdit(extraService.serviceName)}>
+              <tr key={extraService.extraServiceID} onClick={() => handleEdit(extraService.serviceName)} data-item-name={extraService.serviceName}>
                 <td className="menu-item">
                   <div className="name-desc">
                     <div className="item-name">{extraService.serviceName}</div>

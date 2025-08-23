@@ -48,7 +48,7 @@ export default function RoomService() {
           </thead>
           <tbody>
             {roomServices.map((roomService) => (
-              <tr key={roomService.RoomServiceID} onClick={() => handleEdit(roomService.itemName)}>
+              <tr key={roomService.RoomServiceID} onClick={() => handleEdit(roomService.itemName)} data-item-name={roomService.itemName}>
                 <td className="menu-item">
                   <div className="name-desc">
                     <div className="item-name">{roomService.itemName}</div>
