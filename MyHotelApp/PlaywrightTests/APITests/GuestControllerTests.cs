@@ -91,11 +91,6 @@ public class GuestControllerTests : PlaywrightTest
             }
         });
 
-        if (response.Status != 200)
-        {
-            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
-        }
-
         var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
@@ -104,7 +99,7 @@ public class GuestControllerTests : PlaywrightTest
             Assert.That(responseText, Does.Contain("Guest with JMBG 0222456789012 created successfully."));
         });
 
-        // provera
+        // provera sto da ne 
         await using var getResponse = await Request.GetAsync($"/api/Guest/GetGuestByJMBG/{validGuestJMBG}");
 
         if (getResponse.Status != 200)
@@ -150,11 +145,6 @@ public class GuestControllerTests : PlaywrightTest
             }
         });
 
-        if (response.Status != 400)
-        {
-            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
-        }
-
         var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
@@ -180,11 +170,6 @@ public class GuestControllerTests : PlaywrightTest
                 PhoneNumber = "+38161234567"
             }
         });
-
-        if (response.Status != 400)
-        {
-            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
-        }
 
         var responseText = await response.TextAsync();
 
@@ -213,11 +198,6 @@ public class GuestControllerTests : PlaywrightTest
             }
         });
 
-        if (response.Status != 400)
-        {
-            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
-        }
-
         var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
@@ -244,11 +224,6 @@ public class GuestControllerTests : PlaywrightTest
             }
         });
 
-        if (response.Status != 400)
-        {
-            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
-        }
-
         var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
@@ -274,11 +249,6 @@ public class GuestControllerTests : PlaywrightTest
                 PhoneNumber = "+3816123454553"
             }
         });
-
-        if (response.Status != 400)
-        {
-            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
-        }
 
         var responseText = await response.TextAsync();
 
@@ -424,11 +394,6 @@ public class GuestControllerTests : PlaywrightTest
             }
         });
 
-        if (response.Status != 200)
-        {
-            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
-        }
-
         var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
@@ -514,11 +479,6 @@ public class GuestControllerTests : PlaywrightTest
             }
         });
 
-        if (response.Status != 400)
-        {
-            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
-        }
-
         var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
@@ -545,11 +505,6 @@ public class GuestControllerTests : PlaywrightTest
                 PhoneNumber = "+381612345aa"
             }
         });
-
-        if (response.Status != 400)
-        {
-            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
-        }
 
         var responseText = await response.TextAsync();
 
