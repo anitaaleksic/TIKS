@@ -197,6 +197,7 @@ public class ExtraServiceControllerTests : PlaywrightTest
         Assert.That(createResponse.Status, Is.EqualTo(200));
         var createText = await createResponse.TextAsync();
         Assert.That(createText, Is.EqualTo($"\"Extra service with name {serviceName} created successfully.\""));
+
     }
 
     [Test]

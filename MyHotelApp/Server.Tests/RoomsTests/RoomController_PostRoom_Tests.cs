@@ -21,12 +21,10 @@ public class RoomController_PostRoom_Tests
     {
         var options = new DbContextOptionsBuilder<HotelContext>()
                     .UseInMemoryDatabase(databaseName: "HotelTestDb")
-                    //.ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionWarning))
                     .Options;
         _context = new HotelContext(options);
 
         _controllerRoom = new RoomController(_context);
-        // _controllerReservation = new ReservationController(_context);
 
         _context.RoomTypes.Add(new RoomType
         {
@@ -65,7 +63,6 @@ public class RoomController_PostRoom_Tests
     [Test]
     public async Task CreateRoom_WithExistingRoomNumber_ReturnsNotFound()
     {
-        // Prvo ubaci sobu sa brojem 123
         var existingRoom = new Room
         {
             RoomNumber = 123,
@@ -168,10 +165,9 @@ public class RoomController_PostRoom_Tests
         Assert.That(savedRoom.Floor, Is.EqualTo(3)); // Backend je izračunao sprat na osnovu RoomNumber
     }
 
-    [Test] //add to all Create tests
+    [Test] 
     public async Task CreateRoom_WithModelStateInvalid_ReturnsBadRequest()
     {
-        // Arrange
         _controllerRoom.ModelState.AddModelError("error", "some model state error");
         var roomDTO = new RoomDTO();
 

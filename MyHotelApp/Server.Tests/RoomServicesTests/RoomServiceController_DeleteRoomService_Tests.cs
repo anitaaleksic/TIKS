@@ -21,12 +21,10 @@ public class RoomServiceController_DeleteRoomService_Tests
     {
         var options = new DbContextOptionsBuilder<HotelContext>()
                     .UseInMemoryDatabase(databaseName: "HotelTestDb")
-                    //.ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionWarning))
                     .Options;
         _context = new HotelContext(options);
 
         _controllerRoomService = new RoomServiceController(_context);
-        // _controllerReservation = new ReservationController(_context);
 
         _context.RoomServices.Add(new RoomService
         {

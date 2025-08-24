@@ -21,7 +21,6 @@ public class RoomController_PutRoom_Tests
     {
         var options = new DbContextOptionsBuilder<HotelContext>()
                     .UseInMemoryDatabase(databaseName: "HotelTestDb")
-                    //.ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionWarning))
                     .Options;
         _context = new HotelContext(options);
 
@@ -123,8 +122,8 @@ public class RoomController_PutRoom_Tests
         var dto = new RoomDTO
         {
             RoomNumber = 301,
-            RoomTypeID = 2, // promena tipa
-            Floor = 4       // promena sprata
+            RoomTypeID = 2, 
+            Floor = 3       
         };
 
         var result = await _controllerRoom.UpdateRoom(301, dto);
@@ -138,10 +137,9 @@ public class RoomController_PutRoom_Tests
         Assert.That(updatedRoom.Floor, Is.EqualTo(4));
     }
 
-    [Test] //add to all Update and Update tests
+    [Test] 
     public async Task UpdateRoom_WithModelStateInvalid_ReturnsBadRequest()
     {
-        // Arrange
         _controllerRoom.ModelState.AddModelError("error", "some model state error");
         var roomDTO = new RoomDTO();
         var someValidID = 301;
