@@ -265,65 +265,6 @@ public class DatabaseRefresher
         await _context.SaveChangesAsync();
 
 
-
-
-        // var roomServicesMap = new Dictionary<int, int[]>
-        // {
-        //     { 1, new[] { 1, 3, 5 } },
-        //     { 2, new[] { 2, 4 } },
-        //     { 3, new[] { 1, 6 } },
-        //     { 4, new[] { 2, 3, 5 } },
-        //     { 5, new[] { 7 } },
-        //     { 6, new[] { 4, 8 } },
-        //     { 7, new[] { 6 } },
-        //     { 8, new[] { 1, 2 } },
-        //     { 9, new[] { 9, 10 } },
-        //     { 10, new[] { 5, 7 } }
-        // };
-
-        // // Define your mappings for ExtraServices per reservation
-        // var extraServicesMap = new Dictionary<int, int[]>
-        // {
-        //     { 1, new[] { 1, 2 } },
-        //     { 2, new[] { 3, 4 } },
-        //     { 3, new[] { 5, 6 } },
-        //     { 4, new[] { 1 } },
-        //     { 5, new[] { 2, 7 } },
-        //     { 6, new[] { 8, 9 } },
-        //     { 7, new[] { 10 } },
-        //     { 8, new[] { 3, 4 } },
-        //     { 9, new[] { 5, 6 } },
-        //     { 10, new[] { 7, 8, 9, 10 } }
-        // };
-
-        // // Loop through reservations
-        // foreach (var reservation in await _context.Reservations.ToListAsync())
-        // {
-        //     // Add RoomServices
-        //     if (roomServicesMap.ContainsKey(reservation.ReservationID))
-        //     {
-        //         var services = await _context.RoomServices
-        //             .Where(rs => roomServicesMap[reservation.ReservationID].Contains(rs.RoomServiceID))
-        //             .ToListAsync();
-
-        //         reservation.RoomServices.AddRange(services);
-        //     }
-
-        //     // Add ExtraServices
-        //     if (extraServicesMap.ContainsKey(reservation.ReservationID))
-        //     {
-        //         var services = await _context.ExtraServices
-        //             .Where(es => extraServicesMap[reservation.ReservationID].Contains(es.ExtraServiceID))
-        //             .ToListAsync();
-
-        //         reservation.ExtraServices.AddRange(services);
-        //     }
-        // }
-
-        // await _context.SaveChangesAsync();
-
-
-
     }
 
 

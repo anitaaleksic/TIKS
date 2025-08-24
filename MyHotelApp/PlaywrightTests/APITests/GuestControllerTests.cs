@@ -27,26 +27,6 @@ public class GuestControllerTests : PlaywrightTest
 {
     private IAPIRequestContext Request;
     private HotelContext _context;
-    //var page = await context.NewPageAsync();
-
-    // public override BrowserNewContextOptions ContextOptions()
-    // {
-    //     return new BrowserNewContextOptions
-    //     {
-    //         IgnoreHTTPSErrors = true,
-    //         ViewportSize = new ViewportSize
-    //         {
-    //             Height = 720,
-    //             Width = 1280
-    //         },
-    //         RecordVideoSize = new()
-    //         {
-    //             Width = 1280,
-    //             Height = 720
-    //         },
-    //         RecordVideoDir = "../../../Videos"
-    //     };
-    // }
 
     [SetUp]
     public async Task SetUpAPITesting()
@@ -69,7 +49,6 @@ public class GuestControllerTests : PlaywrightTest
         var options = optionsBuilder.Options;
         _context = new HotelContext(options);
 
-        // Refresh the database
         await DatabaseRefresher.AddDataAsync(_context);
     }
 
@@ -268,14 +247,9 @@ public class GuestControllerTests : PlaywrightTest
         {
             Assert.Fail($"Code: {response.Status} - {response.StatusText}");
         }
-        //Assert.That(response.Status, Is.EqualTo(200), $"Expected 200 OK but got {response.Status} - {response.StatusText}");
 
         var jsonResult = await response.JsonAsync();
 
-        // if (!jsonResult.HasValue || jsonResult.Value.ValueKind != System.Text.Json.JsonValueKind.Array)
-        // {
-        //     Assert.Fail("JSON response is not a valid array.");
-        // }
         Assert.Multiple(() =>
         {
             Assert.That(jsonResult.HasValue, Is.True, "Response did not contain JSON.");
@@ -285,15 +259,6 @@ public class GuestControllerTests : PlaywrightTest
         var guests = jsonResult.Value.EnumerateArray().ToList();
 
         Assert.That(guests.Count, Is.GreaterThan(0), "Expected at least one guest in the response.");
-
-        // var firstGuest = guests.First();
-        // Assert.Multiple(() =>
-        // {
-        //     Assert.That(firstGuest.TryGetProperty("fullName", out var name) && !string.IsNullOrEmpty(name.GetString()));
-        //     Console.WriteLine($"Full Name: {name.GetString()}");
-        //     Assert.That(firstGuest.TryGetProperty("jmbg", out var jmbg) && !string.IsNullOrEmpty(jmbg.GetString()));
-        //     Assert.That(firstGuest.TryGetProperty("phoneNumber", out var phone) && !string.IsNullOrEmpty(phone.GetString()));
-        // });
 
     }
 
@@ -308,7 +273,6 @@ public class GuestControllerTests : PlaywrightTest
         {
             Assert.Fail($"Code: {response.Status} - {response.StatusText}");
         }
-        //Assert.That(response.Status, Is.EqualTo(200), $"Expected 200 OK but got {response.Status} - {response.StatusText}");
 
         var jsonResult = await response.JsonAsync();
 
@@ -409,7 +373,6 @@ public class GuestControllerTests : PlaywrightTest
         {
             Assert.Fail($"Code: {getResponse.Status} - {getResponse.StatusText}");
         }
-        //Assert.That(response.Status, Is.EqualTo(200), $"Expected 200 OK but got {response.Status} - {response.StatusText}");
 
         var jsonResult = await getResponse.JsonAsync();
 
@@ -530,7 +493,6 @@ public class GuestControllerTests : PlaywrightTest
             Assert.That(responseText, Does.Contain($"Guest with JMBG {existingJMBG} deleted successfully."));
         });
 
-        //check if its deleted
         await using var getResponse = await Request.GetAsync($"/api/Guest/GetGuestByJMBG/{existingJMBG}");
         var getResponseText = await getResponse.TextAsync();
 

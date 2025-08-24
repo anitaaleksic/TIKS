@@ -26,7 +26,6 @@ public class RoomServiceControllerTests : PlaywrightTest
 {
     private IAPIRequestContext Request;
     private HotelContext _context;
-    //var page = await context.NewPageAsync();
 
 
     [SetUp]
@@ -50,7 +49,6 @@ public class RoomServiceControllerTests : PlaywrightTest
         var options = optionsBuilder.Options;
         _context = new HotelContext(options);
 
-        // Refresh the database
         await DatabaseRefresher.AddDataAsync(_context);
     }
 
@@ -218,9 +216,6 @@ public class RoomServiceControllerTests : PlaywrightTest
         
         var responseText = await resp.TextAsync();;
 
-        //Console.WriteLine($"POST EmptyName => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
-
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
@@ -268,9 +263,6 @@ public class RoomServiceControllerTests : PlaywrightTest
 
         var responseText = await resp.TextAsync();
 
-        //Console.WriteLine($"POST NegativePrice => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
-
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
@@ -294,9 +286,6 @@ public class RoomServiceControllerTests : PlaywrightTest
 
         var responseText = await resp.TextAsync();
 
-        //Console.WriteLine($"POST ZeroPrice => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
-
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
@@ -314,9 +303,7 @@ public class RoomServiceControllerTests : PlaywrightTest
             DataObject = new { ItemName = existingName, ItemPrice = 100.0m, Description = "Duplicate Test" }
         });
 
-        //Console.WriteLine($"Create duplicate response status: {createResp.Status}");
         var text = await createResp.TextAsync();
-        //Console.WriteLine($"Response text: {text}");
 
         Assert.Multiple(() =>
         {
@@ -401,8 +388,6 @@ public class RoomServiceControllerTests : PlaywrightTest
 
         var responseText = await resp.TextAsync();
 
-        //Console.WriteLine($"PUT EmptyName => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
@@ -430,9 +415,6 @@ public class RoomServiceControllerTests : PlaywrightTest
         
         var responseText = await resp.TextAsync();
 
-        //Console.WriteLine($"PUT NameTooLong => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
-
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
@@ -457,9 +439,6 @@ public class RoomServiceControllerTests : PlaywrightTest
         });
 
         var responseText = await resp.TextAsync();
-
-        //Console.WriteLine($"PUT NegativePrice => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
@@ -486,9 +465,6 @@ public class RoomServiceControllerTests : PlaywrightTest
 
         var responseText = await resp.TextAsync();
 
-        //Console.WriteLine($"PUT ZeroPrice => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
-
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
@@ -514,9 +490,6 @@ public class RoomServiceControllerTests : PlaywrightTest
         });
 
         var responseText = await resp.TextAsync();
-
-        //Console.WriteLine($"PUT DuplicateName => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
@@ -563,12 +536,10 @@ public class RoomServiceControllerTests : PlaywrightTest
         int serviceId = 2;
 
         var firstDelete = await Request.DeleteAsync($"/api/RoomService/DeleteRoomService/{serviceId}");
-        //Console.WriteLine($"First delete response status: {firstDelete.Status}");
+        
 
         var secondDelete = await Request.DeleteAsync($"/api/RoomService/DeleteRoomService/{serviceId}");
         var text = await secondDelete.TextAsync();
-        //Console.WriteLine($"Second delete response status: {secondDelete.Status}");
-        //Console.WriteLine($"Response text: {text}");
 
         Assert.Multiple(() =>
         {
