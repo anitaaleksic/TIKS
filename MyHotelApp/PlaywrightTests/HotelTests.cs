@@ -184,6 +184,38 @@ public class HotelTests : PageTest
     }
 
     [Test]
+    public async Task ExitEditRoomService()
+    {
+        await Page.GotoAsync("http://localhost:5173/roomservice");//5173
+        await Page.PauseAsync();
+        await Page.Locator("tr[data-item-name='Breakfast']").ClickAsync();
+
+        //await Page.PauseAsync();
+        await Page.GetByRole(AriaRole.Button, new() { NameString = "x" }).ClickAsync();
+        // Wait for navigation to /roomservice
+        await Page.WaitForURLAsync("**/roomservice");
+        Assert.That(Page.Url, Does.Contain("/roomservice"));
+        //await Page.PauseAsync();
+    }
+
+    [Test]
+    public async Task ExitAddRoomService()
+    {
+        await Page.GotoAsync("http://localhost:5173/roomservice");//5173
+        await Page.PauseAsync();
+        await Page.GetByRole(AriaRole.Button, new() { NameString = "Add Room Service" }).ClickAsync();
+
+        //await Page.PauseAsync();
+        await Page.GetByRole(AriaRole.Button, new() { NameString = "x" }).ClickAsync();
+        // Wait for navigation to /roomservice
+        await Page.WaitForURLAsync("**/roomservice");
+
+        // Assert we are on the /roomservice page
+        Assert.That(Page.Url, Does.Contain("/roomservice"));
+        await Page.PauseAsync();
+    }
+
+    [Test]
     public async Task AddExtraService()
     {
         await Page.GotoAsync("http://localhost:5173/extraservice");//5173
@@ -239,6 +271,38 @@ public class HotelTests : PageTest
         await Page.PauseAsync();
         // await Page.GotoAsync("http://localhost:5173/extraservice");//5173
         // await Page.PauseAsync();
+    }
+
+    [Test]
+    public async Task ExitEditExtraService()
+    {
+        await Page.GotoAsync("http://localhost:5173/extraservice");//5173
+        await Page.PauseAsync();
+        await Page.Locator("tr[data-item-name='Parking Spot']").ClickAsync();
+
+        //await Page.PauseAsync();
+       await Page.GetByRole(AriaRole.Button, new() { NameString = "x", Exact = true }).ClickAsync();
+        // Wait for navigation to /extraservice
+        await Page.WaitForURLAsync("**/extraservice");
+        Assert.That(Page.Url, Does.Contain("/extraservice"));
+        //await Page.PauseAsync();
+    }
+
+    [Test]
+    public async Task ExitAddExtraService()
+    {
+        await Page.GotoAsync("http://localhost:5173/extraservice");//5173
+        await Page.PauseAsync();
+        await Page.GetByRole(AriaRole.Button, new() { NameString = "Add Extra Service" }).ClickAsync();
+
+        //await Page.PauseAsync();
+        await Page.GetByRole(AriaRole.Button, new() { NameString = "x", Exact = true }).ClickAsync();
+        // Wait for navigation to /extraservice
+        await Page.WaitForURLAsync("**/extraservice");
+
+        // Assert we are on the /extraservice page
+        Assert.That(Page.Url, Does.Contain("/extraservice"));
+        await Page.PauseAsync();
     }
 
     [Test]
@@ -320,6 +384,38 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Delete room" }).ClickAsync();
         // await Page.GotoAsync("http://localhost:5173/room");//5173
         // await Page.PauseAsync();
+    }
+
+    [Test]
+    public async Task ExitEditRoom()
+    {
+        await Page.GotoAsync("http://localhost:5173/room");//5173
+        await Page.PauseAsync();
+        await Page.Locator("td[data-roomNumber='201']").ClickAsync();
+
+        //await Page.PauseAsync();
+        await Page.GetByRole(AriaRole.Button, new() { NameString = "x" }).ClickAsync();
+        // Wait for navigation to /room
+        await Page.WaitForURLAsync("**/room");
+        Assert.That(Page.Url, Does.Contain("/room"));
+        //await Page.PauseAsync();
+    }
+
+    [Test]
+    public async Task ExitAddRoom()
+    {
+        await Page.GotoAsync("http://localhost:5173/room");//5173
+        await Page.PauseAsync();
+        await Page.GetByRole(AriaRole.Button, new() { NameString = "Add Room" }).ClickAsync();
+
+        //await Page.PauseAsync();
+        await Page.GetByRole(AriaRole.Button, new() { NameString = "x" }).ClickAsync();
+        // Wait for navigation to /room
+        await Page.WaitForURLAsync("**/room");
+
+        // Assert we are on the /room page
+        Assert.That(Page.Url, Does.Contain("/room"));
+        await Page.PauseAsync();
     }
 
     [Test] 
@@ -537,6 +633,38 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Delete reservation" }).ClickAsync();
         // await Page.GotoAsync("http://localhost:5173/reservation");//5173
         // await Page.PauseAsync();
+    }
+
+    [Test]
+    public async Task ExitEditReservation()
+    {
+        await Page.GotoAsync("http://localhost:5173/reservation");//5173
+        await Page.PauseAsync();
+        await Page.Locator("div.entity-card[data-reservation-id='1']").ClickAsync();
+
+        //await Page.PauseAsync();
+        await Page.GetByRole(AriaRole.Button, new() { NameString = "x", Exact = true }).ClickAsync();
+        // Wait for navigation to /reservation
+        await Page.WaitForURLAsync("**/reservation");
+        Assert.That(Page.Url, Does.Contain("/reservation"));
+        //await Page.PauseAsync();
+    }
+
+    [Test]
+    public async Task ExitAddReservation()
+    {
+        await Page.GotoAsync("http://localhost:5173/reservation");//5173
+        await Page.PauseAsync();
+        await Page.GetByRole(AriaRole.Button, new() { NameString = "Add Reservation" }).ClickAsync();
+
+        //await Page.PauseAsync();
+        await Page.GetByRole(AriaRole.Button, new() { NameString = "x", Exact = true }).ClickAsync();
+        // Wait for navigation to /reservation
+        await Page.WaitForURLAsync("**/reservation");
+
+        // Assert we are on the /reservation page
+        Assert.That(Page.Url, Does.Contain("/reservation"));
+        await Page.PauseAsync();
     }
 
 
