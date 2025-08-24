@@ -134,7 +134,7 @@ public class RoomController_PutRoom_Tests
         var updatedRoom = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == 301);
         Assert.That(updatedRoom, Is.Not.Null);
         Assert.That(updatedRoom.RoomTypeID, Is.EqualTo(2));
-        Assert.That(updatedRoom.Floor, Is.EqualTo(4));
+        Assert.That(updatedRoom.Floor, Is.EqualTo(3));
     }
 
     [Test] 

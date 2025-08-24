@@ -320,7 +320,7 @@ public class HotelTests : PageTest
 
         // Assert we are on the /extraservice page
         Assert.That(Page.Url, Does.Contain("/extraservice"));
-        await Page.PauseAsync();
+        //await Page.PauseAsync();
     }
 
     [Test]
