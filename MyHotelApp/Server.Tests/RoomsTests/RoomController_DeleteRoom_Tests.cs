@@ -22,7 +22,6 @@ public class RoomController_DeleteRoom_Tests
     {
         var options = new DbContextOptionsBuilder<HotelContext>()
                     .UseInMemoryDatabase(databaseName: "HotelTestDb")
-                    //.ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionWarning))
                     .Options;
         _context = new HotelContext(options);
 
@@ -123,9 +122,7 @@ public class RoomController_DeleteRoom_Tests
     public async Task DeleteRoom_WithExistingId_ReturnsOk()
     {
         int existingRoomNumber = 123;
-        //await _context.SaveChangesAsync();
 
-        
         var getRoom = await _context.Rooms.FindAsync(existingRoomNumber);
         Assert.That(getRoom, Is.Not.Null);
         
