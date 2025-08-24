@@ -46,7 +46,6 @@ public class ReservationControllerTests : PlaywrightTest
         var options = optionsBuilder.Options;
         _context = new HotelContext(options);
 
-        // Refresh the database
         await DatabaseRefresher.AddDataAsync(_context);
     }
 
@@ -152,14 +151,9 @@ public class ReservationControllerTests : PlaywrightTest
         {
             Assert.Fail($"Code: {response.Status} - {response.StatusText}");
         }
-        //Assert.That(response.Status, Is.EqualTo(200), $"Expected 200 OK but got {response.Status} - {response.StatusText}");
 
         var jsonResult = await response.JsonAsync();
 
-        // if (!jsonResult.HasValue || jsonResult.Value.ValueKind != System.Text.Json.JsonValueKind.Array)
-        // {
-        //     Assert.Fail("JSON response is not a valid array.");
-        // }
         Assert.Multiple(() =>
         {
             Assert.That(jsonResult.HasValue, Is.True, "Response did not contain JSON.");
@@ -179,11 +173,6 @@ public class ReservationControllerTests : PlaywrightTest
             Assert.That(firstReservation.TryGetProperty("checkOutDate", out var checkOutDate) && checkOutDate.GetDateTime() != default);
             Assert.That(firstReservation.TryGetProperty("totalPrice", out var totalPrice) && totalPrice.GetDecimal() != default);
         });
-        // Console.WriteLine($"Room Number: {firstReservation.GetProperty("roomNumber").GetInt32()}");
-        // Console.WriteLine($"Guest ID: {firstReservation.GetProperty("guestID").GetString()}");
-        // Console.WriteLine($"Check-In Date: {firstReservation.GetProperty("checkInDate").GetDateTime()}");
-        // Console.WriteLine($"Check-Out Date: {firstReservation.GetProperty("checkOutDate").GetDateTime()}");
-        // Console.WriteLine($"Total Price: {firstReservation.GetProperty("totalPrice").GetDecimal()}");
 
     }
 
@@ -208,7 +197,6 @@ public class ReservationControllerTests : PlaywrightTest
         });
 
         var reservation = jsonResult.Value;
-        //Console.WriteLine(reservation);
 
         Assert.Multiple(() =>
         {
@@ -217,7 +205,6 @@ public class ReservationControllerTests : PlaywrightTest
             Assert.That(reservation.GetProperty("guestID").GetString(), Is.EqualTo("5678901234567"));
             Assert.That(reservation.GetProperty("totalPrice").GetDecimal(), Is.EqualTo(257m));
 
-            // Dates as strings then parsed
             var checkIn = DateTime.Parse(reservation.GetProperty("checkInDate").GetString()!);
             var checkOut = DateTime.Parse(reservation.GetProperty("checkOutDate").GetString()!);
             Assert.That(checkIn, Is.EqualTo(new DateTime(2025, 5, 12)));

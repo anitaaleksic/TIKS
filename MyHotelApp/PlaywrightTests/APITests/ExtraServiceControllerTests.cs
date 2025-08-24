@@ -26,7 +26,6 @@ public class ExtraServiceControllerTests : PlaywrightTest
 {
     private IAPIRequestContext Request;
     private HotelContext _context;
-    //var page = await context.NewPageAsync();
 
 
     [SetUp]
@@ -50,7 +49,6 @@ public class ExtraServiceControllerTests : PlaywrightTest
         var options = optionsBuilder.Options;
         _context = new HotelContext(options);
 
-        // Refresh the database
         await DatabaseRefresher.AddDataAsync(_context);
     }
 
@@ -218,9 +216,6 @@ public class ExtraServiceControllerTests : PlaywrightTest
         
         var responseText = await resp.TextAsync();;
 
-        //Console.WriteLine($"POST EmptyName => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
-
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
@@ -268,9 +263,6 @@ public class ExtraServiceControllerTests : PlaywrightTest
 
         var responseText = await resp.TextAsync();
 
-        //Console.WriteLine($"POST Negativeprice => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
-
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
@@ -294,8 +286,6 @@ public class ExtraServiceControllerTests : PlaywrightTest
 
         var responseText = await resp.TextAsync();
 
-        //Console.WriteLine($"POST Zeroprice => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
@@ -314,10 +304,8 @@ public class ExtraServiceControllerTests : PlaywrightTest
             DataObject = new { serviceName = existingName, price = 100.0m, Description = "Duplicate Test" }
         });
 
-        //Console.WriteLine($"Create duplicate response status: {createResp.Status}");
         var text = await createResp.TextAsync();
-        //Console.WriteLine($"Response text: {text}");
-
+        
         Assert.Multiple(() =>
         {
             Assert.That(createResp, Has.Property("Status").EqualTo(400));
@@ -401,9 +389,6 @@ public class ExtraServiceControllerTests : PlaywrightTest
 
         var responseText = await resp.TextAsync();
 
-        //Console.WriteLine($"PUT EmptyName => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
-
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
@@ -430,9 +415,6 @@ public class ExtraServiceControllerTests : PlaywrightTest
         
         var responseText = await resp.TextAsync();
 
-        //Console.WriteLine($"PUT NameTooLong => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
-
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
@@ -457,9 +439,6 @@ public class ExtraServiceControllerTests : PlaywrightTest
         });
 
         var responseText = await resp.TextAsync();
-
-        //Console.WriteLine($"PUT Negativeprice => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
@@ -486,9 +465,6 @@ public class ExtraServiceControllerTests : PlaywrightTest
 
         var responseText = await resp.TextAsync();
 
-        //Console.WriteLine($"PUT Zeroprice => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
-
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
@@ -514,9 +490,6 @@ public class ExtraServiceControllerTests : PlaywrightTest
         });
 
         var responseText = await resp.TextAsync();
-
-        //Console.WriteLine($"PUT DuplicateName => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
@@ -563,12 +536,9 @@ public class ExtraServiceControllerTests : PlaywrightTest
         int serviceId = 2;
 
         var firstDelete = await Request.DeleteAsync($"/api/ExtraService/DeleteExtraService/{serviceId}");
-        //Console.WriteLine($"First delete response status: {firstDelete.Status}");
 
         var secondDelete = await Request.DeleteAsync($"/api/ExtraService/DeleteExtraService/{serviceId}");
         var text = await secondDelete.TextAsync();
-        //Console.WriteLine($"Second delete response status: {secondDelete.Status}");
-        //Console.WriteLine($"Response text: {text}");
 
         Assert.Multiple(() =>
         {

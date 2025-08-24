@@ -27,26 +27,6 @@ public class RoomControllerTests : PlaywrightTest
 {
     private IAPIRequestContext Request;
     private HotelContext _context;
-    //var page = await context.NewPageAsync();
-
-    // public override BrowserNewContextOptions ContextOptions()
-    // {
-    //     return new BrowserNewContextOptions
-    //     {
-    //         IgnoreHTTPSErrors = true,
-    //         ViewportSize = new ViewportSize
-    //         {
-    //             Height = 720,
-    //             Width = 1280
-    //         },
-    //         RecordVideoSize = new()
-    //         {
-    //             Width = 1280,
-    //             Height = 720
-    //         },
-    //         RecordVideoDir = "../../../Videos"
-    //     };
-    // }
 
     [SetUp]
     public async Task SetUpAPITesting()
@@ -69,7 +49,6 @@ public class RoomControllerTests : PlaywrightTest
         var options = optionsBuilder.Options;
         _context = new HotelContext(options);
 
-        // Refresh the database
         await DatabaseRefresher.AddDataAsync(_context);
     }
 
@@ -256,7 +235,6 @@ public class RoomControllerTests : PlaywrightTest
     {
         int existingRoomNumber = 101;
 
-        // Update sobe
         await using var response = await Request.PutAsync($"/api/Room/UpdateRoom/{existingRoomNumber}", new APIRequestContextOptions
         {
             Headers = new Dictionary<string, string>
