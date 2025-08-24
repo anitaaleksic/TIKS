@@ -130,57 +130,30 @@ public class ReservationController : ControllerBase
     }
 
     [HttpGet("GetReservationById/{id}")]
-public async Task<IActionResult> GetReservationById(int id)
-{
-    try
+    public async Task<IActionResult> GetReservationById(int id)
     {
-        var reservation = await _context.Reservations
-            .Include(r => r.Room)
-            .Include(r => r.Guest)
-            .Include(r => r.RoomServices) 
-            .Include(r => r.ExtraServices)
-            .FirstOrDefaultAsync(r => r.ReservationID == id);
-
-        if (reservation == null)
+        try
         {
-            return NotFound($"Reservation with ID {id} not found.");
+            var reservation = await _context.Reservations
+                .Include(r => r.Room)
+                .Include(r => r.Guest)
+                .Include(r => r.RoomServices) 
+                .Include(r => r.ExtraServices)
+                .FirstOrDefaultAsync(r => r.ReservationID == id);
+
+            if (reservation == null)
+            {
+                return NotFound($"Reservation with ID {id} not found.");
+            }
+
+            return Ok(reservation);
         }
-
-        return Ok(reservation);
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
-    catch (Exception ex)
-    {
-        return BadRequest(ex.Message);
-    }
-}
 
-
-    // [HttpGet("GetReservationsByGuest/{jmbg}")]
-    // public async Task<List<Reservation>> GetReservationsByGuest(string jmbg)
-    // {
-    //     try
-    //     {
-    //         var reservations = await _context.Reservations
-    //             .Include(r => r.Room)
-    //             .Include(r => r.Guest)
-    //             .Where(r => r.GuestID == jmbg)
-    //             .ToListAsync();
-    //         // if (reservations.Count == 0)
-    //         // {
-    //         //     return NotFound($"No reservations with GuestID {jmbg} found.");
-    //         // }
-    //         return reservations;
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         List<Reservation> prazna = new List<Reservation>();
-    //         return prazna;
-    //         //return BadRequest(ex.Message);
-    //     }
-    // }
-
-    //prethodna da bi moglo da se istestira 
-    //normalna fja: 
     [HttpGet("GetReservationsByGuest/{jmbg}")]
     public async Task<IActionResult> GetReservationsByGuest(string jmbg)
     {

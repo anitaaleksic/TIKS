@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 export default function ExtraService() {
-  //const [refresh, setRefresh] = useState(false);
   const [extraServices, setExtraServices] = useState([]);
 
   const navigate = useNavigate();
@@ -26,15 +25,8 @@ export default function ExtraService() {
   }
 
   const handleEdit = (extraService) => {
-  console.log("Going to info page for service:", extraService);
-  navigate(`/extraservice/edit/${extraService}`);
-};
-
-//  const handleInfo = (extraService) => {
-//   console.log("Going to info page for service:", extraService);
-//   navigate(`/extraservice/info/${extraService}`);
-// };
-  
+    navigate(`/extraservice/edit/${extraService}`);
+  };  
 
   return (
     <div className="entity-page-wrapper">

@@ -21,13 +21,10 @@ public class ExtraServiceController_GetExtraService_Tests
     {
         var options = new DbContextOptionsBuilder<HotelContext>()
                     .UseInMemoryDatabase(databaseName: "HotelTestDb")
-                    //.ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionWarning))
                     .Options;
         _context = new HotelContext(options);
 
         _controllerExtraService = new ExtraServiceController(_context);
-        // _controllerReservation = new ReservationController(_context);
-
 
     }
     [Test]

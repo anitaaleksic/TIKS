@@ -68,8 +68,6 @@ export default function AddRoom() {
       ...formData,
     };
 
-    //console.log('Šaljem na backend:', roomToSend);
-
     axios.post('/api/Room/CreateRoom', roomToSend)
       .then(() => {
         alert('Room added successfully!');

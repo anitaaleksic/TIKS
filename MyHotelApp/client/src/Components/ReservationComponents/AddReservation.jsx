@@ -144,7 +144,6 @@ export default function AddReservation() {
     });
   };
 
-  // Load room & extra services
   useEffect(() => {
     axios.get('/api/RoomService/GetAllRoomServices')
       .then(res => setRoomServices(res.data))
@@ -172,11 +171,9 @@ export default function AddReservation() {
       let total = 0;
 
       try {
-        // Get room to fetch RoomTypeID
         const roomRes = await axios.get(`/api/Room/GetRoom/${formData.roomNumber}`);
         const roomTypeID = roomRes.data.roomTypeID;
 
-        // Get price per night from RoomType
         const roomTypeRes = await axios.get(`/api/RoomType/GetRoomTypeById/${roomTypeID}`);
         const pricePerNight = roomTypeRes.data.pricePerNight || 0;
         total += pricePerNight * days;
@@ -184,13 +181,11 @@ export default function AddReservation() {
         console.error('Room price fetch failed:', err);
       }
 
-      // Add room services
       for(let id of formData.roomServiceIDs) {
         const service = roomServices.find(s => s.roomServiceID === id);
         if(service) total += parseFloat(service.itemPrice || 0);
       }
 
-      // Add extra services
       for(let id of formData.extraServiceIDs) {
         const service = extraServices.find(s => s.extraServiceID === id);
         if(service) total += parseFloat(service.price || 0) * days;

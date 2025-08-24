@@ -16,7 +16,6 @@ export default function EditExtraService() {
 
   const [originalName, setOriginalName] = useState('');
   const [errorMessages, setErrorMessages] = useState([]);
-  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     axios.get(`/api/ExtraService/GetExtraServiceByName/${serviceName}`)
@@ -45,7 +44,6 @@ export default function EditExtraService() {
     try {
       await axios.delete(`/api/ExtraService/DeleteExtraService/${serviceName}`);
       alert('Extra service deleted successfully.');
-      setRefresh(prev => !prev);
       navigate("/extraservice");
     } catch (err) {
       console.error('Error deleting:', err);

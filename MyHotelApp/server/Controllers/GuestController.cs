@@ -185,7 +185,6 @@ public class GuestController : ControllerBase
                 await _context.SaveChangesAsync();
             }
 
-            //_context.Reservations.RemoveRange(guest.Reservations);
             _context.Guests.Remove(guest);
             await _context.SaveChangesAsync();
             return Ok($"Guest with JMBG {jmbg} deleted successfully.");

@@ -115,55 +115,6 @@ public class RoomTypeController : ControllerBase
         }
     }
 
-    // [HttpPut("UpdateRoom/{roomNumber}")]
-    // public async Task<IActionResult> UpdateRoom(int roomNumber, [FromBody] RoomDTO room)
-    // {
-    //     try
-    //     {
-    //         if (!ModelState.IsValid)
-    //         {
-    //             return BadRequest(ModelState);
-    //         }
-
-    //         var existingRoom = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == roomNumber);
-    //         if (existingRoom == null)
-    //         {
-    //             return NotFound($"Room with number {roomNumber} not found.");
-    //         }
-    //         if (room.RoomNumber <= 0)
-    //         {
-    //             return BadRequest("Room number must be a positive integer.");
-    //         }
-    //         // if (roomNumber != room.RoomNumber)
-    //         // {
-    //         //     return BadRequest("Room number in the URL does not match the room number in the body.");
-    //         // }
-
-    //         if (room.Floor < 1 || room.Floor > 6)
-    //         {
-    //             return BadRequest("Floor must be between 1 and 6.");
-    //         }
-
-    //         var existingRoomType = await _context.RoomTypes.FirstOrDefaultAsync(rt => rt.RoomTypeID == room.RoomTypeID);
-    //         if (existingRoomType == null)
-    //         {
-    //             return BadRequest($"Room type with ID {room.RoomTypeID} does not exist.");
-    //         }
-
-    //         existingRoom.RoomNumber = room.RoomNumber;
-    //         existingRoom.RoomTypeID = room.RoomTypeID;
-    //         existingRoom.Floor = room.Floor;
-    //         existingRoom.IsAvailable = room.IsAvailable;
-
-    //         await _context.SaveChangesAsync();
-    //         return Ok($"Room with number {roomNumber} updated successfully.");
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return BadRequest(ex.Message);
-    //     }
-    // }
-
     [HttpDelete("DeleteRoomTypeById/{id}")]
     public async Task<IActionResult> DeleteRoomTypeById(int id)
     {

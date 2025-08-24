@@ -11,30 +11,11 @@ export default function Room() {
   const navigate = useNavigate();
 
   const [rooms, setRooms] = useState([]);
-  //const [roomTypes, setRoomTypes] = useState([]);
 
   async function GetAllRooms() {
     const response = await axios.get("/api/Room/GetAllRooms");
     return response.data;
   }
-
-  // async function GetAllRoomTypes() {
-  //   const response = await axios.get("/api/RoomType/GetAllRoomTypes");
-  //   return response.data;
-  // }
-
-  // useEffect(() => {
-  //   async function loadData() {
-  //   const [roomsData, roomTypesData] = await Promise.all([
-  //       GetAllRooms(),
-  //       GetAllRoomTypes()
-  //     ]);
-  //     setRooms(roomsData);
-  //     setRoomTypes(roomTypesData);
-  //   }
-  //   loadData();
-
-  // }, []);
 
   useEffect(() => {
     async function loadRooms() {
@@ -44,27 +25,8 @@ export default function Room() {
     loadRooms();
 
   }, []);
-
-  
-  // const roomTypeMap = {};
-  // for (const type of roomTypes) {
-  //   roomTypeMap[type.roomTypeID] = type.type;
-  // }
   
   const floors = {};
-
-  // for(const room of rooms){
-  //   const typeName = roomTypeMap[room.roomTypeID];
-
-  //   if(!floors[room.floor]){
-  //     floors[room.floor] = [];
-  //   }
-    
-  //   floors[room.floor].push({
-  //     ...room,
-  //     typeName
-  //   });
-  // }
 
   for(const room of rooms){
     
@@ -81,14 +43,7 @@ export default function Room() {
     navigate("/addroom");
   };
 
-  // const handleInfo = (roomNumber) => {
-  // console.log('Navigating to room info with roomnumber:', roomNumber);
-  // navigate(`/room/info/${roomNumber}`);
-  // };
-
-
   const handleEdit = (room) => {
-    console.log('Navigating to edit guest with room number:', room);
     navigate(`/room/edit/${room}`);
   };
 
@@ -108,7 +63,6 @@ export default function Room() {
                 <td className='room-container' key={room.roomNumber} onClick={() => handleEdit(room.roomNumber)} data-roomNumber={room.roomNumber}>
                   <div>Room {room.roomNumber}</div>
                   <div>type: {room.roomType.type}</div>
-                  {/* <div>type: {room.typeName}</div> */}
                 </td>
               ))}
             </tr>

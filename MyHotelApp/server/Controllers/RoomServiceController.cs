@@ -127,7 +127,6 @@ public class RoomServiceController : ControllerBase
 
             var reservations = roomService.AddedToReservations;
 
-            // Možeš vratiti direktno reservations ili mapirati u DTO ako želiš:
             return Ok(reservations);
         }
         catch (Exception ex)
@@ -242,25 +241,4 @@ public class RoomServiceController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-
-    // [HttpDelete("DeleteRoomServiceByName/{serviceName}")]
-    // public async Task<IActionResult> DeleteRoomServiceByName(string serviceName)
-    // {
-    //     try
-    //     {
-    //         var roomService = await _context.RoomServices.FirstOrDefaultAsync(rs => string.Equals(rs.ItemName, serviceName, StringComparison.Ordinal));
-    //         if (roomService == null)
-    //         {
-    //             return NotFound($"Room service with name {serviceName} not found.");
-    //         }
-
-    //         _context.RoomServices.Remove(roomService);
-    //         await _context.SaveChangesAsync();
-    //         return Ok($"Room service with name {serviceName} deleted successfully.");
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return BadRequest(ex.Message);
-    //     }
-    // }
 }

@@ -1,12 +1,9 @@
 import axios from 'axios';
-//import avatarRoomService from '../../assets/RoomServiceLogo.png';  
-//import EntityList from '../EntityList';
 import "../../css/ServiceTable.css";
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 export default function RoomService() {
-  //const [refresh, setRefresh] = useState(false);
   const [roomServices, setRoomServices] = useState([]);
 
   const navigate = useNavigate(); 
@@ -28,9 +25,7 @@ export default function RoomService() {
     navigate("/addroomservice");
   };
 
-  const handleEdit = (itemName) => navigate(`/roomservice/edit/${encodeURIComponent(itemName)}`);
-  //const handleInfo = (itemName) => navigate(`/roomservice/info/${encodeURIComponent(itemName)}`);
-  
+  const handleEdit = (itemName) => navigate(`/roomservice/edit/${encodeURIComponent(itemName)}`);  
 
   return (
     <div className="entity-page-wrapper">

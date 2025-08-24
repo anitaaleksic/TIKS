@@ -28,8 +28,6 @@ public class GuestController_GetGuest_Tests
 
         _controllerGuest = new GuestController(_context);
 
-        //seedDb       
-
     }
 
     [Test]
@@ -147,8 +145,6 @@ public class GuestController_GetGuest_Tests
 
         var result = await _controllerGuest.GetGuestByJMBG("1234512345123");
         var okResult = result as OkObjectResult;
-        // Assert.That(okResult, Is.Not.Null);
-        // Assert.That(okResult.Value, Is.InstanceOf<Guest>());
 
         var guest = okResult.Value as GuestDTO;
         Assert.That(guest.Reservations, Is.Not.Null);
@@ -181,9 +177,6 @@ public class GuestController_GetGuest_Tests
         var notFoundResult = result as NotFoundObjectResult;
         Assert.That(notFoundResult, Has.Property("Value").EqualTo($"No guests found."));
     }
-
-
-    //no tests for get all guests
 
     [TearDown]
     public void TearDown()

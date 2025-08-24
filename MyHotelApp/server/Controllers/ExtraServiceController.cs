@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MyHotelApp.server.Models;
-using System.ComponentModel.DataAnnotations;
 
 namespace MyHotelApp.Controllers;
 
@@ -127,7 +126,6 @@ public class ExtraServiceController : ControllerBase
 
             var reservations = extraService.AddedToReservations;
 
-            // Možeš vratiti direktno reservations ili mapirati u DTO ako želiš:
             return Ok(reservations);
         }
         catch (Exception ex)
@@ -241,26 +239,4 @@ public class ExtraServiceController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
-
-    // [HttpDelete("DeleteExtraServiceByName/{serviceName}")] //NE RADIV!!
-    // public async Task<IActionResult> DeleteExtraServiceByName(string serviceName)
-    // {
-    //     try
-    //     {
-    //         var extraService = await _context.ExtraServices.FirstOrDefaultAsync(es => es.ServiceName == serviceName);
-    //         if (extraService == null)
-    //         {
-    //             return BadRequest($"Extra service with name {serviceName} not found.");
-    //         }
-
-    //         _context.ExtraServices.Remove(extraService);
-    //         await _context.SaveChangesAsync();
-    //         return Ok($"Extra service with name {serviceName} deleted successfully.");
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         return BadRequest(ex.Message);
-    //     }
-    // }
-
 }

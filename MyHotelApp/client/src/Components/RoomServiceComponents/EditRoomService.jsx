@@ -15,7 +15,6 @@ export default function EditRoomService() {
 
   const [originalName, setOriginalName] = useState('');
   const [errorMessages, setErrorMessages] = useState([]);
-  //const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     axios.get(`/api/RoomService/GetRoomServiceByName/${itemName}`)
@@ -43,7 +42,6 @@ export default function EditRoomService() {
     try {
       await axios.delete(`/api/RoomService/DeleteRoomService/${id}`);
       alert('Room service deleted successfully.');
-      //setRefresh(prev => !prev); 
       navigate("/roomservice");
     } catch (err) {
       console.error("Delete failed:", err);

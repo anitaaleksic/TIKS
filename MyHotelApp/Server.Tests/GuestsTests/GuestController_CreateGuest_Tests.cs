@@ -27,14 +27,11 @@ public class GuestController_CreateGuest_Tests
         _context = new HotelContext(options);
 
         _controllerGuest = new GuestController(_context);
-
-        //seedDb
     }
 
-    [Test] //add to all Create tests
+    [Test] 
     public async Task CreateGuest_WithModelStateInvalid_ReturnsBadRequest()
     {
-        // Arrange
         _controllerGuest.ModelState.AddModelError("error", "some model state error");
         var guestDTO = new GuestDTO();
 

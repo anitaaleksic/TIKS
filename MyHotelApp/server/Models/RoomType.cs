@@ -15,7 +15,7 @@ public class RoomType
     public required string Type { get; set; }
     [Required]
     [Range(1, 5, ErrorMessage = "Capacity must be between 1 and 5.")]
-    public required int Capacity { get; set; } //kroz konstrukotr stavi default capacity
+    public required int Capacity { get; set; } 
     [Required]
     public required decimal PricePerNight { get; set; }//na osnovu tipa sobe
     [JsonIgnore]

@@ -22,17 +22,14 @@ public class GuestController_DeleteGuest_Tests
     [SetUp]
     public void SetUp()
     {
-        //SetUp InMemory database
         var options = new DbContextOptionsBuilder<HotelContext>()
                     .UseInMemoryDatabase(databaseName: "HotelTestDb")
-                    //.ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionWarning))
                     .Options;
         _context = new HotelContext(options);
 
         _controllerGuest = new GuestController(_context);
         _controllerReservation = new ReservationController(_context);
 
-        //seed db
         _context.Guests.Add(new Guest
         {
             JMBG = "1234512345123",
@@ -41,9 +38,6 @@ public class GuestController_DeleteGuest_Tests
         });
         _context.SaveChanges();
 
-        //ZAKLJUCAK 
-        //moraju da se dodaju sobe inace nece da napravi rezervaciju 
-        //fja GetReservationByGuest mora da vraca listu a ne IActionResult 
         var room = new Room
         {
             RoomNumber = 123,

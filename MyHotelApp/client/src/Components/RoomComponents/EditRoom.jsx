@@ -11,20 +11,15 @@ export default function EditRoom() {
     roomTypeID: '',
     floor: '',
     reservations: []
-    //isAvailable: false
   });
 
   const [errorMessages, setErrorMessages] = useState([]);
   const [roomTypes, setRoomTypes] = useState([]);
-  
-  //const [refresh, setRefresh] = useState(false);
 
   async function GetAllRoomTypes() {
     const response = await axios.get("/api/RoomType/GetAllRoomTypes")
     return response.data;
   }
-
-
 
   useEffect(() => {
     axios.get(`/api/Room/GetRoom/${roomNumber}`)
@@ -77,7 +72,6 @@ export default function EditRoom() {
     if (!window.confirm(`Are you sure you want to delete room ${roomNumber}?`)) return;
     try {
       await axios.delete(`/api/Room/DeleteRoom/${roomNumber}`);
-      //setRefresh(prev => !prev); // Trigger re-fetch
       alert('Room deleted successfully!');
       navigate("/room");
     } catch (err) {      
@@ -177,7 +171,6 @@ export default function EditRoom() {
           <tbody>
             {formData.reservations.map((res) => (
               <tr key={res.id}  >
-                {/* onClick={() => handleEdit(res.id)} */}
                 <td className='td-guest'>{res.guestID}</td>
                 <td className='td-guest'>{formatDate(res.checkInDate)}</td>
                 <td className='td-guest'>{formatDate(res.checkOutDate)}</td>

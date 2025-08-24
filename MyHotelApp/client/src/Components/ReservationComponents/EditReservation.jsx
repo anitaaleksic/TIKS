@@ -36,7 +36,6 @@ export default function EditReservation() {
     extraServiceIDs: []
   });
 
-  // Fetch reservation i servise
   useEffect(() => {
     async function fetchReservation() {
       try {
@@ -138,7 +137,6 @@ export default function EditReservation() {
     }
   };
 
-  // Calculate total with correct RoomType fetch
   useEffect(() => {
     const calculateTotal = async () => {
       if (!formData.checkInDate || !formData.checkOutDate || !formData.roomNumber) return;
@@ -149,11 +147,9 @@ export default function EditReservation() {
       let total = 0;
 
       try {
-        // Dohvati Room da bi imao RoomTypeID
         const roomRes = await axios.get(`/api/Room/GetRoom/${formData.roomNumber}`);
         const roomTypeID = roomRes.data.roomTypeID;
 
-        // Dohvati RoomType po ID-u
         const roomTypeRes = await axios.get(`/api/RoomType/GetRoomTypeById/${roomTypeID}`);
         const pricePerNight = roomTypeRes.data.pricePerNight || 0;
 
@@ -162,13 +158,11 @@ export default function EditReservation() {
         console.error('Room price fetch failed:', err);
       }
 
-      // Dodaj cenu room servisa
       for (let id of formData.roomServiceIDs) {
         const service = roomServices.find(s => s.roomServiceID === id);
         if (service) total += parseFloat(service.itemPrice || 0);
       }
 
-      // Dodaj cenu extra servisa
       for (let id of formData.extraServiceIDs) {
         const service = extraServices.find(s => s.extraServiceID === id);
         if (service) total += parseFloat(service.price || 0) * days;

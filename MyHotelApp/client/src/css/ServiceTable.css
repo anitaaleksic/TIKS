@@ -30,9 +30,6 @@ tbody tr:hover{
     cursor: pointer;
 }
 
-
-
-
 .menu-item {
     display: flex;
     align-items: center;

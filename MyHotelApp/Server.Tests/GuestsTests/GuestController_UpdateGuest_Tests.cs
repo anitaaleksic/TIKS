@@ -28,16 +28,14 @@ public class GuestController_UpdateGuest_Tests
 
         _controllerGuest = new GuestController(_context);
 
-        //seedDb
         _context.Guests.Add(new Guest { JMBG = "1234512345123", FullName = "Anita Aleksic", PhoneNumber = "+381651234567" });
         _context.SaveChanges();
         
     }
 
-    [Test] //add to all Create and Update tests
+    [Test] 
     public async Task UpdateGuest_WithModelStateInvalid_ReturnsBadRequest()
     {
-        // Arrange
         _controllerGuest.ModelState.AddModelError("error", "some model state error");
         var guestDTO = new GuestDTO();
         var someValidJmbg = "1234512345123";
@@ -46,31 +44,6 @@ public class GuestController_UpdateGuest_Tests
 
         Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
     }
-
-    //oba ne mogu jer se ne menja jmbg pri updateu
-    // [Test]
-    // public async Task UpdateGuest_WithJMBGTooLong_ReturnBadRequest()
-    // {       
-    //     var guestDTO = new GuestDTO { FullName = "test", JMBG = "12345678912345", PhoneNumber = "+381655455454" };
-    //     var result = await _controllerGuest.UpdateGuest("1234512345123", guestDTO);
-
-    //     Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    //     var badReqRes = result as BadRequestObjectResult;
-    //     Assert.That(badReqRes, Has.Property("Value").EqualTo("JMBG is required and must have exactly 13 characters."));
-    // }
-
-    // [Test]
-    // public async Task UpdateGuest_WithJMBGTooShort_ReturnBadRequest()
-    // {
-    //     var guestDTO = new GuestDTO { FullName = "test", JMBG = "123456789123", PhoneNumber = "+381655455454" };
-    //     var result = await _controllerGuest.UpdateGuest("1234512345123", guestDTO);
-
-    //     Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
-    //     var badReqRes = result as BadRequestObjectResult;
-    //     Assert.That(badReqRes, Has.Property("Value").EqualTo("JMBG is required and must have exactly 13 characters."));
-    // }
-
-
 
     [Test]
     public async Task UpdateGuest_WithFullNameTooLong_ReturnBadRequest()
@@ -162,7 +135,7 @@ public class GuestController_UpdateGuest_Tests
         Assert.That(badReqRes, Has.Property("Value").EqualTo("JMBG must be exactly 13 characters long."));
     }
 
-    [Test]//koristi i get vrv ne bi trebalo 
+    [Test]
     public async Task UpdateGuest_AllValid_UpdatesGuest()
     {
         string validJmbg = "1234512345123";

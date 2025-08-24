@@ -5,7 +5,6 @@ import axios from 'axios';
 export default function EditGuest() {
   const { jmbg } = useParams();
   const navigate = useNavigate();
-  //const [refresh, setRefresh] = useState(false);
 
   const [formData, setFormData] = useState({
     jmbg: '',
@@ -41,11 +40,9 @@ export default function EditGuest() {
       console.log("Deleting JMBG:", jmbg, "Type:", typeof jmbg);
 
       await axios.delete(`/api/Guest/DeleteGuest/${jmbg}`);
-      //setRefresh(prev => !prev); // Trigger re-fetch
       alert('Guest deleted successfully!');
       navigate("/guest");
     } catch (err) {
-      // If backend sends a response with a message, show it
       if (err.response && err.response.data) {
         alert(err.response.data);
       } else {
@@ -183,7 +180,6 @@ export default function EditGuest() {
           <tbody>
             {formData.reservations.map((res) => (
               <tr key={res.id}  >
-                {/* onClick={() => handleEdit(res.id)} */}
                 <td className='td-guest'>{res.roomNumber}</td>
                 <td className='td-guest'>{formatDate(res.checkInDate)}</td>
                 <td className='td-guest'>{formatDate(res.checkOutDate)}</td>

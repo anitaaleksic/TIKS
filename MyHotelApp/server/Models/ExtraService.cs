@@ -17,8 +17,6 @@ public class ExtraService
     [Required]
     public decimal Price { get; set; }
     public string? Description { get; set; }
-    //ZA PARKING BR PARKING MESTA NE MOZE DA IH BUDE REZ VISE NEGO STO IMA PARKING MESTA 
-    //ISTO I ZA RESTORAN I ZA WELLNESS
 
     [JsonIgnore]
     public List<Reservation> AddedToReservations { get; set; } = new List<Reservation>();

@@ -1,14 +1,10 @@
 import axios from 'axios';
-//import avatarGuest from '../../assets/GuestLogo.png';
 import { useNavigate } from 'react-router-dom';
-
-//import EntityList from '../EntityList';
 import "../../css/GuestTable.css";
 import "../../css/App.css";
 import { useEffect, useState } from 'react';
 
 export default function Guest() {
-  //const [refresh, setRefresh] = useState(false);
   const navigate = useNavigate();
 
   const [guests, setGuests] = useState([]);
@@ -35,26 +31,7 @@ export default function Guest() {
     navigate(`/editguest/${guest}`);
   };
 
-  // const handleInfo = (guestJmbg) => {
-  // console.log('Navigating to guest info with jmbg:', guestJmbg);
-  // navigate(`/guestinfo/${guestJmbg}`);
-  // };
-
-  // const handleDelete = async (jmbg) => {
-  //   if (!window.confirm(`Are you sure you want to delete guest ${jmbg}?`)) return;
-  //   try {
-  //       console.log("Deleting JMBG:", jmbg, "Type:", typeof jmbg);
-
-  //     await axios.delete(`/api/Guest/DeleteGuest/${jmbg}`);
-  //     setRefresh(prev => !prev); // Trigger re-fetch
-  //   } catch (err) {
-  //     console.error("Delete failed:", err);
-  //     alert("Delete failed");
-  //   }
-  // };
-
-  return (
-    
+  return (    
     <div className="entity-page-wrapper">
       <div className="entity-header">
         <button onClick={handleAdd} className="form-button large">

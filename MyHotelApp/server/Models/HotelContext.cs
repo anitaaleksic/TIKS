@@ -23,17 +23,14 @@ public class HotelContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Your configuration goes here:
         modelBuilder.Entity<ExtraService>()
             .Property(e => e.ExtraServiceID)
             .ValueGeneratedOnAdd();
 
-        // Your configuration goes here:
         modelBuilder.Entity<RoomService>()
             .Property(e => e.RoomServiceID)
             .ValueGeneratedOnAdd();
 
-        // Your configuration goes here:
         modelBuilder.Entity<Reservation>()
             .Property(e => e.ReservationID)
             .ValueGeneratedOnAdd();
@@ -75,15 +72,6 @@ public class HotelContext : DbContext
             .HasForeignKey(r => r.GuestID)
             .HasPrincipalKey(g => g.JMBG) 
             .OnDelete(DeleteBehavior.Cascade);
-
-        // modelBuilder.Entity<Reservation>()
-        //     .HasOne(r => r.Guest)
-        //     .WithMany(g => g.Reservations)
-        //     .HasForeignKey(r => r.GuestID)
-        //     .HasPrincipalKey(g => g.JMBG) 
-        //     .OnDelete(DeleteBehavior.Cascade);
-
-
 
     }
         

@@ -134,10 +134,6 @@ public class RoomController : ControllerBase
             {
                 return BadRequest("Room number must be a positive integer.");
             }
-            // if (roomNumber != room.RoomNumber)
-            // {
-            //     return BadRequest("Room number in the URL does not match the room number in the body.");
-            // }
 
             if (room.Floor < 1 || room.Floor > 6)
             {
