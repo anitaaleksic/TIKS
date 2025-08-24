@@ -174,10 +174,9 @@ public class ReservationController_UpdateReservation_Tests
 
     }
 
-    [Test] //add to all Create tests
+    [Test]
     public async Task UpdateReservation_WithModelStateInvalid_ReturnsBadRequest()
     {
-        // Arrange
         _controllerReservation.ModelState.AddModelError("error", "some model state error");
         var reservationDTO = new ReservationDTO();
 
@@ -398,9 +397,7 @@ public class ReservationController_UpdateReservation_Tests
     }
 
     //ovde je provereno i da ce es da obrise ako ga ne posaljemo u update
-
-    //provera je l izbacilo rez iz es ???????????
-    [Test]//da li je potrebna jedna provera kad je lista prazna jedna kad vec ima neki rs
+    [Test]
     public async Task UpdateReservation_AddingRoomService_AddsRoomServiceToListAndTotalPrice()
     {
         //provera da je lista prazna pre nego sto dodam
@@ -469,7 +466,6 @@ public class ReservationController_UpdateReservation_Tests
         var reservationsList = resultEsReservations.Value as List<Reservation>;
         Assert.Multiple(() =>
         {
-            //Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
             //reservation with id 1 is removed and now it only has reservation with id 2
             Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == 2));
         });
@@ -499,7 +495,6 @@ public class ReservationController_UpdateReservation_Tests
         var reservationsListAfter = resultEsReservationsAfter.Value as List<Reservation>;
         Assert.Multiple(() =>
         {
-            //Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
             //reservation with id 1 is removed and now it only has reservation with id 2
             Assert.That(reservationsListAfter, Has.None.Matches<Reservation>(r => r.ReservationID == testResId));
         });
@@ -516,7 +511,6 @@ public class ReservationController_UpdateReservation_Tests
         var reservationsList = resultRsReservations.Value as List<Reservation>;
         Assert.Multiple(() =>
         {
-            //Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
             //reservation with id 1 is removed and now it only has reservation with id 2
             Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == testResId));
         });
@@ -545,14 +539,13 @@ public class ReservationController_UpdateReservation_Tests
         var reservationsListAfter = resultRsReservationsAfter.Value as List<Reservation>;
         Assert.Multiple(() =>
         {
-            //Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
             //reservation with id 1 is removed and now it only has reservation with id 2
             Assert.That(reservationsListAfter, Has.None.Matches<Reservation>(r => r.ReservationID == testResId));
         });
     }
 
 
-    //da li je potrebna jedna provera kad je lista prazna jedna kad vec ima neki rs
+    //da li je potrebna jedna provera kad je lista prazna jedna kad vec ima neki es
     //ova ce da bude za kad vec postoji neki es u listi
     [Test]
     public async Task UpdateReservation_AddingExtraService_AddsExtraServiceToListAndTotalPrice()
@@ -667,7 +660,6 @@ public class ReservationController_UpdateReservation_Tests
     [Test]
     public async Task UpdateReservation_WithRoomService_AddsReservationToRoomServiceReservations()
     {
-        //int existingId = 1;
         int testResId = 2;
         int rsId = 2;
         var resultRs = await _controllerRoomService.GetReservationsByRoomServiceId(rsId);
@@ -722,11 +714,6 @@ public class ReservationController_UpdateReservation_Tests
         var reservationsList = roomObject.Reservations;
 
         Assert.That(reservationsList, Has.Some.Matches<ReservationDTO>(r => r.ReservationID == resId));
-        // Assert.Multiple(() =>
-        // {
-        //     Assert.That(reservationsList.Count, Is.EqualTo(1));
-
-        // });
 
         //provera da nije u listi buduce sobe
         var resultRoom2 = await _controllerRoom.GetRoom(newRoomNum);
@@ -736,10 +723,6 @@ public class ReservationController_UpdateReservation_Tests
 
 
         Assert.That(reservationsList2, Has.None.Matches<ReservationDTO>(r => r.ReservationID == resId));
-        // Assert.Multiple(() =>
-        // {
-        //     Assert.That(reservationsList2.Count, Is.Empty);
-        // });
 
         ReservationDTO reservation2 = new ReservationDTO
         {
@@ -767,12 +750,6 @@ public class ReservationController_UpdateReservation_Tests
         var reservationsListAfter = roomObjectAfter.Reservations;
 
          Assert.That(reservationsListAfter.All(r => r.ReservationID != resId));
-        // Assert.Multiple(() =>
-        // {
-        //     Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
-        //     //reservation with id 1 is removed and now it only has reservation with id 2
-
-        // });
 
         //provera da je ima u novoj
         var resultRoomAfter2 = await _controllerRoom.GetRoom(newRoomNum);

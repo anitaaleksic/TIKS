@@ -52,6 +52,8 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Add guest" }).ClickAsync();
         //await Page.GotoAsync("http://localhost:5173/guest");//5173
         //await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/guest");
+        Assert.That(Page.Url, Does.Contain("/guest"));
     }
 
     [Test]
@@ -74,6 +76,8 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Update guest" }).ClickAsync();
         //await Page.GotoAsync("http://localhost:5173/guest");//5173
         //await Page.PauseAsync();//after
+        await Page.WaitForURLAsync("**/guest");
+        Assert.That(Page.Url, Does.Contain("/guest"));
     }
 
     [Test]
@@ -91,6 +95,8 @@ public class HotelTests : PageTest
         //await Page.PauseAsync();
         //await Page.GotoAsync("http://localhost:5173/guest");//5173
         //await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/guest");
+        Assert.That(Page.Url, Does.Contain("/guest"));
     }
 
     [Test]
@@ -143,6 +149,8 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Add Room Service" }).ClickAsync();
         // await Page.GotoAsync("http://localhost:5173/roomservice");//5173
         // await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/roomservice");
+        Assert.That(Page.Url, Does.Contain("/roomservice"));
     }
 
     [Test]
@@ -164,6 +172,8 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Update room service" }).ClickAsync();
         // await Page.GotoAsync("http://localhost:5173/roomservice");//5173
         // await Page.PauseAsync();//after
+        await Page.WaitForURLAsync("**/roomservice");
+        Assert.That(Page.Url, Does.Contain("/roomservice"));
     }
 
     [Test]
@@ -181,6 +191,8 @@ public class HotelTests : PageTest
         await Page.PauseAsync();
         // await Page.GotoAsync("http://localhost:5173/roomservice");//5173
         // await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/roomservice");
+        Assert.That(Page.Url, Does.Contain("/roomservice"));
     }
 
     [Test]
@@ -233,6 +245,8 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Add Extra Service" }).ClickAsync();
         // await Page.GotoAsync("http://localhost:5173/extraservice");//5173
         // await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/extraservice");
+        Assert.That(Page.Url, Does.Contain("/extraservice"));
     }
 
     [Test]
@@ -254,6 +268,8 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Update extra service" }).ClickAsync();
         // await Page.GotoAsync("http://localhost:5173/extraservice");//5173
         // await Page.PauseAsync();//after
+        await Page.WaitForURLAsync("**/extraservice");
+        Assert.That(Page.Url, Does.Contain("/extraservice"));
     }
 
     [Test]
@@ -271,6 +287,8 @@ public class HotelTests : PageTest
         await Page.PauseAsync();
         // await Page.GotoAsync("http://localhost:5173/extraservice");//5173
         // await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/extraservice");
+        Assert.That(Page.Url, Does.Contain("/extraservice"));
     }
 
     [Test]
@@ -326,6 +344,8 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Add room" }).ClickAsync();
         //await Page.GotoAsync("http://localhost:5173/guest");//5173
         //await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/room");
+        Assert.That(Page.Url, Does.Contain("/room"));
     }
 
     [Test]
@@ -357,6 +377,8 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Update room" }).ClickAsync();
         // await Page.GotoAsync("http://localhost:5173/room");//5173
         // await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/room");
+        Assert.That(Page.Url, Does.Contain("/room"));
     }
 
     [Test]
@@ -384,6 +406,8 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Delete room" }).ClickAsync();
         // await Page.GotoAsync("http://localhost:5173/room");//5173
         // await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/room");
+        Assert.That(Page.Url, Does.Contain("/room"));
     }
 
     [Test]
@@ -418,7 +442,7 @@ public class HotelTests : PageTest
         await Page.PauseAsync();
     }
 
-    [Test] 
+    [Test]
     public async Task AddReservation()
     {
         await Page.GotoAsync("http://localhost:5173/reservation");//5173
@@ -491,6 +515,8 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Add reservation" }).ClickAsync();
         await Page.GotoAsync("http://localhost:5173/reservation");//5173
         await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/reservation");
+        Assert.That(Page.Url, Does.Contain("/reservation"));
     }
 
     [Test]
@@ -572,23 +598,25 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Update reservation" }).ClickAsync();
         await Page.GotoAsync("http://localhost:5173/reservation");//5173
         await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/reservation");
+        Assert.That(Page.Url, Does.Contain("/reservation"));
     }
 
-    [Test] 
+    [Test]
     public async Task DeleteReservation()
     {
         await Page.GotoAsync("http://localhost:5173/reservation");//5173
         //await Page.PauseAsync();
         await Page.Locator("div.entity-card[data-reservation-id='1']").ClickAsync();
         //await Page.PauseAsync();
-        
+
         var totalPriceField = Page.Locator("input[name=\"totalPrice\"]");
         await Expect(totalPriceField).ToHaveValueAsync("387");
 
         var checkInField = Page.Locator("input[name=\"checkInDate\"]");
         var checkOutField = Page.Locator("input[name=\"checkOutDate\"]");
         var guestField = Page.Locator("input[name=\"guestID\"]");
-        var roomField = Page.Locator("input[name=\"roomNumber\"]"); 
+        var roomField = Page.Locator("input[name=\"roomNumber\"]");
         // await checkInField.ClickAsync();
         // await checkInField.FillAsync("2025-01-10");
         await Expect(guestField).ToHaveValueAsync("1234567890123");
@@ -603,9 +631,9 @@ public class HotelTests : PageTest
         var checkboxGroup = Page.Locator(".checkbox-group[data-testid='room-services']");
         await Expect(checkboxGroup).ToBeVisibleAsync();
 
-        var breakfastCheckbox = checkboxGroup.Locator("input[type='checkbox'][value='1']"); 
-        var laundryCheckbox = checkboxGroup.Locator("input[type='checkbox'][value='3']"); 
-        var spaCheckbox = checkboxGroup.Locator("input[type='checkbox'][value='5']"); 
+        var breakfastCheckbox = checkboxGroup.Locator("input[type='checkbox'][value='1']");
+        var laundryCheckbox = checkboxGroup.Locator("input[type='checkbox'][value='3']");
+        var spaCheckbox = checkboxGroup.Locator("input[type='checkbox'][value='5']");
 
         await Expect(breakfastCheckbox).ToBeCheckedAsync();
         await Expect(laundryCheckbox).ToBeCheckedAsync();
@@ -618,8 +646,8 @@ public class HotelTests : PageTest
         var checkboxGroup2 = Page.Locator(".checkbox-group[data-testid='extra-services']");
         await Expect(checkboxGroup2).ToBeVisibleAsync();
 
-        var parkingSpotCheckbox = checkboxGroup2.Locator("input[type='checkbox'][value='1']"); 
-        var restaurantCheckbox = checkboxGroup2.Locator("input[type='checkbox'][value='2']"); 
+        var parkingSpotCheckbox = checkboxGroup2.Locator("input[type='checkbox'][value='1']");
+        var restaurantCheckbox = checkboxGroup2.Locator("input[type='checkbox'][value='2']");
 
         await Expect(parkingSpotCheckbox).ToBeCheckedAsync();
         await Expect(restaurantCheckbox).ToBeCheckedAsync();
@@ -633,6 +661,8 @@ public class HotelTests : PageTest
         await Page.GetByRole(AriaRole.Button, new() { NameString = "Delete reservation" }).ClickAsync();
         // await Page.GotoAsync("http://localhost:5173/reservation");//5173
         // await Page.PauseAsync();
+        await Page.WaitForURLAsync("**/reservation");
+        Assert.That(Page.Url, Does.Contain("/reservation"));
     }
 
     [Test]

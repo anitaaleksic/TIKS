@@ -78,6 +78,7 @@ export default function AddRoom() {
           isAvailable: true,
         });
         setErrorMessages([]);
+        navigate("/room");
       })
       .catch(err => {
         console.error('Error:', err.response || err);

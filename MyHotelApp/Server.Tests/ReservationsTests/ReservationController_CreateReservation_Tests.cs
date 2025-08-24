@@ -19,8 +19,6 @@ public class ReservationController_CreateReservation_Tests
     private static ExtraServiceController _controllerExtraService;
     private static RoomController _controllerRoom;
     private static GuestController _controllerGuest;
-    //private Reservation _reservation;
-    //private Room _room;
     private RoomService _roomService;
     private ExtraService _extraService;
 
@@ -148,27 +146,11 @@ public class ReservationController_CreateReservation_Tests
         };
         _context.Reservations.Add(reservation);
         _context.SaveChanges();
-
-        // _context.Reservations.Add(new Reservation
-        // {
-        //     ReservationID = 2,
-        //     RoomNumber = 124,
-        //     GuestID = "1234512345123",
-        //     CheckInDate = new DateTime(2025, 9, 1),
-        //     CheckOutDate = new DateTime(2025, 9, 3),
-        //     TotalPrice = 320.00m,
-        //     RoomServices = { roomService },
-        //     ExtraServices = { es }
-        // });
-
-        // _context.SaveChanges();
-
     }
 
-    [Test] //add to all Create tests
+    [Test] 
     public async Task CreateReservation_WithModelStateInvalid_ReturnsBadRequest()
     {
-        // Arrange
         _controllerReservation.ModelState.AddModelError("error", "some model state error");
         var reservationDTO = new ReservationDTO();
 
@@ -458,10 +440,6 @@ public class ReservationController_CreateReservation_Tests
         Assert.That(myReservation.TotalPrice, Is.EqualTo(expectedTotal));
     }
 
-    //VRATI NEGDE SOBU DA POGLEDAS TOTAL PRICE --radi dobro
-    //PROVERI JE L RADI KAD POSALJES REZ BEZ TOTAL PRICE -- radi moz i da se obrise svuda al ne mora
-    //PROVERA JE L DODAJE TU REZ SVIMA U LISTE I GOST I SOBA I ROOMSERV I EXTRASERV ubicu se - gotovo fala gadu
-
     [Test]//prvo proveri da li nema tu rez pa dodaj pa proveri je l ima
     public async Task CreateReservation_WithExtraService_AddsReservationToExtraServiceReservations()
     {        
@@ -508,7 +486,6 @@ public class ReservationController_CreateReservation_Tests
     [Test]
     public async Task CreateReservation_WithRoomService_AddsReservationToRoomServiceReservations()
     {
-        //int existingId = 1;
         int rsId = 2;
         var resultRs = await _controllerRoomService.GetReservationsByRoomServiceId(rsId);
         var resultRsReservations = resultRs as OkObjectResult;

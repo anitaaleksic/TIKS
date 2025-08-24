@@ -36,10 +36,6 @@ public class DatabaseRefresher
         await _context.Database.ExecuteSqlRawAsync("DELETE FROM [Reservations]");
         await _context.Database.ExecuteSqlRawAsync("DBCC CHECKIDENT('dbo.Reservations', RESEED, 0)");
 
-
-        //_context.ChangeTracker.Clear();
-
-
         //add guests
         await _context.Guests.AddAsync(new Guest { JMBG = "0123456789012", FullName = "Lazar Živković", PhoneNumber = "+381696969696" });
         await _context.SaveChangesAsync();

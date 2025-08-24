@@ -19,8 +19,6 @@ public class ReservationController_GetReservation_Tests
     private static ExtraServiceController _controllerExtraService;
     private static RoomController _controllerRoom;
     private static GuestController _controllerGuest;
-    //private Reservation _reservation;
-    //private Room _room;
     private RoomService _roomService;
     private ExtraService _extraService;
 

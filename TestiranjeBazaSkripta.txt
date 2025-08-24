@@ -101,14 +101,19 @@ GO
 INSERT INTO dbo.Rooms (RoomNumber, RoomTypeID, Floor) VALUES
 (101, 1, 1),
 (102, 1, 1), 
+(107, 3, 1),
+(111, 4, 1),
 (201, 2, 2), 
 (202, 2, 2), 
 (301, 3, 3), 
 (302, 3, 3), 
+(303, 2, 3),
 (401, 4, 4), 
 (402, 4, 4), 
 (501, 2, 5), 
-(502, 1, 5);
+(502, 1, 5),
+(666, 4, 6),
+(601, 2, 6);
 GO
 
 INSERT INTO dbo.RoomServices (ItemName, ItemPrice, Description) VALUES

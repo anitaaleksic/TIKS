@@ -20,8 +20,6 @@ public class ReservationController_DeleteReservation_Tests
     private static RoomController _controllerRoom;
     private static GuestController _controllerGuest;
     private Reservation _reservation;
-    //private Room _room;
-    //private RoomService _roomService;
 
     [SetUp]
     public void SetUp()
@@ -45,9 +43,6 @@ public class ReservationController_DeleteReservation_Tests
         });
         _context.SaveChanges();
 
-        //ZAKLJUCAK 
-        //moraju da se dodaju sobe inace nece da napravi rezervaciju 
-        //fja GetReservationByGuest mora da vraca listu a ne IActionResult 
         _context.RoomTypes.Add(new RoomType
         {
             RoomTypeID = 1,
@@ -63,8 +58,6 @@ public class ReservationController_DeleteReservation_Tests
             RoomTypeID = 1,
             Floor = 1
         };
-        //,
-        //    Reservations = { _reservation }
 
         _context.Rooms.Add(room);
         _context.SaveChanges();
@@ -157,7 +150,7 @@ public class ReservationController_DeleteReservation_Tests
         var roomAvailability = result as OkObjectResult;
         Assert.That(roomAvailability.Value, Is.False);
 
-        //delete reservation sve isto kao sa brisanje sa existingId
+        //delete reservation sve isto kao za brisanje sa existingId
         int existingId = 1;
         var resultDelete = await _controllerReservation.DeleteReservation(existingId);
         Assert.That(resultDelete, Is.InstanceOf<OkObjectResult>());
@@ -170,8 +163,6 @@ public class ReservationController_DeleteReservation_Tests
         Assert.That(removedResult, Is.InstanceOf<NotFoundObjectResult>());
         var notFoundResult = removedResult as NotFoundObjectResult;
         Assert.That(notFoundResult, Has.Property("Value").EqualTo($"Reservation with ID {existingId} not found."));
-
-        //nez je l treba sve ovo iznad 
 
         //sad je rez sig obrisana proveravamo availability za sobu
         var resultAfter = await _controllerReservation.IsRoomAvailable(_reservation.RoomNumber, _reservation.CheckInDate, _reservation.CheckOutDate);
@@ -205,7 +196,7 @@ public class ReservationController_DeleteReservation_Tests
         
         //ako ga sadrzi tjt sad ga brisemo pa proveravamo da li ga i dalje sadrzi
 
-        //delete reservation sve isto kao sa brisanje sa existingId
+        //delete reservation sve isto kao za brisanje sa existingId
 
         var resultDelete = await _controllerReservation.DeleteReservation(existingId);
         var okResult = resultDelete as OkObjectResult;
@@ -223,8 +214,6 @@ public class ReservationController_DeleteReservation_Tests
             Assert.That(removedResult, Is.InstanceOf<NotFoundObjectResult>());
             Assert.That(notFoundResult, Has.Property("Value").EqualTo($"Reservation with ID {existingId} not found."));
         });
-
-        //nez je l treba sve ovo iznad 
 
         //sad je rez sig obrisana proveravamo da li roomServices vise nemaju vezu sa tom rezervacijom
         //ubacila sam dve rezervacije da bi lista sad imala count 1 pa da proverim da nije isti key 
@@ -258,7 +247,7 @@ public class ReservationController_DeleteReservation_Tests
         
         //ako ga sadrzi tjt sad ga brisemo pa proveravamo da li ga i dalje sadrzi
 
-        //delete reservation sve isto kao sa brisanje sa existingId
+        //delete reservation sve isto kao za brisanje sa existingId
 
         var resultDelete = await _controllerReservation.DeleteReservation(existingId);
         var okResult = resultDelete as OkObjectResult;
@@ -277,8 +266,6 @@ public class ReservationController_DeleteReservation_Tests
             Assert.That(notFoundResult, Has.Property("Value").EqualTo($"Reservation with ID {existingId} not found."));
         });
 
-        //nez je l treba sve ovo iznad 
-
         var resultEsAfter = await _controllerExtraService.GetReservationsByExtraServiceId(esId);
         var resultEsReservationsAfter = resultEsAfter as OkObjectResult;
         var reservationsListAfter = resultEsReservationsAfter.Value as List<Reservation>;
@@ -291,9 +278,7 @@ public class ReservationController_DeleteReservation_Tests
         });
     }
 
-    [Test]//proba prvo bez da ubacim rezervaciju u sobu kad je kreiram da vidim je l se doda sama kad u rezervaciju stavim broj sobe
-    //DA NE TREBA DA UBACIM REZERVACIJU I NE MOZE SVAKAKO JER SE ONA KREIRA NA KRAJU SA SVIM VEZAMA
-    //i proba bez da pravim getRoomReservations nego da ga iskopam iz getRoom  
+    [Test]
     public async Task DeleteReservation_RemovesReservationFromRoomReservations()
     {
         int roomId = 123;
@@ -312,7 +297,7 @@ public class ReservationController_DeleteReservation_Tests
 
         //ako ga sadrzi tjt sad ga brisemo pa proveravamo da li ga i dalje sadrzi
 
-        //delete reservation sve isto kao sa brisanje sa existingId
+        //delete reservation sve isto kao sa brisanje za existingId
 
         var resultDelete = await _controllerReservation.DeleteReservation(reservationId);
         var okResult = resultDelete as OkObjectResult;
@@ -330,8 +315,6 @@ public class ReservationController_DeleteReservation_Tests
             Assert.That(removedResult, Is.InstanceOf<NotFoundObjectResult>());
             Assert.That(notFoundResult, Has.Property("Value").EqualTo($"Reservation with ID {reservationId} not found."));
         });
-
-        //nez je l treba sve ovo iznad 
 
         var resultRoomAfter = await _controllerRoom.GetRoom(roomId);
         var resultRoomOkAfter = resultRoomAfter as OkObjectResult;
@@ -368,7 +351,7 @@ public class ReservationController_DeleteReservation_Tests
 
         //ako ga sadrzi tjt sad ga brisemo pa proveravamo da li ga i dalje sadrzi
 
-        //delete reservation sve isto kao sa brisanje sa existingId
+        //delete reservation sve isto kao za brisanje sa existingId
 
         var resultDelete = await _controllerReservation.DeleteReservation(reservationId1);
         var okResult = resultDelete as OkObjectResult;
