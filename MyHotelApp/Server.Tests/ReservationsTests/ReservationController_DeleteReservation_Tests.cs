@@ -301,13 +301,13 @@ public class ReservationController_DeleteReservation_Tests
 
         var resultRoom = await _controllerRoom.GetRoom(roomId);
         var resultRoomOk = resultRoom as OkObjectResult;
-        var roomObject = resultRoomOk.Value as Room;
+        var roomObject = resultRoomOk.Value as RoomDTO;
         var reservationsList = roomObject.Reservations;
 
         Assert.Multiple(() =>
         {
             Assert.That(reservationsList, Is.Not.Empty);
-            Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == reservationId));
+            Assert.That(reservationsList, Has.Some.Matches<ReservationDTO>(r => r.ReservationID == reservationId));
         });
 
         //ako ga sadrzi tjt sad ga brisemo pa proveravamo da li ga i dalje sadrzi
@@ -335,14 +335,14 @@ public class ReservationController_DeleteReservation_Tests
 
         var resultRoomAfter = await _controllerRoom.GetRoom(roomId);
         var resultRoomOkAfter = resultRoomAfter as OkObjectResult;
-        var roomObjectAfter = resultRoomOkAfter.Value as Room;
-        var reservationsListAfter = roomObject.Reservations;
+        var roomObjectAfter = resultRoomOkAfter.Value as RoomDTO;
+        var reservationsListAfter = roomObjectAfter.Reservations;
 
         Assert.Multiple(() =>
         {
             Assert.That(reservationsListAfter.Count, Is.EqualTo(0));
             //ili jedno ili drugo 
-            Assert.That(reservationsList, Has.None.Matches<Reservation>(r => r.ReservationID == reservationId));
+            Assert.That(reservationsListAfter, Has.None.Matches<ReservationDTO>(r => r.ReservationID == reservationId));
         });
 
     }
@@ -356,14 +356,14 @@ public class ReservationController_DeleteReservation_Tests
 
         var resultGuest = await _controllerGuest.GetGuestByJMBG(guestId);
         var resultGuestOk = resultGuest as OkObjectResult;
-        var guestObject = resultGuestOk.Value as Guest;
+        var guestObject = resultGuestOk.Value as GuestDTO;
         var reservationsList = guestObject.Reservations;
 
         Assert.Multiple(() =>
         {
             Assert.That(reservationsList.Count, Is.EqualTo(2));
-            Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == reservationId1));
-            Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == reservationId2));
+            Assert.That(reservationsList, Has.Some.Matches<ReservationDTO>(r => r.ReservationID == reservationId1));
+            Assert.That(reservationsList, Has.Some.Matches<ReservationDTO>(r => r.ReservationID == reservationId2));
         });
 
         //ako ga sadrzi tjt sad ga brisemo pa proveravamo da li ga i dalje sadrzi
@@ -391,14 +391,14 @@ public class ReservationController_DeleteReservation_Tests
         
         var resultGuestAfter = await _controllerGuest.GetGuestByJMBG(guestId);
         var resultGuestOkAfter = resultGuestAfter as OkObjectResult;
-        var guestObjectAfter = resultGuestOkAfter.Value as Guest;
+        var guestObjectAfter = resultGuestOkAfter.Value as GuestDTO;
         var reservationsListAfter = guestObjectAfter.Reservations;
 
         Assert.Multiple(() =>
         {
-            Assert.That(reservationsList.Count, Is.EqualTo(1));
-            Assert.That(reservationsList, Has.None.Matches<Reservation>(r => r.ReservationID == reservationId1));
-            Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == reservationId2));
+            Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
+            Assert.That(reservationsListAfter, Has.None.Matches<ReservationDTO>(r => r.ReservationID == reservationId1));
+            Assert.That(reservationsListAfter, Has.Some.Matches<ReservationDTO>(r => r.ReservationID == reservationId2));
         });
     }
 

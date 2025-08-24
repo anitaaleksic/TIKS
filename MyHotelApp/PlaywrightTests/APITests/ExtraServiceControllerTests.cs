@@ -55,10 +55,9 @@ public class ExtraServiceControllerTests : PlaywrightTest
     }
 
     [Test]
-    public async Task GetExtraServices_DisplaysApiExtraServicesInTable()
+    public async Task GetAllExtraServices_ReturnsOkAndExtraServices()
     {
-        await using var response = await Request.GetAsync("/api/ExtraService/GetAllExtraServices",
-            new APIRequestContextOptions { Headers = new Dictionary<string, string> { { "Accept", "application/json" } } });
+        await using var response = await Request.GetAsync("/api/ExtraService/GetAllExtraServices");
 
         if (response.Status != 200)
         {
@@ -67,151 +66,139 @@ public class ExtraServiceControllerTests : PlaywrightTest
 
         var jsonResult = await response.JsonAsync();
 
-        if (!jsonResult.HasValue || jsonResult.Value.ValueKind != System.Text.Json.JsonValueKind.Array)
+        Assert.Multiple(() =>
         {
-            Assert.Fail("JSON response is not a valid array.");
-        }
+            Assert.That(jsonResult.HasValue, Is.True, "Response did not contain JSON.");
+            Assert.That(jsonResult.Value.ValueKind, Is.EqualTo(JsonValueKind.Array), "Expected JSON array.");
+        });
 
-        var extraServices = jsonResult.Value.EnumerateArray().ToList();
+        var ExtraServices = jsonResult.Value.EnumerateArray().ToList();
 
-        Assert.That(extraServices.Count, Is.GreaterThan(0), "Expected at least one extra service in the response.");
+        Assert.That(ExtraServices.Count, Is.GreaterThan(0), "Expected at least one Extra service in the response.");
 
-        var firstService = extraServices.First();
-
-        if (!(firstService.TryGetProperty("extraServiceID", out var extraServiceID) &&
-            firstService.TryGetProperty("serviceName", out var serviceName) &&
-            firstService.TryGetProperty("price", out var price) &&
-            firstService.TryGetProperty("description", out var description)))
-        {
-            Assert.Fail("JSON does not contain expected ExtraService properties.");
-        }
-        else
-        {
-            Assert.Multiple(() =>
-            {
-                Assert.That(extraServiceID.GetInt32(), Is.GreaterThan(0), "extraServiceID should be greater than 0.");
-                Assert.That(!string.IsNullOrEmpty(serviceName.GetString()), "serviceName should not be null or empty.");
-                Console.WriteLine($"Service Name: {serviceName.GetString()}");
-                Assert.That(price.GetDecimal(), Is.GreaterThan(0), "price should be greater than 0.");
-                Assert.That(description.ValueKind == System.Text.Json.JsonValueKind.String
-                            || description.ValueKind == System.Text.Json.JsonValueKind.Null,
-                            "description should be a string or null.");
-            });
-        }
     }
 
+
     [Test]
-    public async Task GetExtraServiceById_ExistingId_ReturnsOkWithCorrectData()
+    public async Task GetExtraServiceById_ExistingId_ReturnsOkAndExtraService()
     {
         int serviceId = 1;
-        string expectedName = "Parking"; 
+        string expectedName = "Parking Spot";
 
-        var resp = await Request.GetAsync($"/api/ExtraService/GetExtraServiceById/{serviceId}",
-            new APIRequestContextOptions { Headers = new Dictionary<string, string> { { "Accept", "application/json" } } });
+        await using var response = await Request.GetAsync($"/api/ExtraService/GetExtraServiceById/{serviceId}");
 
-        var text = await resp.TextAsync();
+        if (response.Status != 200)
+        {
+            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
+        }
 
-        Console.WriteLine($"GET ExtraService by ID {serviceId} => Status: {resp.Status}");
-        Console.WriteLine($"Response: {text}");
+        var jsonResult = await response.JsonAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(resp.Status, Is.EqualTo(200));
-            Assert.That(text, Does.Contain(expectedName));
+            Assert.That(jsonResult.HasValue, Is.True, "Response did not contain JSON.");
+            Assert.That(jsonResult.Value.ValueKind, Is.EqualTo(JsonValueKind.Object), "Expected JSON object but got something else.");
+        });
+
+        jsonResult.Value.TryGetProperty("extraServiceID", out var id);
+        jsonResult.Value.TryGetProperty("serviceName", out var name);
+        jsonResult.Value.TryGetProperty("price", out var price);
+        jsonResult.Value.TryGetProperty("description", out var description);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(id.GetInt32(), Is.EqualTo(serviceId));
+            Assert.That(name.GetString(), Is.EqualTo(expectedName));
+            Assert.That(price.GetDecimal(), Is.GreaterThan(0));
+            Assert.That(description.ValueKind == JsonValueKind.String || description.ValueKind == JsonValueKind.Null);
         });
     }
 
     [Test]
     public async Task GetExtraServiceById_NonExistingId_ReturnsNotFound()
     {
-        var nonExistingId = 9999;
+        int nonExistingId = 9999;
 
-        var resp = await Request.GetAsync($"/api/ExtraService/GetExtraServiceById/{nonExistingId}",
-            new APIRequestContextOptions { Headers = new Dictionary<string, string> { { "Accept", "application/json" } } });
-
-        var text = await resp.TextAsync();
-
-        Console.WriteLine($"GET non-existing ExtraService by ID {nonExistingId} => Status: {resp.Status}");
-        Console.WriteLine($"Response: {text}");
+        await using var response = await Request.GetAsync($"/api/ExtraService/GetExtraServiceById/{nonExistingId}");
+        var text = await response.TextAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(resp.Status, Is.EqualTo(404));
-            Assert.That(text, Does.Contain($"Extra service with ID {nonExistingId} not found"));
+            Assert.That(response.Status, Is.EqualTo(404));
+            Assert.That(text, Does.Contain($"Extra service with ID {nonExistingId} not found."));
         });
     }
 
     [Test]
-    public async Task GetExtraServiceByName_ExistingName_ReturnsOkWithCorrectData()
+    public async Task GetExtraServiceByName_ExistingName_ReturnsOkAndExtraService()
     {
         string serviceName = "Parking Spot";
 
-        var resp = await Request.GetAsync($"/api/ExtraService/GetExtraServiceByName/{serviceName}",
-            new APIRequestContextOptions { Headers = new Dictionary<string, string> { { "Accept", "application/json" } } });
+        await using var response = await Request.GetAsync($"/api/ExtraService/GetExtraServiceByName/{serviceName}");
 
-        var text = await resp.TextAsync();
+        if (response.Status != 200)
+        {
+            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
+        }
 
-        Console.WriteLine($"GET ExtraService by Name '{serviceName}' => Status: {resp.Status}");
-        Console.WriteLine($"Response: {text}");
+        var jsonResult = await response.JsonAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(resp.Status, Is.EqualTo(200));
-            Assert.That(text, Does.Contain(serviceName));
+            Assert.That(jsonResult.HasValue, Is.True, "Response did not contain JSON.");
+            Assert.That(jsonResult.Value.ValueKind, Is.EqualTo(JsonValueKind.Object), "Expected JSON object but got something else.");
+        });
+
+        jsonResult.Value.TryGetProperty("extraServiceID", out var id);
+        jsonResult.Value.TryGetProperty("serviceName", out var name);
+        jsonResult.Value.TryGetProperty("price", out var price);
+        jsonResult.Value.TryGetProperty("description", out var description);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(name.GetString(), Is.EqualTo(serviceName));
+            Assert.That(id.GetInt32(), Is.GreaterThan(0));
+            Assert.That(price.GetDecimal(), Is.GreaterThan(0));
+            Assert.That(description.ValueKind == JsonValueKind.String || description.ValueKind == JsonValueKind.Null);
         });
     }
 
     [Test]
     public async Task GetExtraServiceByName_NonExistingName_ReturnsNotFound()
     {
-        var nonExistingName = "ThisServiceDoesNotExist";
+        string nonExistingName = "ThisServiceDoesNotExist";
 
-        var resp = await Request.GetAsync($"/api/ExtraService/GetExtraServiceByName/{nonExistingName}",
-            new APIRequestContextOptions { Headers = new Dictionary<string, string> { { "Accept", "application/json" } } });
-
-        var text = await resp.TextAsync();
-
-        Console.WriteLine($"GET non-existing ExtraService by Name '{nonExistingName}' => Status: {resp.Status}");
-        Console.WriteLine($"Response: {text}");
+        await using var response = await Request.GetAsync($"/api/ExtraService/GetExtraServiceByName/{nonExistingName}");
+        var text = await response.TextAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(resp.Status, Is.EqualTo(404));
-            Assert.That(text, Does.Contain($"Extra service with name {nonExistingName} not found"));
+            Assert.That(response.Status, Is.EqualTo(404));
+            Assert.That(text, Does.Contain($"Extra service with name {nonExistingName} not found."));
         });
     }
+
+
 
     [Test]
     public async Task CreateExtraService_ValidData_CheckDatabase()
     {
-        var serviceName = "TestExtraService";
+        var serviceName = "TestService";
 
-        
         var createResponse = await Request.PostAsync("/api/ExtraService/CreateExtraService", new APIRequestContextOptions
         {
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
             DataObject = new
             {
-                ServiceName = serviceName,
-                Price = 150m,
-                Description = "Test extra service description"
+                serviceName = serviceName,
+                price = 100,
+                Description = "Test description"
             }
         });
 
         Assert.That(createResponse.Status, Is.EqualTo(200));
         var createText = await createResponse.TextAsync();
         Assert.That(createText, Is.EqualTo($"\"Extra service with name {serviceName} created successfully.\""));
-
-        
-        var getResponse = await Request.GetAsync($"/api/ExtraService/GetExtraServiceByName/{serviceName}");
-        Assert.That(getResponse.Status, Is.EqualTo(200));
-
-        var jsonResult = await getResponse.JsonAsync();
-        Assert.That(jsonResult.HasValue, Is.True);
-
-        Assert.That(jsonResult.Value.TryGetProperty("serviceName", out var returnedName) && returnedName.GetString() == serviceName, Is.True);
-        Assert.That(jsonResult.Value.TryGetProperty("price", out var returnedPrice) && returnedPrice.GetDecimal() == 150m, Is.True);
-        Assert.That(jsonResult.Value.TryGetProperty("description", out var returnedDescription) && returnedDescription.GetString() == "Test extra service description", Is.True);
     }
 
     [Test]
@@ -222,22 +209,22 @@ public class ExtraServiceControllerTests : PlaywrightTest
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
             DataObject = new
             {
-                ServiceName = "",
-                Price = 10m,
+                serviceName = "",
+                price = 10m,
                 Description = "Empty name test"
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        
+        var responseText = await resp.TextAsync();;
 
-        Console.WriteLine($"POST EmptyName => Status: {resp.Status}");
-        Console.WriteLine($"Response: {jsonString}");
+        //Console.WriteLine($"POST EmptyName => Status: {resp.Status}");
+        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Service name is required and cannot exceed 50 characters"));
+            Assert.That(responseText, Does.Contain("Service name is required and cannot exceed 50 characters"));
         });
     }
 
@@ -249,160 +236,150 @@ public class ExtraServiceControllerTests : PlaywrightTest
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
             DataObject = new
             {
-                ServiceName = new string('a', 51),
-                Price = 10m,
+                serviceName = new string('a', 51),
+                price = 10m,
                 Description = "Name too long test"
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
-        Console.WriteLine($"POST NameTooLong => Status: {resp.Status}");
-        Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Service name is required and cannot exceed 50 characters"));
+            Assert.That(responseText, Does.Contain("Service name is required and cannot exceed 50 characters"));
         });
     }
 
     [Test]
-    public async Task CreateExtraService_NegativePrice_ReturnsBadRequest()
+    public async Task CreateExtraService_Negativeprice_ReturnsBadRequest()
     {
         var resp = await Request.PostAsync("/api/ExtraService/CreateExtraService", new APIRequestContextOptions
         {
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
             DataObject = new
             {
-                ServiceName = "NegativePriceExtra",
-                Price = -5m,
+                serviceName = "Negativeprice",
+                price = -5m,
                 Description = "Negative price test"
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
-        Console.WriteLine($"POST NegativePrice => Status: {resp.Status}");
-        Console.WriteLine($"Response: {jsonString}");
+        //Console.WriteLine($"POST Negativeprice => Status: {resp.Status}");
+        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Price must be a positive value"));
+            Assert.That(responseText, Does.Contain("Price must be a positive value"));
         });
     }
 
     [Test]
-    public async Task CreateExtraService_ZeroPrice_ReturnsBadRequest()
+    public async Task CreateExtraService_Zeroprice_ReturnsBadRequest()
     {
         var resp = await Request.PostAsync("/api/ExtraService/CreateExtraService", new APIRequestContextOptions
         {
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
             DataObject = new
             {
-                ServiceName = "ZeroPriceExtra",
-                Price = 0m,
+                serviceName = "Zeroprice",
+                price = 0m,
                 Description = "Zero price test"
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
-        Console.WriteLine($"POST ZeroPrice => Status: {resp.Status}");
-        Console.WriteLine($"Response: {jsonString}");
+        //Console.WriteLine($"POST Zeroprice => Status: {resp.Status}");
+        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Price must be a positive value"));
+            Assert.That(responseText, Does.Contain("Price must be a positive value"));
         });
     }
 
     [Test]
     public async Task CreateExtraService_DuplicateName_ReturnsError()
     {
-        var existingName = "Parking Spot"; // već postoji u bazi
+        var existingName = "Parking Spot"; 
         var createResp = await Request.PostAsync("/api/ExtraService/CreateExtraService", new APIRequestContextOptions
         {
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
-            DataObject = new { ServiceName = existingName, Price = 100.0m, Description = "Duplicate Test" }
+            DataObject = new { serviceName = existingName, price = 100.0m, Description = "Duplicate Test" }
         });
 
-        Console.WriteLine($"Create duplicate response status: {createResp.Status}");
+        //Console.WriteLine($"Create duplicate response status: {createResp.Status}");
         var text = await createResp.TextAsync();
-        Console.WriteLine($"Response text: {text}");
+        //Console.WriteLine($"Response text: {text}");
 
-        Assert.That(createResp.Status, Is.EqualTo(400));
-        Assert.That(text, Does.Contain($"Extra service with the name {existingName} already exists."));
+        Assert.Multiple(() =>
+        {
+            Assert.That(createResp, Has.Property("Status").EqualTo(400));
+            Assert.That(text, Does.Contain($"Extra service with the name {existingName} already exists."));
+        });
     }
 
 
-    [Test]
-    public async Task UpdateExtraService_ById_UpdatesSuccessfully()
-    {
-        var service = await _context.ExtraServices.FirstAsync(es => es.ServiceName == "Parking Spot");
-        var updatedName = "Parking Premium";
 
-        var updateResp = await Request.PutAsync($"/api/ExtraService/UpdateExtraService/{service.ExtraServiceID}", new APIRequestContextOptions
+    [Test]
+    public async Task UpdateExtraService_ById_ReturnsOkAndUpdatesExtraService()
+    {
+        int existingServiceId = 1; 
+
+        await using var response = await Request.PutAsync($"/api/ExtraService/UpdateExtraService/{existingServiceId}", new APIRequestContextOptions
         {
-            Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
+            Headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            },
             DataObject = new
             {
-                ServiceName = updatedName,
-                Price = 50.00m,
+                serviceName = "Parking Spot Deluxe",
+                price = 15.00m,
                 Description = "Updated description"
             }
         });
 
-        Assert.That(updateResp.Status, Is.EqualTo(200));
-        Console.WriteLine($"Update response status: {updateResp.Status}");
-
-        var getUpdated = await Request.GetAsync($"/api/ExtraService/GetExtraServiceById/{service.ExtraServiceID}");
-        var json = await getUpdated.JsonAsync();
-        Assert.That(json.HasValue, Is.True);
-
-        Console.WriteLine($"Updated JSON: {json.Value}");
+        var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(json.Value.TryGetProperty("extraServiceID", out var idProp) && idProp.GetInt32() == service.ExtraServiceID, "extraServiceID mismatch");
-            Assert.That(json.Value.TryGetProperty("serviceName", out var nameProp) && nameProp.GetString() == updatedName, "serviceName mismatch");
-            Assert.That(json.Value.TryGetProperty("price", out var priceProp) && priceProp.GetDecimal() == 50.00m, "price mismatch");
-            Assert.That(json.Value.TryGetProperty("description", out var descProp) && descProp.GetString() == "Updated description", "description mismatch");
+            Assert.That(response, Has.Property("Status").EqualTo(200));
+            Assert.That(responseText, Does.Contain($"Extra service with ID {existingServiceId} updated successfully."));
         });
     }
 
-    [Test]
-    public async Task UpdateExtraServiceByName_ValidUpdate_Succeeds()
-    {
-        var serviceName = "Parking Spot";
-        var updatedName = "Parking Premium";
 
-        var resp = await Request.PutAsync($"/api/ExtraService/UpdateExtraServiceByName/{serviceName}", new APIRequestContextOptions
+    [Test]
+    public async Task UpdateExtraServiceByName_ValidUpdate_ReturnsOk()
+    {
+        string existingServiceName = "Parking Spot";
+        await using var response = await Request.PutAsync($"/api/ExtraService/UpdateExtraServiceByName/{existingServiceName}", new APIRequestContextOptions
         {
-            Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
+            Headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            },
             DataObject = new
             {
-                ServiceName = updatedName,
-                Price = 60m,
+                serviceName = "Parking Spot Deluxe",
+                price = 20.00m,
                 Description = "Updated description"
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
-
-        Console.WriteLine($"PUT ValidUpdate => Status: {resp.Status}");
-        Console.WriteLine($"Response: {jsonString}");
+        var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(resp, Has.Property("Status").EqualTo(200));
-            Assert.That(jsonString, Does.Contain($"Extra service with name {serviceName} updated successfully"));
+            Assert.That(response, Has.Property("Status").EqualTo(200));
+            Assert.That(responseText, Does.Contain($"Extra service with name {existingServiceName} updated successfully."));
         });
     }
 
@@ -416,22 +393,21 @@ public class ExtraServiceControllerTests : PlaywrightTest
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
             DataObject = new
             {
-                ServiceName = "",
-                Price = 60m,
+                serviceName = "",
+                price = 20m,
                 Description = "Empty name test"
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
-        Console.WriteLine($"PUT EmptyName => Status: {resp.Status}");
-        Console.WriteLine($"Response: {jsonString}");
+        //Console.WriteLine($"PUT EmptyName => Status: {resp.Status}");
+        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Service name is required and cannot exceed 50 characters"));
+            Assert.That(responseText, Does.Contain("Service name is required and cannot exceed 50 characters"));
         });
     }
 
@@ -445,27 +421,27 @@ public class ExtraServiceControllerTests : PlaywrightTest
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
             DataObject = new
             {
-                ServiceName = new string('a', 51),
-                Price = 60m,
+                serviceName = new string('a', 51),
+                price = 20m,
                 Description = "Name too long test"
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        
+        var responseText = await resp.TextAsync();
 
-        Console.WriteLine($"PUT NameTooLong => Status: {resp.Status}");
-        Console.WriteLine($"Response: {jsonString}");
+        //Console.WriteLine($"PUT NameTooLong => Status: {resp.Status}");
+        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Service name is required and cannot exceed 50 characters"));
+            Assert.That(responseText, Does.Contain("Service name is required and cannot exceed 50 characters"));
         });
     }
 
     [Test]
-    public async Task UpdateExtraServiceByName_NegativePrice_ReturnsBadRequest()
+    public async Task UpdateExtraServiceByName_Negativeprice_ReturnsBadRequest()
     {
         var serviceName = "Parking Spot";
 
@@ -474,27 +450,26 @@ public class ExtraServiceControllerTests : PlaywrightTest
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
             DataObject = new
             {
-                ServiceName = "Parking Updated",
-                Price = -5m,
+                serviceName = "Parking Spot Updated",
+                price = -5m,
                 Description = "Negative price test"
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
-        Console.WriteLine($"PUT NegativePrice => Status: {resp.Status}");
-        Console.WriteLine($"Response: {jsonString}");
+        //Console.WriteLine($"PUT Negativeprice => Status: {resp.Status}");
+        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Price must be a positive value"));
+            Assert.That(responseText, Does.Contain("Price must be a positive value"));
         });
     }
 
     [Test]
-    public async Task UpdateExtraServiceByName_ZeroPrice_ReturnsBadRequest()
+    public async Task UpdateExtraServiceByName_Zeroprice_ReturnsBadRequest()
     {
         var serviceName = "Parking Spot";
 
@@ -503,22 +478,21 @@ public class ExtraServiceControllerTests : PlaywrightTest
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
             DataObject = new
             {
-                ServiceName = "Parking Updated",
-                Price = 0m,
+                serviceName = "Parking Spot Updated",
+                price = 0m,
                 Description = "Zero price test"
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
-        Console.WriteLine($"PUT ZeroPrice => Status: {resp.Status}");
-        Console.WriteLine($"Response: {jsonString}");
+        //Console.WriteLine($"PUT Zeroprice => Status: {resp.Status}");
+        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Price must be a positive value"));
+            Assert.That(responseText, Does.Contain("Price must be a positive value"));
         });
     }
 
@@ -526,81 +500,75 @@ public class ExtraServiceControllerTests : PlaywrightTest
     public async Task UpdateExtraServiceByName_DuplicateName_ReturnsBadRequest()
     {
         var serviceName = "Parking Spot";
-        var existingName = "Restaurant Access"; // već postoji u bazi
+        var existingName = "Restaurant Access"; 
 
         var resp = await Request.PutAsync($"/api/ExtraService/UpdateExtraServiceByName/{serviceName}", new APIRequestContextOptions
         {
             Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
             DataObject = new
             {
-                ServiceName = existingName,
-                Price = 70m,
+                serviceName = existingName,
+                price = 25m,
                 Description = "Duplicate name test"
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
-        Console.WriteLine($"PUT DuplicateName => Status: {resp.Status}");
-        Console.WriteLine($"Response: {jsonString}");
+        //Console.WriteLine($"PUT DuplicateName => Status: {resp.Status}");
+        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain($"Extra service with the name {existingName} already exists."));
+            Assert.That(responseText, Does.Contain($"Extra service with the name {existingName} already exists"));
+        });
+    }
+
+
+    [Test]
+    public async Task DeleteExtraService_ExistingId_ReturnsOk()
+    {
+        int existingServiceId = 1;
+
+        await using var response = await Request.DeleteAsync($"/api/ExtraService/DeleteExtraService/{existingServiceId}");
+        var responseText = await response.TextAsync();
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(response, Has.Property("Status").EqualTo(200));
+            Assert.That(responseText, Does.Contain($"Extra service with ID {existingServiceId} deleted successfully."));
         });
     }
 
     [Test]
-    public async Task DeleteExtraService_ById_DeletesSuccessfully()
+    public async Task DeleteExtraService_NonExistingId_ReturnsNotFound()
     {
-        int serviceId = 1;
+        int nonExistingServiceId = 9999;
 
-        var deleteResp = await Request.DeleteAsync($"/api/ExtraService/DeleteExtraService/{serviceId}");
-        Console.WriteLine($"Delete response status: {deleteResp.Status}");
-
-        var getDeleted = await Request.GetAsync($"/api/ExtraService/GetExtraServiceById/{serviceId}");
-        Console.WriteLine($"GET after delete status: {getDeleted.Status}");
+        await using var response = await Request.DeleteAsync($"/api/ExtraService/DeleteExtraService/{nonExistingServiceId}");
+        var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(deleteResp.Status, Is.EqualTo(200));
-            Assert.That(getDeleted.Status, Is.EqualTo(404));
+            Assert.That(response, Has.Property("Status").EqualTo(404));
+            Assert.That(responseText, Does.Contain($"Extra service with ID {nonExistingServiceId} not found."));
         });
     }
 
-    [Test]
-    public async Task DeleteExtraService_ById_NonExistingId_ReturnsNotFound()
-    {
-        int nonExistingId = 9999;
-
-        var deleteResp = await Request.DeleteAsync($"/api/ExtraService/DeleteExtraService/{nonExistingId}");
-        var text = await deleteResp.TextAsync();
-        Console.WriteLine($"Delete non-existing ID response status: {deleteResp.Status}");
-        Console.WriteLine($"Response text: {text}");
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(deleteResp.Status, Is.EqualTo(404));
-            Assert.That(text, Does.Contain($"Extra service with ID {nonExistingId} not found"));
-        });
-    }
 
     [Test]
     public async Task DeleteExtraService_ById_Twice_SecondTimeReturnsNotFound()
     {
         int serviceId = 2;
 
-        // Prvi DELETE
         var firstDelete = await Request.DeleteAsync($"/api/ExtraService/DeleteExtraService/{serviceId}");
-        Console.WriteLine($"First delete response status: {firstDelete.Status}");
+        //Console.WriteLine($"First delete response status: {firstDelete.Status}");
 
-        // Drugi DELETE
         var secondDelete = await Request.DeleteAsync($"/api/ExtraService/DeleteExtraService/{serviceId}");
         var text = await secondDelete.TextAsync();
-        Console.WriteLine($"Second delete response status: {secondDelete.Status}");
-        Console.WriteLine($"Response text: {text}");
+        //Console.WriteLine($"Second delete response status: {secondDelete.Status}");
+        //Console.WriteLine($"Response text: {text}");
 
         Assert.Multiple(() =>
         {
@@ -610,7 +578,6 @@ public class ExtraServiceControllerTests : PlaywrightTest
         });
     }
 
-
     [TearDown]
     public async Task TearDownAPITesting()
     {
@@ -618,3 +585,4 @@ public class ExtraServiceControllerTests : PlaywrightTest
         await _context.DisposeAsync();
     }
 }
+

@@ -175,7 +175,7 @@ public class GuestController_UpdateGuest_Tests
 
         var res = await _controllerGuest.GetGuestByJMBG(validJmbg);
         var updatedRes = res as OkObjectResult;
-        var updatedGuest = updatedRes.Value as Guest;
+        var updatedGuest = updatedRes.Value as GuestDTO;
         Assert.That(updatedGuest.FullName, Is.EqualTo(guestDTO.FullName));
         Assert.That(updatedGuest.PhoneNumber, Is.EqualTo(guestDTO.PhoneNumber));
         Assert.That(updatedGuest.JMBG, Is.EqualTo(validJmbg));//jmbg not changed

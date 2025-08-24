@@ -105,9 +105,9 @@ public class GuestController_GetGuest_Tests
         var result = await _controllerGuest.GetGuestByJMBG("1234512345123");
         var okResult = result as OkObjectResult;
         Assert.That(okResult, Is.Not.Null);
-        Assert.That(okResult.Value, Is.InstanceOf<Guest>());
+        Assert.That(okResult.Value, Is.InstanceOf<GuestDTO>());
 
-        var guest = okResult.Value as Guest;
+        var guest = okResult.Value as GuestDTO;
         Assert.That(guest.JMBG, Is.EqualTo("1234512345123"));
 
     }    
@@ -150,7 +150,7 @@ public class GuestController_GetGuest_Tests
         // Assert.That(okResult, Is.Not.Null);
         // Assert.That(okResult.Value, Is.InstanceOf<Guest>());
 
-        var guest = okResult.Value as Guest;
+        var guest = okResult.Value as GuestDTO;
         Assert.That(guest.Reservations, Is.Not.Null);
 
     }

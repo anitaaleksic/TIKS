@@ -287,6 +287,11 @@ public async Task<IActionResult> GetReservationById(int id)
             .Include(r => r.RoomType)
             .FirstOrDefaultAsync(r => r.RoomNumber == reservation.RoomNumber);
 
+             if (existingRoom == null)
+            {
+                return NotFound($"Room with number {reservation.RoomNumber} does not exist.");
+            }
+
 
             var existingGuest = await _context.Guests.FirstOrDefaultAsync(g => g.JMBG == reservation.GuestID);
             if (existingGuest == null)

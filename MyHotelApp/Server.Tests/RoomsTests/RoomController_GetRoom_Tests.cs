@@ -74,12 +74,9 @@ public class RoomController_GetRoom_Tests
         var okResult = result as OkObjectResult;
         Assert.That(okResult?.Value, Is.Not.Null);
 
-        var room = okResult?.Value as Room;
+        var room = okResult?.Value as RoomDTO;
         Assert.That(room, Is.Not.Null);
         Assert.That(room.RoomNumber, Is.EqualTo(101));
-        Assert.That(room.RoomType, Is.Not.Null);
-        Assert.That(room.RoomType.Type, Is.EqualTo("Single"));
-        Assert.That(room.RoomType.PricePerNight, Is.EqualTo(50.00m));
     }
 
     [Test]
@@ -100,7 +97,7 @@ public class RoomController_GetRoom_Tests
 
         var result = await _controllerRoom.GetRoom(existingRoomNumber);
         var okResult = result as OkObjectResult;
-        var room = okResult?.Value as Room;
+        var room = okResult?.Value as RoomDTO;
 
         Assert.That(room, Has.Property("RoomTypeID").EqualTo(expectedRoomTypeID));
     }
@@ -113,7 +110,7 @@ public class RoomController_GetRoom_Tests
 
         var result = await _controllerRoom.GetRoom(existingRoomNumber);
         var okResult = result as OkObjectResult;
-        var room = okResult?.Value as Room;
+        var room = okResult?.Value as RoomDTO;
 
         Assert.That(room, Has.Property("Floor").EqualTo(expectedFloor));
     }
@@ -125,7 +122,7 @@ public class RoomController_GetRoom_Tests
 
         var result = await _controllerRoom.GetRoom(existingRoomNumber);
         var okResult = result as OkObjectResult;
-        var room = okResult?.Value as Room;
+        var room = okResult?.Value as RoomDTO;
 
         Assert.That(room, Has.Property("RoomNumber").EqualTo(existingRoomNumber));
     }
@@ -157,7 +154,7 @@ public class RoomController_GetRoom_Tests
         var result = await _controllerRoom.GetRoom(202);
         var okResult = result as OkObjectResult;
 
-        var room = okResult.Value as Room;
+        var room = okResult.Value as RoomDTO;
         Assert.That(room.Reservations, Is.Not.Null);
 
     }

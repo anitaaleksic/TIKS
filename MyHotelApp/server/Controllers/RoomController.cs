@@ -30,11 +30,11 @@ public class RoomController : ControllerBase
             var existingRoom = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == room.RoomNumber);
             if (room.RoomNumber < 101 || room.RoomNumber > 699)
             {
-                return NotFound("Room number must be between 101 and 699.");
+                return BadRequest("Room number must be between 101 and 699.");
             }
             if (existingRoom != null)
             {
-                return NotFound($"Room with number {room.RoomNumber} already exists.");
+                 return BadRequest($"Room with number {room.RoomNumber} already exists.");
             }
 
             if (room.Floor < 1 || room.Floor > 6)
