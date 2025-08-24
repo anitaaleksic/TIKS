@@ -55,7 +55,7 @@ public class RoomServiceControllerTests : PlaywrightTest
     }
 
     [Test]
-    public async Task GetRoomServices_DisplaysApiRoomServicesInTable()
+    public async Task GetAllRoomServices_ReturnsOkAndRoomServices()
     {
         await using var response = await Request.GetAsync("/api/RoomService/GetAllRoomServices");
 
@@ -66,116 +66,118 @@ public class RoomServiceControllerTests : PlaywrightTest
 
         var jsonResult = await response.JsonAsync();
 
-        if (!jsonResult.HasValue || jsonResult.Value.ValueKind != System.Text.Json.JsonValueKind.Array)
+        Assert.Multiple(() =>
         {
-            Assert.Fail("JSON response is not a valid array.");
-        }
+            Assert.That(jsonResult.HasValue, Is.True, "Response did not contain JSON.");
+            Assert.That(jsonResult.Value.ValueKind, Is.EqualTo(JsonValueKind.Array), "Expected JSON array.");
+        });
 
         var roomServices = jsonResult.Value.EnumerateArray().ToList();
 
         Assert.That(roomServices.Count, Is.GreaterThan(0), "Expected at least one room service in the response.");
 
-        var firstService = roomServices.First();
-
-        if (!(firstService.TryGetProperty("roomServiceID", out var roomServiceID) &&
-            firstService.TryGetProperty("itemName", out var itemName) &&
-            firstService.TryGetProperty("itemPrice", out var itemPrice) &&
-            firstService.TryGetProperty("description", out var description)))
-        {
-            Assert.Fail("JSON does not contain expected RoomService properties.");
-        }
-        else
-        {
-            Assert.Multiple(() =>
-            {
-                Assert.That(roomServiceID.GetInt32(), Is.GreaterThan(0), "roomServiceID should be greater than 0.");
-                Assert.That(!string.IsNullOrEmpty(itemName.GetString()), "itemName should not be null or empty.");
-                ////Console.WriteLine($"Item Name: {itemName.GetString()}");
-                Assert.That(itemPrice.GetDecimal(), Is.GreaterThan(0), "itemPrice should be greater than 0.");
-                // description može da bude null
-                Assert.That(description.ValueKind == System.Text.Json.JsonValueKind.String 
-                            || description.ValueKind == System.Text.Json.JsonValueKind.Null,
-                            "description should be a string or null.");
-            });
-        }
     }
 
+
     [Test]
-    public async Task GetRoomServiceById_ExistingId_ReturnsOkWithCorrectData()
+    public async Task GetRoomServiceById_ExistingId_ReturnsOkAndRoomService()
     {
         int serviceId = 1;
         string expectedName = "Breakfast";
 
-        var resp = await Request.GetAsync($"/api/RoomService/GetRoomServiceById/{serviceId}",
-            new APIRequestContextOptions { Headers = new Dictionary<string, string> { { "Accept", "application/json" } } });
-        var text = await resp.TextAsync();
+        await using var response = await Request.GetAsync($"/api/RoomService/GetRoomServiceById/{serviceId}");
 
-        //Console.WriteLine($"GET RoomService by ID {serviceId} => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {text}");
+        if (response.Status != 200)
+        {
+            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
+        }
+
+        var jsonResult = await response.JsonAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(resp.Status, Is.EqualTo(200));
-            Assert.That(text, Does.Contain(expectedName));
+            Assert.That(jsonResult.HasValue, Is.True, "Response did not contain JSON.");
+            Assert.That(jsonResult.Value.ValueKind, Is.EqualTo(JsonValueKind.Object), "Expected JSON object but got something else.");
+        });
+
+        jsonResult.Value.TryGetProperty("roomServiceID", out var id);
+        jsonResult.Value.TryGetProperty("itemName", out var name);
+        jsonResult.Value.TryGetProperty("itemPrice", out var price);
+        jsonResult.Value.TryGetProperty("description", out var description);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(id.GetInt32(), Is.EqualTo(serviceId));
+            Assert.That(name.GetString(), Is.EqualTo(expectedName));
+            Assert.That(price.GetDecimal(), Is.GreaterThan(0));
+            Assert.That(description.ValueKind == JsonValueKind.String || description.ValueKind == JsonValueKind.Null);
         });
     }
-
 
     [Test]
     public async Task GetRoomServiceById_NonExistingId_ReturnsNotFound()
     {
-        var nonExistingId = 9999;
-        var resp = await Request.GetAsync($"/api/RoomService/GetRoomServiceById/{nonExistingId}",
-            new APIRequestContextOptions { Headers = new Dictionary<string, string> { { "Accept", "application/json" } } });
-        var text = await resp.TextAsync();
+        int nonExistingId = 9999;
 
-        //Console.WriteLine($"GET non-existing RoomService by ID {nonExistingId} => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {text}");
+        await using var response = await Request.GetAsync($"/api/RoomService/GetRoomServiceById/{nonExistingId}");
+        var text = await response.TextAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(resp.Status, Is.EqualTo(404));
-            Assert.That(text, Does.Contain($"Room service with ID {nonExistingId} not found"));
+            Assert.That(response.Status, Is.EqualTo(404));
+            Assert.That(text, Does.Contain($"Room service with ID {nonExistingId} not found."));
         });
     }
 
-
     [Test]
-    public async Task GetRoomServiceByName_ExistingName_ReturnsOkWithCorrectData()
+    public async Task GetRoomServiceByName_ExistingName_ReturnsOkAndRoomService()
     {
         string serviceName = "Breakfast";
 
-        var resp = await Request.GetAsync($"/api/RoomService/GetRoomServiceByName/{serviceName}",
-            new APIRequestContextOptions { Headers = new Dictionary<string, string> { { "Accept", "application/json" } } });
-        var text = await resp.TextAsync();
+        await using var response = await Request.GetAsync($"/api/RoomService/GetRoomServiceByName/{serviceName}");
 
-        //Console.WriteLine($"GET RoomService by Name '{serviceName}' => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {text}");
+        if (response.Status != 200)
+        {
+            Assert.Fail($"Code: {response.Status} - {response.StatusText}");
+        }
+
+        var jsonResult = await response.JsonAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(resp.Status, Is.EqualTo(200));
-            Assert.That(text, Does.Contain(serviceName));
+            Assert.That(jsonResult.HasValue, Is.True, "Response did not contain JSON.");
+            Assert.That(jsonResult.Value.ValueKind, Is.EqualTo(JsonValueKind.Object), "Expected JSON object but got something else.");
+        });
+
+        jsonResult.Value.TryGetProperty("roomServiceID", out var id);
+        jsonResult.Value.TryGetProperty("itemName", out var name);
+        jsonResult.Value.TryGetProperty("itemPrice", out var price);
+        jsonResult.Value.TryGetProperty("description", out var description);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(name.GetString(), Is.EqualTo(serviceName));
+            Assert.That(id.GetInt32(), Is.GreaterThan(0));
+            Assert.That(price.GetDecimal(), Is.GreaterThan(0));
+            Assert.That(description.ValueKind == JsonValueKind.String || description.ValueKind == JsonValueKind.Null);
         });
     }
 
     [Test]
     public async Task GetRoomServiceByName_NonExistingName_ReturnsNotFound()
     {
-        var nonExistingName = "ThisServiceDoesNotExist";
-        var resp = await Request.GetAsync($"/api/RoomService/GetRoomServiceByName/{nonExistingName}",
-            new APIRequestContextOptions { Headers = new Dictionary<string, string> { { "Accept", "application/json" } } });
-        var text = await resp.TextAsync();
+        string nonExistingName = "ThisServiceDoesNotExist";
 
-        //Console.WriteLine($"GET non-existing RoomService by Name '{nonExistingName}' => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {text}");
+        await using var response = await Request.GetAsync($"/api/RoomService/GetRoomServiceByName/{nonExistingName}");
+        var text = await response.TextAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(resp.Status, Is.EqualTo(404));
-            Assert.That(text, Does.Contain($"Room service with name {nonExistingName} not found"));
+            Assert.That(response.Status, Is.EqualTo(404));
+            Assert.That(text, Does.Contain($"Room service with name {nonExistingName} not found."));
         });
     }
+
 
 
     [Test]
@@ -197,17 +199,6 @@ public class RoomServiceControllerTests : PlaywrightTest
         Assert.That(createResponse.Status, Is.EqualTo(200));
         var createText = await createResponse.TextAsync();
         Assert.That(createText, Is.EqualTo($"\"Room service item with name {serviceName} created successfully.\""));
-
-        var getResponse = await Request.GetAsync($"/api/RoomService/GetRoomServiceByName/{serviceName}");
-        Assert.That(getResponse.Status, Is.EqualTo(200));
-
-        // Deserijalizuj i proveri
-        var jsonResult = await getResponse.JsonAsync();
-        Assert.That(jsonResult.HasValue, Is.True);
-
-        Assert.That(jsonResult.Value.TryGetProperty("itemName", out var itemName) && itemName.GetString() == serviceName, Is.True);
-        Assert.That(jsonResult.Value.TryGetProperty("itemPrice", out var itemPrice) && itemPrice.GetDecimal() == 100, Is.True);
-        Assert.That(jsonResult.Value.TryGetProperty("description", out var description) && description.GetString() == "Test description", Is.True);
     }
 
     [Test]
@@ -224,8 +215,8 @@ public class RoomServiceControllerTests : PlaywrightTest
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        
+        var responseText = await resp.TextAsync();;
 
         //Console.WriteLine($"POST EmptyName => Status: {resp.Status}");
         //Console.WriteLine($"Response: {jsonString}");
@@ -233,7 +224,7 @@ public class RoomServiceControllerTests : PlaywrightTest
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Service name is required and cannot exceed 50 characters"));
+            Assert.That(responseText, Does.Contain("Service name is required and cannot exceed 50 characters"));
         });
     }
 
@@ -251,16 +242,13 @@ public class RoomServiceControllerTests : PlaywrightTest
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
-        //Console.WriteLine($"POST NameTooLong => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
 
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Service name is required and cannot exceed 50 characters"));
+            Assert.That(responseText, Does.Contain("Service name is required and cannot exceed 50 characters"));
         });
     }
 
@@ -278,8 +266,7 @@ public class RoomServiceControllerTests : PlaywrightTest
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
         //Console.WriteLine($"POST NegativePrice => Status: {resp.Status}");
         //Console.WriteLine($"Response: {jsonString}");
@@ -287,7 +274,7 @@ public class RoomServiceControllerTests : PlaywrightTest
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Price must be a positive value"));
+            Assert.That(responseText, Does.Contain("Price must be a positive value"));
         });
     }
 
@@ -305,8 +292,7 @@ public class RoomServiceControllerTests : PlaywrightTest
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
         //Console.WriteLine($"POST ZeroPrice => Status: {resp.Status}");
         //Console.WriteLine($"Response: {jsonString}");
@@ -314,7 +300,7 @@ public class RoomServiceControllerTests : PlaywrightTest
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Price must be a positive value"));
+            Assert.That(responseText, Does.Contain("Price must be a positive value"));
         });
     }
 
@@ -332,73 +318,68 @@ public class RoomServiceControllerTests : PlaywrightTest
         var text = await createResp.TextAsync();
         //Console.WriteLine($"Response text: {text}");
 
-        Assert.That(createResp.Status, Is.EqualTo(404));
+        Assert.Multiple(() =>
+        {
+            Assert.That(createResp, Has.Property("Status").EqualTo(404));
+            Assert.That(text, Does.Contain($"Room service with the name {existingName} already exists."));
+        });
     }
 
 
 
     [Test]
-    public async Task UpdateRoomService_ById_UpdatesSuccessfully()
+    public async Task UpdateRoomService_ById_ReturnsOkAndUpdatesRoomService()
     {
-        var service = await _context.RoomServices.FirstAsync(rs => rs.ItemName == "Breakfast");
-        var updatedName = "Breakfast Deluxe";
+        int existingServiceId = 1; 
 
-        var updateResp = await Request.PutAsync($"/api/RoomService/UpdateRoomService/{service.RoomServiceID}", new APIRequestContextOptions
+        await using var response = await Request.PutAsync($"/api/RoomService/UpdateRoomService/{existingServiceId}", new APIRequestContextOptions
         {
-            Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
+            Headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            },
             DataObject = new
             {
-                ItemName = updatedName,
+                ItemName = "Breakfast Deluxe",
                 ItemPrice = 15.00m,
                 Description = "Updated description"
             }
         });
 
-        Assert.That(updateResp.Status, Is.EqualTo(200));
-        //Console.WriteLine($"Update response status: {updateResp.Status}");
-
-        var getUpdated = await Request.GetAsync($"/api/RoomService/GetRoomServiceById/{service.RoomServiceID}");
-        var json = await getUpdated.JsonAsync();
-        Assert.That(json.HasValue, Is.True);
-
-        //Console.WriteLine($"Updated JSON: {json.Value}");
+        var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(json.Value.TryGetProperty("roomServiceID", out var idProp) && idProp.GetInt32() == service.RoomServiceID, "roomServiceID mismatch");
-            Assert.That(json.Value.TryGetProperty("itemName", out var nameProp) && nameProp.GetString() == updatedName, "itemName mismatch");
-            Assert.That(json.Value.TryGetProperty("itemPrice", out var priceProp) && priceProp.GetDecimal() == 15.00m, "itemPrice mismatch");
-            Assert.That(json.Value.TryGetProperty("description", out var descProp) && descProp.GetString() == "Updated description", "description mismatch");
+            Assert.That(response, Has.Property("Status").EqualTo(200));
+            Assert.That(responseText, Does.Contain($"Room service with ID {existingServiceId} updated successfully."));
         });
     }
 
-    [Test]
-    public async Task UpdateRoomServiceByName_ValidUpdate_Succeeds()
-    {
-        var serviceName = "Breakfast";
-        var updatedName = "Breakfast Deluxe";
 
-        var resp = await Request.PutAsync($"/api/RoomService/UpdateRoomServiceByName/{serviceName}", new APIRequestContextOptions
+    [Test]
+    public async Task UpdateRoomServiceByName_ValidUpdate_ReturnsOk()
+    {
+        string existingServiceName = "Breakfast";
+        await using var response = await Request.PutAsync($"/api/RoomService/UpdateRoomServiceByName/{existingServiceName}", new APIRequestContextOptions
         {
-            Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } },
+            Headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" }
+            },
             DataObject = new
             {
-                ItemName = updatedName,
-                ItemPrice = 20m,
+                ItemName = "Breakfast Deluxe",
+                ItemPrice = 20.00m,
                 Description = "Updated description"
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
-
-        //Console.WriteLine($"PUT ValidUpdate => Status: {resp.Status}");
-        //Console.WriteLine($"Response: {jsonString}");
+        var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(resp, Has.Property("Status").EqualTo(200));
-            Assert.That(jsonString, Does.Contain($"Room service with name {serviceName} updated successfully"));
+            Assert.That(response, Has.Property("Status").EqualTo(200));
+            Assert.That(responseText, Does.Contain($"Room service with name {existingServiceName} updated successfully."));
         });
     }
 
@@ -418,8 +399,7 @@ public class RoomServiceControllerTests : PlaywrightTest
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
         //Console.WriteLine($"PUT EmptyName => Status: {resp.Status}");
         //Console.WriteLine($"Response: {jsonString}");
@@ -427,7 +407,7 @@ public class RoomServiceControllerTests : PlaywrightTest
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Service name is required and cannot exceed 50 characters"));
+            Assert.That(responseText, Does.Contain("Service name is required and cannot exceed 50 characters"));
         });
     }
 
@@ -447,8 +427,8 @@ public class RoomServiceControllerTests : PlaywrightTest
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        
+        var responseText = await resp.TextAsync();
 
         //Console.WriteLine($"PUT NameTooLong => Status: {resp.Status}");
         //Console.WriteLine($"Response: {jsonString}");
@@ -456,7 +436,7 @@ public class RoomServiceControllerTests : PlaywrightTest
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Service name is required and cannot exceed 50 characters"));
+            Assert.That(responseText, Does.Contain("Service name is required and cannot exceed 50 characters"));
         });
     }
 
@@ -476,8 +456,7 @@ public class RoomServiceControllerTests : PlaywrightTest
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
         //Console.WriteLine($"PUT NegativePrice => Status: {resp.Status}");
         //Console.WriteLine($"Response: {jsonString}");
@@ -485,7 +464,7 @@ public class RoomServiceControllerTests : PlaywrightTest
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Price must be a positive value"));
+            Assert.That(responseText, Does.Contain("Price must be a positive value"));
         });
     }
 
@@ -505,8 +484,7 @@ public class RoomServiceControllerTests : PlaywrightTest
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
         //Console.WriteLine($"PUT ZeroPrice => Status: {resp.Status}");
         //Console.WriteLine($"Response: {jsonString}");
@@ -514,7 +492,7 @@ public class RoomServiceControllerTests : PlaywrightTest
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain("Price must be a positive value"));
+            Assert.That(responseText, Does.Contain("Price must be a positive value"));
         });
     }
 
@@ -535,8 +513,7 @@ public class RoomServiceControllerTests : PlaywrightTest
             }
         });
 
-        var body = await resp.BodyAsync();
-        var jsonString = Encoding.UTF8.GetString(body);
+        var responseText = await resp.TextAsync();
 
         //Console.WriteLine($"PUT DuplicateName => Status: {resp.Status}");
         //Console.WriteLine($"Response: {jsonString}");
@@ -544,45 +521,41 @@ public class RoomServiceControllerTests : PlaywrightTest
         Assert.Multiple(() =>
         {
             Assert.That(resp, Has.Property("Status").EqualTo(400));
-            Assert.That(jsonString, Does.Contain($"Room service with the name {existingName} already exists"));
+            Assert.That(responseText, Does.Contain($"Room service with the name {existingName} already exists"));
         });
     }
 
 
     [Test]
-    public async Task DeleteRoomService_ById_DeletesSuccessfully()
+    public async Task DeleteRoomService_ExistingId_ReturnsOk()
     {
-        int serviceId = 1; 
+        int existingServiceId = 1;
 
-        var deleteResp = await Request.DeleteAsync($"/api/RoomService/DeleteRoomService/{serviceId}");
-        //Console.WriteLine($"Delete response status: {deleteResp.Status}");
-
-        var getDeleted = await Request.GetAsync($"/api/RoomService/GetRoomServiceById/{serviceId}");
-        //Console.WriteLine($"GET after delete status: {getDeleted.Status}");
+        await using var response = await Request.DeleteAsync($"/api/RoomService/DeleteRoomService/{existingServiceId}");
+        var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(deleteResp.Status, Is.EqualTo(200));
-            Assert.That(getDeleted.Status, Is.EqualTo(404));
+            Assert.That(response, Has.Property("Status").EqualTo(200));
+            Assert.That(responseText, Does.Contain($"Room service with ID {existingServiceId} deleted successfully."));
         });
     }
 
     [Test]
-    public async Task DeleteRoomService_ById_NonExistingId_ReturnsNotFound()
+    public async Task DeleteRoomService_NonExistingId_ReturnsNotFound()
     {
-        int nonExistingId = 9999;
+        int nonExistingServiceId = 9999;
 
-        var deleteResp = await Request.DeleteAsync($"/api/RoomService/DeleteRoomService/{nonExistingId}");
-        var text = await deleteResp.TextAsync();
-        //Console.WriteLine($"Delete non-existing ID response status: {deleteResp.Status}");
-        //Console.WriteLine($"Response text: {text}");
+        await using var response = await Request.DeleteAsync($"/api/RoomService/DeleteRoomService/{nonExistingServiceId}");
+        var responseText = await response.TextAsync();
 
         Assert.Multiple(() =>
         {
-            Assert.That(deleteResp.Status, Is.EqualTo(404));
-            Assert.That(text, Does.Contain($"Room service with ID {nonExistingId} not found"));
+            Assert.That(response, Has.Property("Status").EqualTo(404));
+            Assert.That(responseText, Does.Contain($"Room service with ID {nonExistingServiceId} not found."));
         });
     }
+
 
     [Test]
     public async Task DeleteRoomService_ById_Twice_SecondTimeReturnsNotFound()

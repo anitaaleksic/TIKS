@@ -57,8 +57,8 @@ public class RoomController_PostRoom_Tests
 
         var result = await _controllerRoom.CreateRoom(roomDto);
 
-        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
-        var notFound = (NotFoundObjectResult)result;
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+        var notFound = (BadRequestObjectResult)result;
         Assert.That(notFound.Value, Is.EqualTo("Room number must be between 101 and 699."));
     }
 
@@ -84,8 +84,8 @@ public class RoomController_PostRoom_Tests
 
         var result = await _controllerRoom.CreateRoom(roomDto);
 
-        Assert.That(result, Is.InstanceOf<NotFoundObjectResult>());
-        var notFound = (NotFoundObjectResult)result;
+        Assert.That(result, Is.InstanceOf<BadRequestObjectResult>());
+        var notFound = (BadRequestObjectResult)result;
         Assert.That(notFound.Value, Is.EqualTo("Room with number 123 already exists."));
     }
 

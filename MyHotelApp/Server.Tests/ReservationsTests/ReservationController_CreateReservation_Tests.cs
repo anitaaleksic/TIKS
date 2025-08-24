@@ -555,7 +555,7 @@ public class ReservationController_CreateReservation_Tests
         int roomNum = 500;
         var resultRoom = await _controllerRoom.GetRoom(roomNum);
         var resultRoomOk = resultRoom as OkObjectResult;
-        var roomObject = resultRoomOk.Value as Room;
+        var roomObject = resultRoomOk.Value as RoomDTO;
         var reservationsList = roomObject.Reservations;
 
         Assert.That(reservationsList, Is.Empty);
@@ -580,14 +580,14 @@ public class ReservationController_CreateReservation_Tests
 
         var resultRoomAfter = await _controllerRoom.GetRoom(roomNum);
         var resultRoomOkAfter = resultRoomAfter as OkObjectResult;
-        var roomObjectAfter = resultRoomOkAfter.Value as Room;
-        var reservationsListAfter = roomObject.Reservations;
+        var roomObjectAfter = resultRoomOkAfter.Value as RoomDTO;
+        var reservationsListAfter = roomObjectAfter.Reservations;
 
         Assert.Multiple(() =>
         {
             Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
             //reservation with id 1 is removed and now it only has reservation with id 2
-            Assert.That(reservationsListAfter, Has.Some.Matches<Reservation>(r => r.GuestID == reservationDTO.GuestID &&
+            Assert.That(reservationsListAfter, Has.Some.Matches<ReservationDTO>(r => r.GuestID == reservationDTO.GuestID &&
                                                                                   r.RoomNumber == reservationDTO.RoomNumber &&
                                                                                   r.CheckInDate == reservationDTO.CheckInDate &&
                                                                                   r.CheckOutDate == reservationDTO.CheckOutDate));
@@ -601,7 +601,7 @@ public class ReservationController_CreateReservation_Tests
 
         var resultGuest = await _controllerGuest.GetGuestByJMBG(guestId);
         var resultGuestOk = resultGuest as OkObjectResult;
-        var guestObject = resultGuestOk.Value as Guest;
+        var guestObject = resultGuestOk.Value as GuestDTO;
         var reservationsList = guestObject.Reservations;
 
         Assert.That(reservationsList, Is.Empty);
@@ -627,13 +627,13 @@ public class ReservationController_CreateReservation_Tests
 
         var resultGuestAfter = await _controllerGuest.GetGuestByJMBG(guestId);
         var resultGuestOkAfter = resultGuestAfter as OkObjectResult;
-        var guestObjectAfter = resultGuestOkAfter.Value as Guest;
+        var guestObjectAfter = resultGuestOkAfter.Value as GuestDTO;
         var reservationsListAfter = guestObjectAfter.Reservations;
 
         Assert.Multiple(() =>
         {
-            Assert.That(reservationsList.Count, Is.EqualTo(1));
-            Assert.That(reservationsListAfter, Has.Some.Matches<Reservation>(r => r.GuestID == reservationDTO.GuestID &&
+            Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
+            Assert.That(reservationsListAfter, Has.Some.Matches<ReservationDTO>(r => r.GuestID == reservationDTO.GuestID &&
                                                                                   r.RoomNumber == reservationDTO.RoomNumber &&
                                                                                   r.CheckInDate == reservationDTO.CheckInDate &&
                                                                                   r.CheckOutDate == reservationDTO.CheckOutDate));

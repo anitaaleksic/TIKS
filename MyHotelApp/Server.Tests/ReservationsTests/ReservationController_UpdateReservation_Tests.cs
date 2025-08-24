@@ -718,10 +718,10 @@ public class ReservationController_UpdateReservation_Tests
         //provera da je u listi trenutne sobe 
         var resultRoom = await _controllerRoom.GetRoom(currentRoomNum);
         var resultRoomOk = resultRoom as OkObjectResult;
-        var roomObject = resultRoomOk.Value as Room;
+        var roomObject = resultRoomOk.Value as RoomDTO;
         var reservationsList = roomObject.Reservations;
 
-        Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == resId));
+        Assert.That(reservationsList, Has.Some.Matches<ReservationDTO>(r => r.ReservationID == resId));
         // Assert.Multiple(() =>
         // {
         //     Assert.That(reservationsList.Count, Is.EqualTo(1));
@@ -731,11 +731,11 @@ public class ReservationController_UpdateReservation_Tests
         //provera da nije u listi buduce sobe
         var resultRoom2 = await _controllerRoom.GetRoom(newRoomNum);
         var resultRoomOk2 = resultRoom2 as OkObjectResult;
-        var roomObject2 = resultRoomOk2.Value as Room;
+        var roomObject2 = resultRoomOk2.Value as RoomDTO;
         var reservationsList2 = roomObject2.Reservations;
 
 
-        Assert.That(reservationsList2, Has.None.Matches<Reservation>(r => r.ReservationID == resId));
+        Assert.That(reservationsList2, Has.None.Matches<ReservationDTO>(r => r.ReservationID == resId));
         // Assert.Multiple(() =>
         // {
         //     Assert.That(reservationsList2.Count, Is.Empty);
@@ -763,10 +763,10 @@ public class ReservationController_UpdateReservation_Tests
         //provera da je nema vise u staroj sobi
         var resultRoomAfter = await _controllerRoom.GetRoom(currentRoomNum);
         var resultRoomOkAfter = resultRoomAfter as OkObjectResult;
-        var roomObjectAfter = resultRoomOkAfter.Value as Room;
-        var reservationsListAfter = roomObject.Reservations;
+        var roomObjectAfter = resultRoomOkAfter.Value as RoomDTO;
+        var reservationsListAfter = roomObjectAfter.Reservations;
 
-        Assert.That(reservationsListAfter, Has.None.Matches<Reservation>(r => r.ReservationID == resId));
+         Assert.That(reservationsListAfter.All(r => r.ReservationID != resId));
         // Assert.Multiple(() =>
         // {
         //     Assert.That(reservationsListAfter.Count, Is.EqualTo(1));
@@ -777,10 +777,10 @@ public class ReservationController_UpdateReservation_Tests
         //provera da je ima u novoj
         var resultRoomAfter2 = await _controllerRoom.GetRoom(newRoomNum);
         var resultRoomOkAfter2 = resultRoomAfter2 as OkObjectResult;
-        var roomObjectAfter2 = resultRoomOkAfter2.Value as Room;
-        var reservationsListAfter2 = roomObject2.Reservations;
+        var roomObjectAfter2 = resultRoomOkAfter2.Value as RoomDTO;
+        var reservationsListAfter2 = roomObjectAfter2.Reservations;
 
-        Assert.That(reservationsListAfter2, Has.Some.Matches<Reservation>(r => r.ReservationID == resId));
+        Assert.That(reservationsListAfter2, Has.Some.Matches<ReservationDTO>(r => r.ReservationID == resId));
     }
 
     [Test]//menjamo rez 2 "1234512345123" -> "1234567890123" bila anita bice mila
@@ -793,18 +793,18 @@ public class ReservationController_UpdateReservation_Tests
         //provera da je u listi trenutnog gosta
         var resultGuest = await _controllerGuest.GetGuestByJMBG(currentGuestId);
         var resultGuestOk = resultGuest as OkObjectResult;
-        var guestObject = resultGuestOk.Value as Guest;
+        var guestObject = resultGuestOk.Value as GuestDTO;
         var reservationsList = guestObject.Reservations;
 
-        Assert.That(reservationsList, Has.Some.Matches<Reservation>(r => r.ReservationID == resId));
+        Assert.That(reservationsList, Has.Some.Matches<ReservationDTO>(r => r.ReservationID == resId));
 
         //provera da nije u listi buduceg 
         var resultGuest2 = await _controllerGuest.GetGuestByJMBG(newGuestId);
         var resultGuestOk2 = resultGuest2 as OkObjectResult;
-        var guestObject2 = resultGuestOk2.Value as Guest;
+        var guestObject2 = resultGuestOk2.Value as GuestDTO;
         var reservationsList2 = guestObject2.Reservations;
 
-        Assert.That(reservationsList2, Has.None.Matches<Reservation>(r => r.ReservationID == resId));
+        Assert.That(reservationsList2, Has.None.Matches<ReservationDTO>(r => r.ReservationID == resId));
 
         //update
         ReservationDTO reservation2 = new ReservationDTO
@@ -830,19 +830,19 @@ public class ReservationController_UpdateReservation_Tests
 
         var resultGuestAfter = await _controllerGuest.GetGuestByJMBG(currentGuestId);
         var resultGuestOkAfter = resultGuestAfter as OkObjectResult;
-        var guestObjectAfter = resultGuestOkAfter.Value as Guest;
+        var guestObjectAfter = resultGuestOkAfter.Value as GuestDTO;
         var reservationsListAfter = guestObjectAfter.Reservations;
 
-        Assert.That(reservationsListAfter, Has.None.Matches<Reservation>(r => r.ReservationID == resId));
+        Assert.That(reservationsListAfter.All(r => r.ReservationID != resId));
 
         //provera da je kod novog gosta
 
         var resultGuestAfter2 = await _controllerGuest.GetGuestByJMBG(newGuestId);
         var resultGuestOkAfter2 = resultGuestAfter2 as OkObjectResult;
-        var guestObjectAfter2 = resultGuestOkAfter2.Value as Guest;
+        var guestObjectAfter2 = resultGuestOkAfter2.Value as GuestDTO;
         var reservationsListAfter2 = guestObjectAfter2.Reservations;
 
-        Assert.That(reservationsListAfter2, Has.Some.Matches<Reservation>(r => r.ReservationID == resId));
+        Assert.That(reservationsListAfter2, Has.Some.Matches<ReservationDTO>(r => r.ReservationID == resId));
 
     }
 
